@@ -32,7 +32,7 @@ class Conference
     /**
      * @ORM\Column(type="datetime")
      */
-    private $start;
+    private ?\DateTimeInterface $start;
 
     /**
      * @ORM\Column(type="json")
