@@ -19,17 +19,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    private ?int $id = null;
+    private ?int $id;
 
     /**
      * @ORM\Column(type="string", length=100, unique=true)
      */
-    private ?string $email = null;
+    private ?string $email;
 
     /**
      * @ORM\Column(type="json")
      */
-    private array $roles = [];
+    private ?array $roles;
 
     /**
      * @var string The hashed password
@@ -40,7 +40,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\ManyToOne(inversedBy="users")
      */
-    private ?Type $type = null;
+    private ?Type $type;
 
     /**
      * @ORM\ManyToMany(targetEntity=Conference::class, inversedBy="users")
