@@ -1,17 +1,16 @@
-# Symfony Docker
+# Conference's registry on Symfony
 
-A [Docker](https://www.docker.com/)-based installer and runtime for the [Symfony](https://symfony.com) web framework,
-with [FrankenPHP](https://frankenphp.dev) and [Caddy](https://caddyserver.com/) inside!
-
-![CI](https://github.com/dunglas/symfony-docker/workflows/CI/badge.svg)
+A project where users can participate in or listen to a conference.
 
 ## Getting Started
 
 1. If not already done, [install Docker Compose](https://docs.docker.com/compose/install/) (v2.10+)
 2. Run `docker compose build --no-cache` to build fresh images
-3. Run `docker compose up --pull always -d --wait` to set up and start a fresh Symfony project
-4. Open `https://localhost` in your favorite web browser and [accept the auto-generated TLS certificate](https://stackoverflow.com/a/15076602/1352334)
-5. Run `docker compose down --remove-orphans` to stop the Docker containers.
+3. Run `docker compose up -d` to set up and start a project
+4. Copy .env.dist and rename it to .env
+5. Run `docker compose exec php bin/console secrets:generate-keys` to generate App key
+6. Open `https://localhost` in your favorite web browser and [accept the auto-generated TLS certificate](https://stackoverflow.com/a/15076602/1352334)
+7. Run `docker compose down --remove-orphans` to stop the Docker containers.
 
 ## DataBase Diagram
 [Link to diagram](https://dbdiagram.io/d/Conferences-675b14c946c15ed47932b533)
