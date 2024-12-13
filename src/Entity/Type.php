@@ -17,17 +17,17 @@ class Type
      * @ORM\GeneratedValue
      * @ORM\Column
      */
-    private ?int $id = null;
+    private ?int $id;
 
     /**
-     * @ORM\Column(length=50)
+     * @ORM\Column(length=30)
      */
-    private ?string $name = null;
+    private ?string $name;
 
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="type")
      */
-    private Collection $users;
+    private ?Collection $users;
 
     public function __construct()
     {
@@ -54,7 +54,7 @@ class Type
     /**
      * @return Collection<int, User>
      */
-    public function getUsers(): Collection
+    public function getUsers(): ?Collection
     {
         return $this->users;
     }

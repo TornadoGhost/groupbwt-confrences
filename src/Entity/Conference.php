@@ -17,7 +17,7 @@ class Conference
      * @ORM\GeneratedValue
      * @ORM\Column
      */
-    private ?int $id = null;
+    private ?int $id;
 
     /**
      * @ORM\ManyToMany(targetEntity=User::class, mappedBy="conference")
@@ -32,7 +32,7 @@ class Conference
     /**
      * @ORM\Column(type="datetime")
      */
-    private $start;
+    private ?\DateTimeInterface $start;
 
     /**
      * @ORM\Column(type="json")
@@ -40,7 +40,7 @@ class Conference
     private array $address = [];
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=30)
      */
     private ?string $country;
 
