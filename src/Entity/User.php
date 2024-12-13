@@ -32,10 +32,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?array $roles;
 
     /**
-     * @var string The hashed password
+     * @var string|null The hashed password
      * @ORM\Column(type="string")
      */
-    private string $password;
+    private ?string $password;
 
     /**
      * @ORM\ManyToOne(inversedBy="users")
@@ -45,7 +45,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\ManyToMany(targetEntity=Conference::class, inversedBy="users")
      */
-    private Collection $conferences;
+    private ?Collection $conferences;
 
     /**
      * @ORM\Column(type="string", length=100)
