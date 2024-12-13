@@ -27,7 +27,7 @@ class Type
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="type")
      */
-    private Collection $users;
+    private ?Collection $users;
 
     public function __construct()
     {
