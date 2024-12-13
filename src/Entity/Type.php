@@ -20,7 +20,7 @@ class Type
     private ?int $id = null;
 
     /**
-     * @ORM\Column(length=50)
+     * @ORM\Column(length=30)
      */
     private ?string $name = null;
 

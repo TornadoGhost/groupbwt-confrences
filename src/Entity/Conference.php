@@ -40,7 +40,7 @@ class Conference
     private array $address = [];
 
     /**
-     * @ORM\Column(type="string", length=100)
+     * @ORM\Column(type="string", length=30)
      */
     private ?string $country;
 
