@@ -54,7 +54,7 @@ class Type
     /**
      * @return Collection<int, User>
      */
-    public function getUsers(): Collection
+    public function getUsers(): ?Collection
     {
         return $this->users;
     }
