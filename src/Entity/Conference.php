@@ -44,6 +44,11 @@ class Conference
      */
     private ?string $country;
 
+    /**
+     * @ORM\Column(type="boolean", options={"default":0})
+     */
+    private ?bool $deletedAt;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -125,6 +130,18 @@ class Conference
     public function setCountry(string $country): self
     {
         $this->country = $country;
+
+        return $this;
+    }
+
+    public function isDeletedAt(): ?bool
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(bool $deletedAt): self
+    {
+        $this->deletedAt = $deletedAt;
 
         return $this;
     }
