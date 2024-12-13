@@ -17,12 +17,12 @@ class Type
      * @ORM\GeneratedValue
      * @ORM\Column
      */
-    private ?int $id = null;
+    private ?int $id;
 
     /**
      * @ORM\Column(length=30)
      */
-    private ?string $name = null;
+    private ?string $name;
 
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="type")
