@@ -17,7 +17,7 @@ class Conference
      * @ORM\GeneratedValue
      * @ORM\Column
      */
-    private ?int $id = null;
+    private ?int $id;
 
     /**
      * @ORM\ManyToMany(targetEntity=User::class, mappedBy="conference")
