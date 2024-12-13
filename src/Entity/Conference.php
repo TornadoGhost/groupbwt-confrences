@@ -48,11 +48,6 @@ class Conference
      */
     private ?string $country;
 
-    /**
-     * @ORM\Column(type="boolean", options={"default":0})
-     */
-    private ?bool $deletedAt;
-
     public function __construct()
     {
         $this->users = new ArrayCollection();
