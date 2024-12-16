@@ -51,6 +51,8 @@ class Conference
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->setCreatedAt(new \DateTime());
+        $this->setUpdatedAt(new \DateTime());
     }
 
     public function getId(): ?int

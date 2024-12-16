@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+{% block links %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+{% endblock %}
+
+{% set body_class = 'bg-primary' %}
+
+{% block body %}
+    <div class="container h-100 d-flex justify-content-center align-items-center">
+        <div class="row w-100">
+            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
+                <div class="card border-0 shadow rounded-3">
+                    <div class="card-body p-4 p-sm-5">
+                        <h5 class="card-title text-center mb-5 fw-light fs-5">Register</h5>
+                        {{ form_errors(registrationForm) }}
+                        {{ form_start(registrationForm) }}
+
+                        <div class="form-floating mb-3">
+                            {{ form_row(registrationForm.firstname, {
+                                attr: {
+                                    placeholder: 'Firstname example',
+                                }
+                            }) }}
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            {{ form_row(registrationForm.lastname, {
+                                attr: {
+                                    placeholder: 'Lastname example',
+                                }
+                            }) }}
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            {{ form_row(registrationForm.birthdate) }}
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            {{ form_row(registrationForm.country) }}
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            {{ form_row(registrationForm.phone, {
+                                label: 'Phone number',
+                                attr: {
+                                    class: 'phone-input'
+                                }
+                            }) }}
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            {{ form_row(registrationForm.type) }}
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            {{ form_row(registrationForm.email, {
+                                attr: {
+                                    placeholder: 'name@example.com'
+                                }
+                            }) }}
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            {{ form_row(registrationForm.plainPassword, {
+                                label: 'Password',
+                                attr: {
+                                    placeholder: '**********',
+                                }
+                            }) }}
+                        </div>
+
+                        <div class="d-grid">
+                            <button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit">
+                                Register
+                            </button>
+                        </div>
+
+                        {{ form_end(registrationForm) }}
+
+
+                        <a href="{{ path('app_login') }}">Do you have an account? Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const phoneInput = document.querySelector('.phone-input');
+            const countrySelect = document.querySelector('[name="registration_form[country]"]');
+
+            const iti = intlTelInput(phoneInput, {
+                initialCountry: countrySelect.value,
+                separateDialCode: true,
+            });
+
+            document.getElementsByClassName('iti')[0].classList.add('w-100');
+
+            countrySelect.addEventListener('change', function () {
+                iti.setCountry(countrySelect.value);
+            });
+        });
+
+        document.getElementById('registration_form_type').firstElementChild.disabled = true;
+    </script>
+{% endblock %}
