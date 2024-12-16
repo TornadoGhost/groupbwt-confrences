@@ -33,6 +33,16 @@ class RegistrationFormType extends AbstractType
                     ]),
                 ],
             ])
+            ->add('firstname', TextType::class)
+            ->add('lastname', TextType::class)
+            ->add('birthdate', BirthdayType::class)
+            ->add('country', CountryType::class)
+            ->add('phone', TextType::class)
+            ->add('type', EntityType::class, [
+                'class' => Type::class,
+                'choice_label' => 'name',
+                'placeholder' => 'Select type',
+            ])
         ;
     }
 
