@@ -85,7 +85,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @Assert\NotBlank
-     * @Assert\Date
+     * @Assert\Type("\DateTimeInterface")
      * @var null|DateTimeInterface A "Y-m-d" formatted value
      * @ORM\Column(type="date")
      */
