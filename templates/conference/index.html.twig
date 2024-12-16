@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Conference index{% endblock %}
+
+{% block body %}
+    <h1>Conference index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Start</th>
+                <th>Address</th>
+                <th>Country</th>
+                <th>CreatedAt</th>
+                <th>UpdatedAt</th>
+                <th>DeletedAt</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for conference in conferences %}
+            <tr>
+                <td>{{ conference.id }}</td>
+                <td>{{ conference.title }}</td>
+                <td>{{ conference.start ? conference.start|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ conference.address ? conference.address|json_encode : '' }}</td>
+                <td>{{ conference.country }}</td>
+                <td>{{ conference.createdAt ? conference.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ conference.updatedAt ? conference.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ conference.deletedAt ? conference.deletedAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    <a href="{{ path('app_conference_show', {'id': conference.id}) }}">show</a>
+                    <a href="{{ path('app_conference_edit', {'id': conference.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="9">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_conference_new') }}">Create new</a>
+{% endblock %}

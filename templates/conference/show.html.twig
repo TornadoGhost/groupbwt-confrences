@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Conference{% endblock %}
+
+{% block body %}
+    <h1>Conference</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ conference.id }}</td>
+            </tr>
+            <tr>
+                <th>Title</th>
+                <td>{{ conference.title }}</td>
+            </tr>
+            <tr>
+                <th>Start</th>
+                <td>{{ conference.start ? conference.start|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Address</th>
+                <td>{{ conference.address ? conference.address|json_encode : '' }}</td>
+            </tr>
+            <tr>
+                <th>Country</th>
+                <td>{{ conference.country }}</td>
+            </tr>
+            <tr>
+                <th>CreatedAt</th>
+                <td>{{ conference.createdAt ? conference.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>UpdatedAt</th>
+                <td>{{ conference.updatedAt ? conference.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>DeletedAt</th>
+                <td>{{ conference.deletedAt ? conference.deletedAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_conference_index') }}">back to list</a>
+
+    <a href="{{ path('app_conference_edit', {'id': conference.id}) }}">edit</a>
+
+    {{ include('conference/_delete_form.html.twig') }}
+{% endblock %}
