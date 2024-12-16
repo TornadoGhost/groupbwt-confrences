@@ -27,7 +27,11 @@ class RegistrationFormType extends AbstractType
             ])
             ->add('plainPassword', PasswordType::class, [
                 'mapped' => false,
-                'attr' => ['autocomplete' => 'new-password'],
+                'label' => 'Password',
+                'attr' => [
+                    'autocomplete' => 'new-password',
+                    'placeholder' => '**********',
+                ],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Please enter a password',
@@ -54,7 +58,12 @@ class RegistrationFormType extends AbstractType
                 'format' => 'yyyy-MM-dd',
             ])
             ->add('country', CountryType::class)
-            ->add('phone', TextType::class)
+            ->add('phone', TextType::class, [
+                'label' => 'Phone number',
+                'attr' => [
+                    'class' => 'phone-input'
+                ]
+            ])
             ->add('type', EntityType::class, [
                 'class' => Type::class,
                 'choice_label' => 'name',
