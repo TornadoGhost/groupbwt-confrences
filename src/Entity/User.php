@@ -33,6 +33,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @Assert\Email(
      *      message = "The email '{{ value }}' is not a valid email."
      *  )
+     * @Assert\Length(
+     *        min = 3,
+     *        max = 100,
+     *        minMessage = "Your email must be at least {{ limit }} characters long",
+     *        maxMessage = "Your email cannot be longer than {{ limit }} characters"
+     * )
      * @ORM\Column(type="string", length=100, unique=true)
      */
     private ?string $email;
