@@ -114,6 +114,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->conferences = new ArrayCollection();
         $this->setCreatedAt(new \DateTime());
         $this->setUpdatedAt(new \DateTime());
+        $this->setRoles(['ROLE_USER']);
     }
 
     public function getId(): ?int
