@@ -21,7 +21,7 @@ class LoginController extends AbstractController
             if ($referer) {
                 return $this->redirect($referer);
             } else {
-                return $this->redirectToRoute('temp_page');
+                return $this->redirectToRoute('app_conference_index');
             }
         }
 
