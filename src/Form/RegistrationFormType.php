@@ -31,14 +31,16 @@ class RegistrationFormType extends AbstractType
                     new Length([
                         'min' => 6,
                         'minMessage' => 'Your password should be at least {{ limit }} characters',
-                        // max length allowed by Symfony for security reasons
                         'max' => 4096,
                     ]),
                 ],
             ])
             ->add('firstname', TextType::class)
             ->add('lastname', TextType::class)
-            ->add('birthdate', BirthdayType::class)
+            ->add('birthdate', BirthdayType::class, [
+                'widget' => 'single_text',
+                'format' => 'yyyy-MM-dd',
+            ])
             ->add('country', CountryType::class)
             ->add('phone', TextType::class)
             ->add('type', EntityType::class, [
