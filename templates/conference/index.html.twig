@@ -16,17 +16,32 @@
         <tbody>
         {% for conference in conferences.currentPageResults %}
             <tr>
-                <td>{{ conference.id }}</td>
+
                 <td>{{ conference.title }}</td>
                 <td>{{ conference.start ? conference.start|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ conference.address ? conference.address|json_encode : '' }}</td>
-                <td>{{ conference.country }}</td>
-                <td>{{ conference.createdAt ? conference.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ conference.updatedAt ? conference.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ conference.deletedAt ? conference.deletedAt|date('Y-m-d H:i:s') : '' }}</td>
                 <td>
-                    <a href="{{ path('app_conference_show', {'id': conference.id}) }}">show</a>
-                    <a href="{{ path('app_conference_edit', {'id': conference.id}) }}">edit</a>
+                    {% if app.user %}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a class="btn btn-danger" href="#">Delete</a>
+                            <a class="btn btn-info" href="{{ path('app_conference_edit', {'id': conference.id}) }}">Edit</a>
+                        {% else %}
+                            {% if conference.users is empty %}
+                                <a class="btn btn-primary"
+                                   href="{{ path('app_conference_join', {'id': conference.id}) }}">Join</a>
+                            {% else %}
+                                <a class="btn btn-danger"
+                                   href="{{ path('app_conference_cancel', {'id': conference.id}) }}">Cancel participation</a>
+                            {% endif %}
+                        {% endif %}
+                        <a class="btn btn-primary"
+                           href="{{ path('app_conference_show', {'id': conference.id}) }}">Details</a>
+                    {% else %}
+                        <a class="btn btn-primary"
+                           href="{{ path('app_login') }}">Join</a>
+                        <a class="btn btn-primary"
+                           href="{{ path('app_login') }}">Details</a>
+                    {% endif %}
+
                 </td>
             </tr>
         {% else %}
