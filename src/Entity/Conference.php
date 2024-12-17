@@ -27,7 +27,7 @@ class Conference
      * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="conferences")
      * @ORM\JoinTable(name="user_conference")
      */
-    private Collection $users;
+    private ?Collection $users;
 
     /**
      * @ORM\Column(type="string", length=150)
