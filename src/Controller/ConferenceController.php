@@ -59,6 +59,7 @@ class ConferenceController extends AbstractController
     {
         return $this->render('conference/show.html.twig', [
             'conference' => $conference,
+            'google_maps_api_key' => $_ENV['GOOGLE_MAPS_API_KEY']
         ]);
     }
 
@@ -83,11 +84,11 @@ class ConferenceController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="app_conference_delete", methods={"POST"})
+     * @Route("/{id}/delete", name="app_conference_delete", methods={"POST"})
      */
     public function delete(Request $request, Conference $conference, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$conference->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete-conference', $request->request->get('token'))) {
             $entityManager->remove($conference);
             $entityManager->flush();
         }
@@ -96,21 +97,25 @@ class ConferenceController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/join", name="app_conference_join", methods={"GET"})
+     * @Route("/{id}/join", name="app_conference_join", methods={"POST"})
      */
-    public function join(Conference $conference, ConferenceService $conferenceService): Response
+    public function join(Request $request, Conference $conference, ConferenceService $conferenceService): Response
     {
-        $conferenceService->addUserToConference($conference, $this->getUser());
+        if ($this->isCsrfTokenValid('join-conference', $request->request->get('token'))) {
+            $conferenceService->addUserToConference($conference, $this->getUser());
+        }
 
         return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
     }
 
     /**
-     * @Route("/{id}/cancel", name="app_conference_cancel", methods={"GET"})
+     * @Route("/{id}/cancel", name="app_conference_cancel", methods={"POST"})
      */
-    public function cancel(Conference $conference, ConferenceService $conferenceService): Response
+    public function cancel(Request $request, Conference $conference, ConferenceService $conferenceService): Response
     {
-        $conferenceService->removeUserFromConference($conference, $this->getUser());
+        if ($this->isCsrfTokenValid('cancel-conference', $request->request->get('token'))) {
+            $conferenceService->removeUserFromConference($conference, $this->getUser());
+        }
 
         return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
     }

@@ -1,50 +1,99 @@
-{% extends 'base.html.twig' %}
+{% extends 'layout.html.twig' %}
 
-{% block title %}Conference{% endblock %}
+{% block title %}Conference Information{% endblock %}
+
+{% block links %}
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
     <h1>Conference</h1>
 
     <table class="table">
         <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ conference.id }}</td>
-            </tr>
-            <tr>
-                <th>Title</th>
-                <td>{{ conference.title }}</td>
-            </tr>
-            <tr>
-                <th>Start</th>
-                <td>{{ conference.start ? conference.start|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Address</th>
-                <td>{{ conference.address ? conference.address|json_encode : '' }}</td>
-            </tr>
-            <tr>
-                <th>Country</th>
-                <td>{{ conference.country }}</td>
-            </tr>
-            <tr>
-                <th>CreatedAt</th>
-                <td>{{ conference.createdAt ? conference.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>UpdatedAt</th>
-                <td>{{ conference.updatedAt ? conference.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>DeletedAt</th>
-                <td>{{ conference.deletedAt ? conference.deletedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
+        <tr>
+            <th>Title</th>
+            <td>{{ conference.title }}</td>
+        </tr>
+        <tr>
+            <th>Country</th>
+            <td id="country-name" data-country="{{ conference.country }}">{{ conference.country }}</td>
+        </tr>
+        <tr>
+            <th>Day of Start</th>
+            <td>{{ conference.start ? conference.start|date('Y-m-d H:i:s') : '' }}</td>
+        </tr>
+        <tr>
+            <th>Address</th>
+            <td>
+                <div id="map" data-lat="{{ conference.address[0] }}" data-lng="{{ conference.address[1] }}"></div>
+            </td>
+        </tr>
         </tbody>
     </table>
 
-    <a href="{{ path('app_conference_index') }}">back to list</a>
+    {% if is_granted('ROLE_ADMIN') %}
+        <form class="d-inline" action="{{ path('app_conference_delete', { id: conference.id }) }}"
+              method="post">
+            <input type="hidden" name="token" value="{{ csrf_token('delete-conference') }}">
+            <button class="btn btn-danger" type="submit">Delete</button>
+        </form>
+        <a class="btn btn-info" href="{{ path('app_conference_edit', {'id': conference.id}) }}">Edit</a>
+    {% else %}
+        {% if conference.users is empty %}
+            <form class="d-inline" action="{{ path('app_conference_join', {'id': conference.id}) }}"
+                  method="post">
+                <input type="hidden" name="token" value="{{ csrf_token('join-conference') }}">
+                <button class="btn btn-primary" type="submit">Join</button>
+            </form>
+        {% else %}
+            <form class="d-inline" action="{{ path('app_conference_cancel', {'id': conference.id}) }}"
+                  method="post">
+                <input type="hidden" name="token" value="{{ csrf_token('cancel-conference') }}">
+                <button class="btn btn-danger" type="submit">Cancel participation</button>
+            </form>
+        {% endif %}
+    {% endif %}
 
-    <a href="{{ path('app_conference_edit', {'id': conference.id}) }}">edit</a>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}">
+    </script>
+    <script>
+        function getCountryName(code, locale = 'en') {
+            return new Intl.DisplayNames([locale], {type: 'region'}).of(code);
+        }
 
-    {{ include('conference/_delete_form.html.twig') }}
+        document.addEventListener("DOMContentLoaded", function () {
+            const countryElement = document.getElementById('country-name');
+            const countryCode = countryElement.dataset.country;
+
+            if (countryCode) {
+                const countryName = getCountryName(countryCode);
+                countryElement.textContent = countryName;
+            }
+        });
+
+        const mapElement = document.getElementById('map');
+        const latitude = parseFloat(mapElement.dataset.lat);
+        const longitude = parseFloat(mapElement.dataset.lng);
+
+        const map = new google.maps.Map(mapElement, {
+            center: {lat: latitude, lng: longitude},
+            zoom: 3,
+            disableDefaultUI: true,
+            gestureHandling: "none",
+            zoomControl: false
+        });
+
+        new google.maps.Marker({
+            position: {lat: latitude, lng: longitude},
+            map: map,
+            title: "Your place"
+        });
+    </script>
 {% endblock %}
