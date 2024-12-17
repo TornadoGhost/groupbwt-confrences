@@ -101,7 +101,9 @@ class ConferenceController extends AbstractController
      */
     public function join(Request $request, Conference $conference, ConferenceService $conferenceService): Response
     {
-        $conferenceService->addUserToConference($conference, $this->getUser());
+        if ($this->isCsrfTokenValid('join-conference', $request->request->get('token'))) {
+            $conferenceService->addUserToConference($conference, $this->getUser());
+        }
 
         return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
     }
@@ -111,7 +113,9 @@ class ConferenceController extends AbstractController
      */
     public function cancel(Request $request, Conference $conference, ConferenceService $conferenceService): Response
     {
-        $conferenceService->removeUserFromConference($conference, $this->getUser());
+        if ($this->isCsrfTokenValid('cancel-conference', $request->request->get('token'))) {
+            $conferenceService->removeUserFromConference($conference, $this->getUser());
+        }
 
         return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
     }
