@@ -97,7 +97,7 @@ class ConferenceController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/join", name="app_conference_join", methods={"GET"})
+     * @Route("/{id}/join", name="app_conference_join", methods={"POST"})
      */
     public function join(Conference $conference, ConferenceService $conferenceService): Response
     {
@@ -107,7 +107,7 @@ class ConferenceController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/cancel", name="app_conference_cancel", methods={"GET"})
+     * @Route("/{id}/cancel", name="app_conference_cancel", methods={"POST"})
      */
     public function cancel(Conference $conference, ConferenceService $conferenceService): Response
     {
