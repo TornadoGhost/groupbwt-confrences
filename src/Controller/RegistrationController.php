@@ -24,7 +24,7 @@ class RegistrationController extends AbstractController
             if ($referer) {
                 return $this->redirect($referer);
             } else {
-                return $this->redirectToRoute('temp_page');
+                return $this->redirectToRoute('app_conference_index');
             }
         }
 
@@ -43,7 +43,7 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            return $this->redirectToRoute('temp_page');
+            return $this->redirectToRoute('app_conference_index');
         }
 
         return $this->render('registration/register.html.twig', [

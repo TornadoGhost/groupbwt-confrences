@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=ConferenceRepository::class)
@@ -24,9 +25,10 @@ class Conference
     private ?int $id;
 
     /**
-     * @ORM\ManyToMany(targetEntity=User::class, mappedBy="conference")
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="conferences")
+     * @ORM\JoinTable(name="user_conference")
      */
-    private Collection $users;
+    private ?Collection $users;
 
     /**
      * @ORM\Column(type="string", length=150)
@@ -68,7 +70,11 @@ class Conference
         return $this->users;
     }
 
-    public function addUser(User $user): self
+    /**
+     * @param User|UserInterface $user
+     * @return $this
+     */
+    public function addUser($user): self
     {
         if (!$this->users->contains($user)) {
             $this->users[] = $user;
@@ -78,7 +84,11 @@ class Conference
         return $this;
     }
 
-    public function removeUser(User $user): self
+    /**
+     * @param User|UserInterface $user
+     * @return $this
+     */
+    public function removeUser($user): self
     {
         if ($this->users->removeElement($user)) {
             $user->removeConference($this);
@@ -131,18 +141,6 @@ class Conference
     public function setCountry(string $country): self
     {
         $this->country = $country;
-
-        return $this;
-    }
-
-    public function isDeletedAt(): ?bool
-    {
-        return $this->deletedAt;
-    }
-
-    public function setDeletedAt(bool $deletedAt): self
-    {
-        $this->deletedAt = $deletedAt;
 
         return $this;
     }

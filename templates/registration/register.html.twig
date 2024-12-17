@@ -19,19 +19,11 @@
                         {{ form_start(registrationForm) }}
 
                         <div class="form-floating mb-3">
-                            {{ form_row(registrationForm.firstname, {
-                                attr: {
-                                    placeholder: 'Firstname example',
-                                }
-                            }) }}
+                            {{ form_row(registrationForm.firstname) }}
                         </div>
 
                         <div class="form-floating mb-3">
-                            {{ form_row(registrationForm.lastname, {
-                                attr: {
-                                    placeholder: 'Lastname example',
-                                }
-                            }) }}
+                            {{ form_row(registrationForm.lastname) }}
                         </div>
 
                         <div class="form-floating mb-3">
@@ -43,12 +35,7 @@
                         </div>
 
                         <div class="form-floating mb-3">
-                            {{ form_row(registrationForm.phone, {
-                                label: 'Phone number',
-                                attr: {
-                                    class: 'phone-input'
-                                }
-                            }) }}
+                            {{ form_row(registrationForm.phone) }}
                         </div>
 
                         <div class="form-floating mb-3">
@@ -56,20 +43,11 @@
                         </div>
 
                         <div class="form-floating mb-3">
-                            {{ form_row(registrationForm.email, {
-                                attr: {
-                                    placeholder: 'name@example.com'
-                                }
-                            }) }}
+                            {{ form_row(registrationForm.email) }}
                         </div>
 
                         <div class="form-floating mb-3">
-                            {{ form_row(registrationForm.plainPassword, {
-                                label: 'Password',
-                                attr: {
-                                    placeholder: '**********',
-                                }
-                            }) }}
+                            {{ form_row(registrationForm.plainPassword) }}
                         </div>
 
                         <div class="d-grid">

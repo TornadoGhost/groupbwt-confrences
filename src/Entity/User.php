@@ -33,6 +33,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @Assert\Email(
      *      message = "The email '{{ value }}' is not a valid email."
      *  )
+     * @Assert\Length(
+     *        min = 3,
+     *        max = 100,
+     *        minMessage = "Your email must be at least {{ limit }} characters long",
+     *        maxMessage = "Your email cannot be longer than {{ limit }} characters"
+     * )
      * @ORM\Column(type="string", length=100, unique=true)
      */
     private ?string $email;
@@ -55,7 +61,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Type $type;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Conference::class, inversedBy="users")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Conference", mappedBy="users")
+     * @ORM\JoinTable(name="user_conference")
      */
     private ?Collection $conferences;
 
