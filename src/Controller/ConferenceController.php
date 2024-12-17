@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Conference;
 use App\Form\ConferenceType;
-use App\Repository\ConferenceRepository;
+use App\Service\ConferenceService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,10 +19,14 @@ class ConferenceController extends AbstractController
     /**
      * @Route("/", name="app_conference_index", methods={"GET"})
      */
-    public function index(ConferenceRepository $conferenceRepository): Response
+    public function index(Request $request, ConferenceService $service): Response
     {
         return $this->render('conference/index.html.twig', [
-            'conferences' => $conferenceRepository->findAll(),
+            'conferences' => $service->getAllConferenceWithSpecificUserPaginate(
+                $this->getUser(),
+                15,
+                $request->query->getInt('page', 1)
+            ),
         ]);
     }
 
