@@ -61,7 +61,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Type $type;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Conference::class, inversedBy="users")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Conference", mappedBy="users")
+     * @ORM\JoinTable(name="user_conference")
      */
     private ?Collection $conferences;
 
