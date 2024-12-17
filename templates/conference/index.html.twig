@@ -14,7 +14,7 @@
         </tr>
         </thead>
         <tbody>
-        {% for conference in conferences %}
+        {% for conference in conferences.currentPageResults %}
             <tr>
                 <td>{{ conference.id }}</td>
                 <td>{{ conference.title }}</td>
