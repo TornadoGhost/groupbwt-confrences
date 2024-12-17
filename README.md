@@ -14,3 +14,6 @@ A project where users can participate in or listen to a conference.
 
 ## DataBase Diagram
 [Link to diagram](https://dbdiagram.io/d/Conferences-675b14c946c15ed47932b533)
+
+## Google Map
+For Google Map to work you need Google Map Api Key, you can create your own or ask me to send my key.
