@@ -94,4 +94,24 @@ class ConferenceController extends AbstractController
 
         return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    /**
+     * @Route("/{id}/join", name="app_conference_join", methods={"GET"})
+     */
+    public function join(Conference $conference, ConferenceService $conferenceService): Response
+    {
+        $conferenceService->addUserToConference($conference, $this->getUser());
+
+        return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    /**
+     * @Route("/{id}/cancel", name="app_conference_cancel", methods={"GET"})
+     */
+    public function cancel(Conference $conference, ConferenceService $conferenceService): Response
+    {
+        $conferenceService->removeUserFromConference($conference, $this->getUser());
+
+        return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
+    }
 }
