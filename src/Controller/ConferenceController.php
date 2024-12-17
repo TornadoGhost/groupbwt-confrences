@@ -88,7 +88,7 @@ class ConferenceController extends AbstractController
      */
     public function delete(Request $request, Conference $conference, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$conference->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete-conference', $request->request->get('token'))) {
             $entityManager->remove($conference);
             $entityManager->flush();
         }
