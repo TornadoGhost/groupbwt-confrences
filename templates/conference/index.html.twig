@@ -5,19 +5,13 @@
 {% block body %}
     <h1>Conference index</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Title</th>
-                <th>Start</th>
-                <th>Address</th>
-                <th>Country</th>
-                <th>CreatedAt</th>
-                <th>UpdatedAt</th>
-                <th>DeletedAt</th>
-                <th>actions</th>
-            </tr>
+    <table class="table table-hover">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Day of start</th>
+            <th scope="col">Actions</th>
+        </tr>
         </thead>
         <tbody>
         {% for conference in conferences %}
