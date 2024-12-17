@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/conference")
+ * @Route("/conferences")
  */
 class ConferenceController extends AbstractController
 {
