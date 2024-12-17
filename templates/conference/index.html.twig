@@ -37,5 +37,9 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_conference_new') }}">Create new</a>
+    <div class="pagination">
+        {{ pagerfanta(conferences, 'twitter_bootstrap4') }}
+    </div>
+
+    <a class="btn btn-primary" href="{{ path('app_conference_new') }}">Create new</a>
 {% endblock %}
