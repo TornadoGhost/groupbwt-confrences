@@ -24,7 +24,8 @@ class Conference
     private ?int $id;
 
     /**
-     * @ORM\ManyToMany(targetEntity=User::class, mappedBy="conference")
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="conferences")
+     * @ORM\JoinTable(name="user_conference")
      */
     private Collection $users;
 
