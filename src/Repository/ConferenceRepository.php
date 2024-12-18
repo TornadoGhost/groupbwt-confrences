@@ -31,13 +31,17 @@ class ConferenceRepository extends ServiceEntityRepository
             return $this->createQueryBuilder('c')
                 ->select('c, u')
                 ->leftJoin('c.users', 'u')
-                ->where("c.deletedAt IS NULL");
+                ->where("c.deletedAt IS NULL")
+                ->orderBy('c.createdAt', 'DESC')
+                ;
         }
         return $this->createQueryBuilder('c')
             ->select('c, u')
             ->leftJoin('c.users', 'u', Join::WITH, 'u.id = :userId')
             ->where("c.deletedAt IS NULL")
-            ->setParameter('userId', $userId);
+            ->setParameter('userId', $userId)
+            ->orderBy('c.createdAt', 'DESC')
+            ;
     }
 
     public function workWithConference($job, Conference $conference, User $user): void
