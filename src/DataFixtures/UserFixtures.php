@@ -42,6 +42,7 @@ class UserFixtures extends Fixture implements DependentFixtureInterface
             } else {
                 $admin->setEmail($faker->email);
                 $admin->setType($randomType);
+                $admin->setRoles(['ROLE_'.strtoupper($randomType->getName())]);
             }
             $admin->setFirstname($faker->firstName);
             $admin->setLastname($faker->lastName);
