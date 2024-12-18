@@ -12,7 +12,7 @@ class LoginController extends BaseAuthController
     /**
      * @Route(path="/login", name="app_login")
      */
-    public function login(AuthenticationUtils $authenticationUtils, Request $request): Response
+    public function login(Request $request, AuthenticationUtils $authenticationUtils): Response
     {
         if ($this->getUser()) {
             $referer = $request->headers->get('referer');
