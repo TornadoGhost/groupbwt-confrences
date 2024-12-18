@@ -45,7 +45,7 @@ class ConferenceController extends AbstractController
         $conferenceService->prepareForm($request, $conference, $form);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $conferenceService->saveEditFormChanges($form, $conference);
+            $conferenceService->saveFormChanges($form, $conference);
 
             return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -79,7 +79,7 @@ class ConferenceController extends AbstractController
         $conferenceService->prepareForm($request, $conference, $form);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $conferenceService->saveEditFormChanges($form, $conference);
+            $conferenceService->saveFormChanges($form, $conference);
 
             return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
         }
