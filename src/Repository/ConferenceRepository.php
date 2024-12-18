@@ -46,13 +46,25 @@ class ConferenceRepository extends ServiceEntityRepository
 
     public function addUserToConference(Conference $conference, UserInterface $user): void
     {
-        if ($job === 'add') {
-            $conference->addUser($user);
-        } else if ($job === 'remove') {
-            $conference->removeUser($user);
-        }
+        $conference->addUser($user);
+        $this->saveData($user);
+    }
 
-        $this->_em->persist($conference);
+    public function removeUserFromConference(Conference $conference, UserInterface $user): void
+    {
+        $conference->removeUser($user);
+        $this->saveData($user);
+    }
+
+    public function saveEditFormChanges(Conference $conference, array $address): void
+    {
+        $conference->setAddress($address);
+        $this->saveData($conference);
+    }
+
+    protected function saveData(object $data): void
+    {
+        $this->_em->persist($data);
         $this->_em->flush();
     }
 
