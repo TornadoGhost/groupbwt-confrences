@@ -54,39 +54,37 @@ class ConferenceType extends AbstractType
             ])
             ->add('latitude', NumberType::class, [
                 'mapped' => false,
-                'label' => 'Latitude',
                 'required' => true,
                 'attr' => [
                     'placeholder' => 'Enter latitude',
                 ],
                 'constraints' => [
                     new NotNull([
-                        'message' => 'Title should be not null'
+                        'message' => 'The Latitude should be not null'
                     ]),
                     new Length([
                         'min' => 1,
-                        'minMessage' => 'The title should be at least {{ limit }} characters',
+                        'minMessage' => 'The Latitude should be at least {{ limit }} characters',
                         'max' => 10,
-                        'maxMessage' => 'The title should be less than {{ limit }} characters',
+                        'maxMessage' => 'The Latitude should be less than {{ limit }} characters',
                     ]),
                 ]
             ])
             ->add('longitude', NumberType::class, [
                 'mapped' => false,
-                'label' => 'Longitude',
                 'required' => true,
                 'attr' => [
                     'placeholder' => 'Enter longitude',
                 ],
                 'constraints' => [
                     new NotNull([
-                        'message' => 'Title should be not null'
+                        'message' => 'The Longitude should be not null'
                     ]),
                     new Length([
                         'min' => 1,
-                        'minMessage' => 'The title should be at least {{ limit }} characters',
+                        'minMessage' => 'The Longitude should be at least {{ limit }} characters',
                         'max' => 10,
-                        'maxMessage' => 'The title should be less than {{ limit }} characters',
+                        'maxMessage' => 'The Longitude should be less than {{ limit }} characters',
                     ]),
                 ]
             ])
