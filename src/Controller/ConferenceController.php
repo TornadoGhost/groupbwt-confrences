@@ -38,15 +38,14 @@ class ConferenceController extends AbstractController
      * @Route("/new", name="app_conference_new", methods={"GET", "POST"})
      * @Security("is_granted('ROLE_ADMIN')")
      */
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, ConferenceService $conferenceService): Response
     {
         $conference = new Conference();
         $form = $this->createForm(ConferenceType::class, $conference);
-        $form->handleRequest($request);
+        $conferenceService->prepareForm($request, $conference, $form);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($conference);
-            $entityManager->flush();
+            $conferenceService->saveEditFormChanges($form, $conference);
 
             return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
         }
