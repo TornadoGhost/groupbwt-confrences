@@ -31,7 +31,7 @@ class Conference
     private ?Collection $users;
 
     /**
-     * @ORM\Column(type="string", length=150)
+     * @ORM\Column(type="string", length=255)
      */
     private ?string $title;
 
