@@ -3,11 +3,12 @@
 namespace App\Service;
 
 use App\Entity\Conference;
-use App\Entity\User;
 use App\Repository\ConferenceRepository;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class ConferenceService
 {
