@@ -2,6 +2,8 @@
 
 {% block title %}Conferences list{% endblock %}
 
+{% block isActive %}active{% endblock %}
+
 {% block body %}
     {% for message in app.flashes('error') %}
         <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">

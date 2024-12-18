@@ -63,37 +63,8 @@
     <script
         src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}">
     </script>
-    <script>
-        function getCountryName(code, locale = 'en') {
-            return new Intl.DisplayNames([locale], {type: 'region'}).of(code);
-        }
-
-        document.addEventListener("DOMContentLoaded", function () {
-            const countryElement = document.getElementById('country-name');
-            const countryCode = countryElement.dataset.country;
-
-            if (countryCode) {
-                const countryName = getCountryName(countryCode);
-                countryElement.textContent = countryName;
-            }
-        });
-
-        const mapElement = document.getElementById('map');
-        const latitude = parseFloat(mapElement.dataset.lat);
-        const longitude = parseFloat(mapElement.dataset.lng);
-
-        const map = new google.maps.Map(mapElement, {
-            center: {lat: latitude, lng: longitude},
-            zoom: 3,
-            disableDefaultUI: true,
-            gestureHandling: "none",
-            zoomControl: false
-        });
-
-        new google.maps.Marker({
-            position: {lat: latitude, lng: longitude},
-            map: map,
-            title: "Your place"
-        });
+    <script type="module">
+        import { initializeMap } from "{{ asset('js/fixedGoogleMap.js') }}"
+        initializeMap();
     </script>
 {% endblock %}
