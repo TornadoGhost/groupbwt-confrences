@@ -53,6 +53,7 @@ class ConferenceController extends AbstractController
         return $this->renderForm('conference/new.html.twig', [
             'conference' => $conference,
             'form' => $form,
+            'google_maps_api_key' => $_ENV['GOOGLE_MAPS_API_KEY']
         ]);
     }
 
@@ -86,6 +87,7 @@ class ConferenceController extends AbstractController
         return $this->renderForm('conference/edit.html.twig', [
             'conference' => $conference,
             'form' => $form,
+            'google_maps_api_key' => $_ENV['GOOGLE_MAPS_API_KEY']
         ]);
     }
 
