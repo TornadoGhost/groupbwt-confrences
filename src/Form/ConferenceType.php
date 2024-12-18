@@ -54,7 +54,6 @@ class ConferenceType extends AbstractType
             ])
             ->add('latitude', NumberType::class, [
                 'mapped' => false,
-                'label' => 'Latitude',
                 'required' => true,
                 'attr' => [
                     'placeholder' => 'Enter latitude',
@@ -73,7 +72,6 @@ class ConferenceType extends AbstractType
             ])
             ->add('longitude', NumberType::class, [
                 'mapped' => false,
-                'label' => 'Longitude',
                 'required' => true,
                 'attr' => [
                     'placeholder' => 'Enter longitude',
