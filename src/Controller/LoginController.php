@@ -15,13 +15,7 @@ class LoginController extends BaseAuthController
     public function login(Request $request, AuthenticationUtils $authenticationUtils): Response
     {
         if ($this->getUser()) {
-            $referer = $request->headers->get('referer');
-
-            if ($referer) {
-                return $this->redirect($referer);
-            } else {
-                return $this->redirectToRoute('app_conference_index');
-            }
+            return $this->refererRedirect($request);
         }
 
         $error = $authenticationUtils->getLastAuthenticationError();
