@@ -47,4 +47,37 @@ class ConferenceService
     {
         $this->conferenceRepository->removeUserFromConference($conference, $user);
     }
+
+    public function prepareForm(Request $request, Conference $conference, FormInterface $form): FormInterface
+    {
+        $latitude = $conference->getAddress()[0] ?? null;
+        $longitude = $conference->getAddress()[1] ?? null;
+
+        $form = $this->setCustomDataForForm($form, ['latitude' => $latitude, 'longitude' => $longitude]);
+        $form->handleRequest($request);
+
+        return $form;
+    }
+
+    public function saveFormChanges(FormInterface $form, Conference $conference): void
+    {
+        $latitude = $form->get('latitude')->getData();
+        $longitude = $form->get('longitude')->getData();
+
+        $address = [$latitude, $longitude];
+        $this->conferenceRepository->saveEditFormChanges($conference, $address);
+    }
+
+    protected function setCustomDataForForm(FormInterface $form, array $fieldsData = []): FormInterface
+    {
+        if (!$fieldsData) {
+            return $form;
+        }
+
+        foreach ($fieldsData as $field => $value) {
+            $form->get($field)->setData($value);
+        }
+
+        return $form;
+    }
 }
