@@ -18,13 +18,7 @@ class RegistrationController extends BaseAuthController
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
         if ($this->getUser()) {
-            $referer = $request->headers->get('referer');
-
-            if ($referer) {
-                return $this->redirect($referer);
-            } else {
-                return $this->redirectToRoute('app_conference_index');
-            }
+            return $this->refererRedirect($request);
         }
 
         $user = new User();
