@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use DateTimeInterface;
 
 /**
  * @ORM\Entity(repositoryClass=ConferenceRepository::class)
@@ -38,7 +39,7 @@ class Conference
     /**
      * @ORM\Column(type="datetime")
      */
-    private ?\DateTimeInterface $start;
+    private ?DateTimeInterface $start;
 
     /**
      * @ORM\Column(type="json")
