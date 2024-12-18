@@ -2,27 +2,20 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
-class LoginController extends AbstractController
+class LoginController extends BaseAuthController
 {
     /**
      * @Route(path="/login", name="app_login")
      */
-    public function login(AuthenticationUtils $authenticationUtils, Request $request): Response
+    public function login(Request $request, AuthenticationUtils $authenticationUtils): Response
     {
         if ($this->getUser()) {
-            $referer = $request->headers->get('referer');
-
-            if ($referer) {
-                return $this->redirect($referer);
-            } else {
-                return $this->redirectToRoute('app_conference_index');
-            }
+            return $this->refererRedirect($request);
         }
 
         $error = $authenticationUtils->getLastAuthenticationError();

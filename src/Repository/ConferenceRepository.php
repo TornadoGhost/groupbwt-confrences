@@ -31,40 +31,40 @@ class ConferenceRepository extends ServiceEntityRepository
             return $this->createQueryBuilder('c')
                 ->select('c, u')
                 ->leftJoin('c.users', 'u')
-                ->where("c.deletedAt IS NULL");
+                ->where("c.deletedAt IS NULL")
+                ->orderBy('c.createdAt', 'DESC')
+                ;
         }
         return $this->createQueryBuilder('c')
             ->select('c, u')
             ->leftJoin('c.users', 'u', Join::WITH, 'u.id = :userId')
             ->where("c.deletedAt IS NULL")
-            ->setParameter('userId', $userId);
+            ->setParameter('userId', $userId)
+            ->orderBy('c.createdAt', 'DESC')
+            ;
     }
 
-    public function workWithConference($job, Conference $conference, User $user): void
+    public function addUserToConference(Conference $conference, UserInterface $user): void
     {
-        if ($job === 'add') {
-            $conference->addUser($user);
-        } else if ($job === 'remove') {
-            $conference->removeUser($user);
-        }
+        $conference->addUser($user);
+        $this->saveData($user);
+    }
 
-        $this->_em->persist($conference);
+    public function removeUserFromConference(Conference $conference, UserInterface $user): void
+    {
+        $conference->removeUser($user);
+        $this->saveData($user);
+    }
+
+    public function saveEditFormChanges(Conference $conference, array $address): void
+    {
+        $conference->setAddress($address);
+        $this->saveData($conference);
+    }
+
+    protected function saveData(object $data): void
+    {
+        $this->_em->persist($data);
         $this->_em->flush();
-    }
-
-    /**
-     * @param User|UserInterface $user
-     */
-    public function addUserToConference(Conference $conference, $user): void
-    {
-        $this->workWithConference('add', $conference, $user);
-    }
-
-    /**
-     * @param User|UserInterface $user
-     */
-    public function removeUserFromConference(Conference $conference, $user): void
-    {
-        $this->workWithConference('remove', $conference, $user);
     }
 }

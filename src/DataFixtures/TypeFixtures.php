@@ -10,7 +10,7 @@ class TypeFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        $userTypes = ['listener', 'participant'];
+        $userTypes = ['Listener', 'Announcer'];
         foreach($userTypes as $type) {
             $userType = new Type();
             $userType->setName($type);

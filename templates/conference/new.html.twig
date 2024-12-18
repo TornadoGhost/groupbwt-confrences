@@ -1,11 +1,96 @@
-{% extends 'base.html.twig' %}
+{% extends 'layout.html.twig' %}
 
-{% block title %}New Conference{% endblock %}
+{% block title %}Create a new Conference{% endblock %}
+
+{% block links %}
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
     <h1>Create new Conference</h1>
 
-    {{ include('conference/_form.html.twig') }}
+    {{ form_start(form) }}
+    {{ form_row(form.title) }}
+    {{ form_row(form.start) }}
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-6">
 
-    <a href="{{ path('app_conference_index') }}">back to list</a>
+                {{ form_row(form.latitude) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_row(form.longitude) }}
+            </div>
+        </div>
+    </div>
+    <div id="map" data-lat="0" data-lng="0"></div>
+    {{ form_row(form.country) }}
+    <button class="btn btn-primary" type="submit">Save</button>
+    {{ form_end(form) }}
+
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}">
+    </script>
+    <script>
+        function getCountryName(code, locale = 'en') {
+            return new Intl.DisplayNames([locale], {type: 'region'}).of(code);
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const countryElement = document.getElementById('conference_country');
+            const countryCode = countryElement.dataset.country;
+
+            if (countryCode) {
+                const countryName = getCountryName(countryCode);
+                countryElement.textContent = countryName;
+            }
+
+            const mapElement = document.getElementById('map');
+            const latitudeInput = document.getElementById('conference_latitude');
+            const longitudeInput = document.getElementById('conference_longitude');
+
+            let latitude = parseFloat(mapElement.dataset.lat);
+            let longitude = parseFloat(mapElement.dataset.lng);
+
+            const map = new google.maps.Map(mapElement, {
+                center: { lat: latitude, lng: longitude },
+                zoom: 3,
+                disableDefaultUI: false,
+                gestureHandling: "cooperative",
+                zoomControl: true,
+                streetViewControl: false,
+                mapTypeControl: false
+            });
+
+            let marker = new google.maps.Marker({
+                position: { lat: latitude, lng: longitude },
+                map: map,
+                title: "Your place",
+                draggable: true
+            });
+
+            marker.addListener('dragend', function (event) {
+                const newLat = event.latLng.lat();
+                const newLng = event.latLng.lng();
+
+                latitudeInput.value = newLat.toFixed(6);
+                longitudeInput.value = newLng.toFixed(6);
+            });
+
+            map.addListener('click', function (event) {
+                const newLat = event.latLng.lat();
+                const newLng = event.latLng.lng();
+
+                marker.setPosition({ lat: newLat, lng: newLng });
+
+                latitudeInput.value = newLat.toFixed(6);
+                longitudeInput.value = newLng.toFixed(6);
+            });
+        });
+    </script>
 {% endblock %}

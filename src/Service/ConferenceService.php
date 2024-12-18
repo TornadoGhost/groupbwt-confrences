@@ -3,14 +3,16 @@
 namespace App\Service;
 
 use App\Entity\Conference;
-use App\Entity\User;
 use App\Repository\ConferenceRepository;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class ConferenceService
 {
+    const COUNT_PER_PAGE = 15;
     private ConferenceRepository $conferenceRepository;
 
     public function __construct(
@@ -20,46 +22,63 @@ class ConferenceService
         $this->conferenceRepository = $conferenceRepository;
     }
 
-    /**
-     * @param User|UserInterface $user
-     */
     public function getAllConferenceWithSpecificUserPaginate(
-        $user,
-        int $maxPerPage = 10,
+        ?int $userId,
+        int $countPerPage,
         int $currentPage = 1
     ): Pagerfanta
     {
-        if ($user) {
-            $userId = $user->getId();
-        } else {
-            $userId = null;
-        }
-
         $queryResult = $this->conferenceRepository->getAllConferencesWithSpecificUser($userId);
 
         $adapter = new QueryAdapter($queryResult);
         $conferences = new Pagerfanta($adapter);
 
-        $conferences->setMaxPerPage($maxPerPage);
+        $conferences->setMaxPerPage($countPerPage);
         $conferences->setCurrentPage($currentPage);
 
         return $conferences;
     }
 
-
-    /**
-     * @param User|UserInterface $user
-     */
-    public function addUserToConference(Conference $conference, $user): void
+    public function addUserToConference(Conference $conference, UserInterface $user): void
     {
         $this->conferenceRepository->addUserToConference($conference, $user);
     }
 
-    /**
-     * @param User|UserInterface $user
-     */
-    public function removeUserFromConference(Conference $conference, $user): void
+    public function removeUserFromConference(Conference $conference, UserInterface $user): void
     {
         $this->conferenceRepository->removeUserFromConference($conference, $user);
+    }
+
+    public function prepareForm(Request $request, Conference $conference, FormInterface $form): FormInterface
+    {
+        $latitude = $conference->getAddress()[0] ?? null;
+        $longitude = $conference->getAddress()[1] ?? null;
+
+        $form = $this->setCustomDataForForm($form, ['latitude' => $latitude, 'longitude' => $longitude]);
+        $form->handleRequest($request);
+
+        return $form;
+    }
+
+    public function saveFormChanges(FormInterface $form, Conference $conference): void
+    {
+        $latitude = $form->get('latitude')->getData();
+        $longitude = $form->get('longitude')->getData();
+
+        $address = [$latitude, $longitude];
+        $this->conferenceRepository->saveEditFormChanges($conference, $address);
+    }
+
+    protected function setCustomDataForForm(FormInterface $form, array $fieldsData = []): FormInterface
+    {
+        if (!$fieldsData) {
+            return $form;
+        }
+
+        foreach ($fieldsData as $field => $value) {
+            $form->get($field)->setData($value);
+        }
+
+        return $form;
     }
 }

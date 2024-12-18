@@ -2,46 +2,30 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-use App\Form\RegistrationFormType;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Service\RegistrationService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
-class RegistrationController extends AbstractController
+class RegistrationController extends BaseAuthController
 {
     /**
      * @Route(path="/register", name="app_register")
      */
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
+    public function register(
+        Request                     $request,
+        RegistrationService         $registrationService
+    ): Response
     {
         if ($this->getUser()) {
-            $referer = $request->headers->get('referer');
-
-            if ($referer) {
-                return $this->redirect($referer);
-            } else {
-                return $this->redirectToRoute('app_conference_index');
-            }
+            return $this->refererRedirect($request);
         }
 
-        $user = new User();
-        $form = $this->createForm(RegistrationFormType::class, $user);
-        $form->handleRequest($request);
+        $user = $registrationService->createNewUser();
+        $form = $registrationService->userFormPrep($request, $user);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user->setPassword(
-                $userPasswordHasher->hashPassword(
-                    $user,
-                    $form->get('plainPassword')->getData()
-                )
-            );
-
-            $entityManager->persist($user);
-            $entityManager->flush();
+            $registrationService->saveNewUser($user, $form);
 
             return $this->redirectToRoute('app_conference_index');
         }

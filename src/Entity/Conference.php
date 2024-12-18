@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use DateTimeInterface;
 
 /**
  * @ORM\Entity(repositoryClass=ConferenceRepository::class)
@@ -31,14 +32,14 @@ class Conference
     private ?Collection $users;
 
     /**
-     * @ORM\Column(type="string", length=150)
+     * @ORM\Column(type="string", length=255)
      */
     private ?string $title;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private ?\DateTimeInterface $start;
+    private ?DateTimeInterface $start;
 
     /**
      * @ORM\Column(type="json")
@@ -102,19 +103,19 @@ class Conference
         return $this->title;
     }
 
-    public function setTitle(string $title): self
+    public function setTitle(?string $title): self
     {
         $this->title = $title;
 
         return $this;
     }
 
-    public function getStart(): ?\DateTimeInterface
+    public function getStart(): ?DateTimeInterface
     {
         return $this->start;
     }
 
-    public function setStart(\DateTimeInterface $start): self
+    public function setStart(?DateTimeInterface $start): self
     {
         $this->start = $start;
 
@@ -126,7 +127,7 @@ class Conference
         return $this->address;
     }
 
-    public function setAddress(array $address): self
+    public function setAddress(?array $address): self
     {
         $this->address = $address;
 
@@ -138,7 +139,7 @@ class Conference
         return $this->country;
     }
 
-    public function setCountry(string $country): self
+    public function setCountry(?string $country): self
     {
         $this->country = $country;
 
