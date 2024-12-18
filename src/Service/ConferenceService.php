@@ -38,7 +38,7 @@ class ConferenceService
         $adapter = new QueryAdapter($queryResult);
         $conferences = new Pagerfanta($adapter);
 
-        $conferences->setMaxPerPage($maxPerPage);
+        $conferences->setMaxPerPage($countPerPage);
         $conferences->setCurrentPage($currentPage);
 
         return $conferences;
