@@ -44,7 +44,7 @@ class ConferenceRepository extends ServiceEntityRepository
             ;
     }
 
-    public function workWithConference($job, Conference $conference, User $user): void
+    public function addUserToConference(Conference $conference, UserInterface $user): void
     {
         if ($job === 'add') {
             $conference->addUser($user);
