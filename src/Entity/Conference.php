@@ -44,7 +44,7 @@ class Conference
     /**
      * @ORM\Column(type="json")
      */
-    private array $address = [];
+    private ?array $address = [];
 
     /**
      * @ORM\Column(type="string", length=30)
