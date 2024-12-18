@@ -72,13 +72,13 @@ class ConferenceController extends AbstractController
      * @Route("/{id}/edit", name="app_conference_edit", methods={"GET", "POST"})
      * @Security("is_granted('ROLE_ADMIN')")
      */
-    public function edit(Request $request, Conference $conference, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Conference $conference, ConferenceService $conferenceService): Response
     {
         $form = $this->createForm(ConferenceType::class, $conference);
-        $form->handleRequest($request);
+        $conferenceService->prepareForm($request, $conference, $form);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            $conferenceService->saveEditFormChanges($form, $conference);
 
             return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
         }
