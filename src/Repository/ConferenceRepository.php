@@ -67,20 +67,4 @@ class ConferenceRepository extends ServiceEntityRepository
         $this->_em->persist($data);
         $this->_em->flush();
     }
-
-    /**
-     * @param User|UserInterface $user
-     */
-    public function addUserToConference(Conference $conference, $user): void
-    {
-        $this->workWithConference('add', $conference, $user);
-    }
-
-    /**
-     * @param User|UserInterface $user
-     */
-    public function removeUserFromConference(Conference $conference, $user): void
-    {
-        $this->workWithConference('remove', $conference, $user);
-    }
 }
