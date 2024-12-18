@@ -29,16 +29,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id;
 
     /**
-     * @Assert\NotBlank
-     * @Assert\Email(
-     *      message = "The email '{{ value }}' is not a valid email."
-     *  )
-     * @Assert\Length(
-     *        min = 3,
-     *        max = 100,
-     *        minMessage = "Your email must be at least {{ limit }} characters long",
-     *        maxMessage = "Your email cannot be longer than {{ limit }} characters"
-     * )
      * @ORM\Column(type="string", length=100, unique=true)
      */
     private ?string $email;
@@ -55,7 +45,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password;
 
     /**
-     * @Assert\NotBlank
      * @ORM\ManyToOne(inversedBy="users")
      */
     private ?Type $type;
@@ -67,51 +56,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Collection $conferences;
 
     /**
-     * @Assert\NotBlank
-     * @Assert\Length(
-     *       min = 2,
-     *       max = 100,
-     *       minMessage = "Your first name must be at least {{ limit }} characters long",
-     *       maxMessage = "Your first name cannot be longer than {{ limit }} characters"
-     *  )
      * @ORM\Column(type="string", length=100)
      */
     private ?string $firstname;
 
     /**
-     * @Assert\NotBlank
-     * @Assert\Length(
-     *        min = 2,
-     *        max = 100,
-     *        minMessage = "Your last name must be at least {{ limit }} characters long",
-     *        maxMessage = "Your last name cannot be longer than {{ limit }} characters"
-     *   )
      * @ORM\Column(type="string", length=100)
      */
     private ?string $lastname;
 
     /**
-     * @Assert\NotBlank
-     * @Assert\Type("\DateTimeInterface")
      * @var null|DateTimeInterface A "Y-m-d" formatted value
      * @ORM\Column(type="date")
      */
     private ?DateTimeInterface $birthdate;
 
     /**
-     * @Assert\NotBlank
-     * @Assert\Country
      * @ORM\Column(type="string", length=30)
      */
     private ?string $country;
 
     /**
-     * @Assert\Length(
-     *     min = 10,
-     *     max = 20,
-     *     minMessage = "Your phone number must be at least {{ limit }} numbers long",
-     *     maxMessage = "Your phone number cannot be longer than {{ limit }} numbers"
-     * )
      * @ORM\Column(type="string", length=20)
      */
     private ?string $phone;
