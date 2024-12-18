@@ -20,9 +20,6 @@ class ConferenceService
         $this->conferenceRepository = $conferenceRepository;
     }
 
-    /**
-     * @param User|UserInterface $user
-     */
     public function getAllConferenceWithSpecificUserPaginate(
         $user,
         int $maxPerPage = 10,
@@ -46,19 +43,12 @@ class ConferenceService
         return $conferences;
     }
 
-
-    /**
-     * @param User|UserInterface $user
-     */
-    public function addUserToConference(Conference $conference, $user): void
+    public function addUserToConference(Conference $conference, UserInterface $user): void
     {
         $this->conferenceRepository->addUserToConference($conference, $user);
     }
 
-    /**
-     * @param User|UserInterface $user
-     */
-    public function removeUserFromConference(Conference $conference, $user): void
+    public function removeUserFromConference(Conference $conference, UserInterface $user): void
     {
         $this->conferenceRepository->removeUserFromConference($conference, $user);
     }
