@@ -27,12 +27,6 @@ class ConferenceService
         int $currentPage = 1
     ): Pagerfanta
     {
-        if ($user) {
-            $userId = $user->getId();
-        } else {
-            $userId = null;
-        }
-
         $queryResult = $this->conferenceRepository->getAllConferencesWithSpecificUser($userId);
 
         $adapter = new QueryAdapter($queryResult);
