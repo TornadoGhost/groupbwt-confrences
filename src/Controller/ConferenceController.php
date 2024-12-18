@@ -21,12 +21,15 @@ class ConferenceController extends AbstractController
      */
     public function index(Request $request, ConferenceService $service): Response
     {
+        $userId = !$this->getUser() ? null : $this->getUser()->getId();
+        $conferences = $service->getAllConferenceWithSpecificUserPaginate(
+            $userId,
+            ConferenceService::COUNT_PER_PAGE,
+            $request->query->getInt('page', 1)
+        );
+
         return $this->render('conference/index.html.twig', [
-            'conferences' => $service->getAllConferenceWithSpecificUserPaginate(
-                $this->getUser(),
-                15,
-                $request->query->getInt('page', 1)
-            ),
+            'conferences' => $conferences,
         ]);
     }
 
