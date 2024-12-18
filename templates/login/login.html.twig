@@ -35,12 +35,13 @@
                                    value="{{ csrf_token('authenticate') }}"
                             >
                             <div class="d-grid">
+
+                                <p>Don't you have an account? <a href="{{ path('app_register') }}">Register</a></p>
                                 <button class="btn btn-primary btn-login text-uppercase fw-bold" type="submit">
                                     Login
                                 </button>
                             </div>
                         </form>
-                        <a href="{{ path('app_register') }}">Don't you have an account? Register</a>
                     </div>
                 </div>
             </div>
