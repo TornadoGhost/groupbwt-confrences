@@ -6,6 +6,7 @@ use App\Entity\Conference;
 use App\Form\ConferenceType;
 use App\Service\ConferenceService;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,6 +36,7 @@ class ConferenceController extends AbstractController
 
     /**
      * @Route("/new", name="app_conference_new", methods={"GET", "POST"})
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -57,6 +59,7 @@ class ConferenceController extends AbstractController
 
     /**
      * @Route("/{id}", name="app_conference_show", methods={"GET"})
+     * @Security("is_granted('ROLE_USER')")
      */
     public function show(Conference $conference): Response
     {
@@ -68,6 +71,7 @@ class ConferenceController extends AbstractController
 
     /**
      * @Route("/{id}/edit", name="app_conference_edit", methods={"GET", "POST"})
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function edit(Request $request, Conference $conference, EntityManagerInterface $entityManager): Response
     {
@@ -88,6 +92,7 @@ class ConferenceController extends AbstractController
 
     /**
      * @Route("/{id}/delete", name="app_conference_delete", methods={"POST"})
+     * @Security("is_granted('ROLE_ADMIN')")
      */
     public function delete(Request $request, Conference $conference, EntityManagerInterface $entityManager): Response
     {
@@ -101,6 +106,7 @@ class ConferenceController extends AbstractController
 
     /**
      * @Route("/{id}/join", name="app_conference_join", methods={"POST"})
+     * @Security("is_granted('ROLE_USER')")
      */
     public function join(Request $request, Conference $conference, ConferenceService $conferenceService): Response
     {
@@ -113,6 +119,7 @@ class ConferenceController extends AbstractController
 
     /**
      * @Route("/{id}/cancel", name="app_conference_cancel", methods={"POST"})
+     * @Security("is_granted('ROLE_USER')")
      */
     public function cancel(Request $request, Conference $conference, ConferenceService $conferenceService): Response
     {
