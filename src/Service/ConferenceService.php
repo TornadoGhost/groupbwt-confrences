@@ -11,6 +11,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class ConferenceService
 {
+    const COUNT_PER_PAGE = 15;
     private ConferenceRepository $conferenceRepository;
 
     public function __construct(
