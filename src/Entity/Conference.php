@@ -103,19 +103,19 @@ class Conference
         return $this->title;
     }
 
-    public function setTitle(string $title): self
+    public function setTitle(?string $title): self
     {
         $this->title = $title;
 
         return $this;
     }
 
-    public function getStart(): ?\DateTimeInterface
+    public function getStart(): ?DateTimeInterface
     {
         return $this->start;
     }
 
-    public function setStart(\DateTimeInterface $start): self
+    public function setStart(?DateTimeInterface $start): self
     {
         $this->start = $start;
 
@@ -127,7 +127,7 @@ class Conference
         return $this->address;
     }
 
-    public function setAddress(array $address): self
+    public function setAddress(?array $address): self
     {
         $this->address = $address;
 
@@ -139,7 +139,7 @@ class Conference
         return $this->country;
     }
 
-    public function setCountry(string $country): self
+    public function setCountry(?string $country): self
     {
         $this->country = $country;
 
