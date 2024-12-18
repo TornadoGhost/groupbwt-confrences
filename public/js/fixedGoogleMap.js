@@ -6,7 +6,7 @@ export function initializeMap() {
   const mapOptions = {
     disableDefaultUI: true,
     gestureHandling: "none",
-    zoomControl: false
+    zoomControl: true
   };
 
   const markerOptions = {
