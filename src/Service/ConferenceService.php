@@ -22,8 +22,8 @@ class ConferenceService
     }
 
     public function getAllConferenceWithSpecificUserPaginate(
-        $user,
-        int $maxPerPage = 10,
+        ?int $userId,
+        int $countPerPage,
         int $currentPage = 1
     ): Pagerfanta
     {
