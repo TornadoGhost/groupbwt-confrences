@@ -13,9 +13,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class RegistrationService
 {
-    private $formFactory;
-    private $userRepository;
-    private $userPasswordHasher;
+    private FormFactoryInterface $formFactory;
+    private UserRepository $userRepository;
+    private UserPasswordHasherInterface $userPasswordHasher;
 
     public function __construct(
         FormFactoryInterface $formFactory,
