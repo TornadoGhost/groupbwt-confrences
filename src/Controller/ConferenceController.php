@@ -17,6 +17,14 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ConferenceController extends AbstractController
 {
+    private ConferenceService $conferenceService;
+    public function __construct(
+        ConferenceService $conferenceService
+    )
+    {
+        $this->conferenceService = $conferenceService;
+    }
+
     /**
      * @Route("/", name="app_conference_index", methods={"GET"})
      */
