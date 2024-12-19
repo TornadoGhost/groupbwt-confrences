@@ -21,8 +21,8 @@ class RegistrationController extends BaseAuthController
             return $this->refererRedirect($request);
         }
 
-        $user = $registrationService->createNewUser();
-        $form = $registrationService->userFormPrep($request, $user);
+        $user = new User();
+        $form = $registrationService->userFormPreparation($request, $user);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $registrationService->saveNewUser($user, $form);
