@@ -36,11 +36,6 @@ class RegistrationService
         return $form;
     }
 
-    public function createNewUser(): User
-    {
-        return $this->userRepository->newUser();
-    }
-
     public function saveNewUser(UserInterface $user, FormInterface $form)
     {
         $user->setPassword(
