@@ -12,7 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\GreaterThan;
+use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
@@ -49,7 +49,11 @@ class ConferenceType extends AbstractType
                     new Type([
                         'type' => \DateTimeInterface::class,
                         'message' => 'The value {{ value }} is not a valid date.',
-                    ])
+                    ]),
+                    new GreaterThanOrEqual([
+                        'value' => new \DateTime(),
+                        'message' => 'The date and time must not be earlier than now.',
+                    ]),
                 ]
             ])
             ->add('latitude', NumberType::class, [
