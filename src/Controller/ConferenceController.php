@@ -31,8 +31,7 @@ class ConferenceController extends AbstractController
     public function index(Request $request): Response
     {
         $userId = !$this->getUser() ? null : $this->getUser()->getId();
-        $conferences = $service->getAllConferenceWithSpecificUserPaginate(
-            $userId,
+        $conferences = $this->conferenceService->getAllConferenceWithSpecificUserPaginate(
             ConferenceService::COUNT_PER_PAGE,
             $request->query->getInt('page', 1),
             $userId
