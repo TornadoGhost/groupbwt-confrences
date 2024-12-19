@@ -34,7 +34,8 @@ class ConferenceController extends AbstractController
         $conferences = $service->getAllConferenceWithSpecificUserPaginate(
             $userId,
             ConferenceService::COUNT_PER_PAGE,
-            $request->query->getInt('page', 1)
+            $request->query->getInt('page', 1),
+            $userId
         );
 
         return $this->render('conference/index.html.twig', [
