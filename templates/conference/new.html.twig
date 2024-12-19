@@ -36,5 +36,8 @@
     <script
         src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}">
     </script>
-    <script src="{{ asset('js/interactiveGoogleMap.js') }}"></script>
+    <script type="module">
+        import { initializeMap } from "{{ asset('js/interactiveGoogleMap.js') }}";
+        initializeMap();
+    </script>
 {% endblock %}
