@@ -23,9 +23,9 @@ class ConferenceService
     }
 
     public function getAllConferenceWithSpecificUserPaginate(
-        ?int $userId,
         int $countPerPage,
-        int $currentPage = 1
+        int $currentPage = 1,
+        ?int $userId = null
     ): Pagerfanta
     {
         $queryResult = $this->conferenceRepository->getAllConferencesWithSpecificUser($userId);
