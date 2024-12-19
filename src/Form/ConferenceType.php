@@ -89,9 +89,6 @@ class ConferenceType extends AbstractType
                 ]
             ])
             ->add('country', CountryType::class, [
-                'row_attr' => [
-                    'class' => 'mt-3'
-                ],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Please select a country.',
