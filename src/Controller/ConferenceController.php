@@ -50,7 +50,7 @@ class ConferenceController extends AbstractController
     {
         $conference = new Conference();
         $form = $this->createForm(ConferenceType::class, $conference);
-        $conferenceService->prepareForm($request, $conference, $form);
+        $this->conferenceService->formPreparation($request, $conference, $form);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $conferenceService->saveFormChanges($form, $conference);
