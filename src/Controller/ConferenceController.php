@@ -17,16 +17,24 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ConferenceController extends AbstractController
 {
+    private ConferenceService $conferenceService;
+    public function __construct(
+        ConferenceService $conferenceService
+    )
+    {
+        $this->conferenceService = $conferenceService;
+    }
+
     /**
      * @Route("/", name="app_conference_index", methods={"GET"})
      */
-    public function index(Request $request, ConferenceService $service): Response
+    public function index(Request $request): Response
     {
         $userId = !$this->getUser() ? null : $this->getUser()->getId();
-        $conferences = $service->getAllConferenceWithSpecificUserPaginate(
-            $userId,
+        $conferences = $this->conferenceService->getAllConferenceWithSpecificUserPaginate(
             ConferenceService::COUNT_PER_PAGE,
-            $request->query->getInt('page', 1)
+            $request->query->getInt('page', 1),
+            $userId
         );
 
         return $this->render('conference/index.html.twig', [
@@ -38,14 +46,14 @@ class ConferenceController extends AbstractController
      * @Route("/new", name="app_conference_new", methods={"GET", "POST"})
      * @Security("is_granted('ROLE_ADMIN')")
      */
-    public function new(Request $request, ConferenceService $conferenceService): Response
+    public function new(Request $request): Response
     {
         $conference = new Conference();
         $form = $this->createForm(ConferenceType::class, $conference);
-        $conferenceService->prepareForm($request, $conference, $form);
+        $this->conferenceService->formPreparation($request, $conference, $form);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $conferenceService->saveFormChanges($form, $conference);
+            $this->conferenceService->saveFormChanges($form, $conference);
 
             return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -73,13 +81,13 @@ class ConferenceController extends AbstractController
      * @Route("/{id}/edit", name="app_conference_edit", methods={"GET", "POST"})
      * @Security("is_granted('ROLE_ADMIN')")
      */
-    public function edit(Request $request, Conference $conference, ConferenceService $conferenceService): Response
+    public function edit(Request $request, Conference $conference): Response
     {
         $form = $this->createForm(ConferenceType::class, $conference);
-        $conferenceService->prepareForm($request, $conference, $form);
+        $this->conferenceService->formPreparation($request, $conference, $form);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $conferenceService->saveFormChanges($form, $conference);
+            $this->conferenceService->saveFormChanges($form, $conference);
 
             return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
         }

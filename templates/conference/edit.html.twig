@@ -16,11 +16,19 @@
 
     {{ form_start(form) }}
     {{ form_row(form.title) }}
-    {{ form_row(form.start) }}
     <div class="form-group">
         <div class="row">
             <div class="col-md-6">
-
+                {{ form_row(form.start) }}
+            </div>
+            <div class="col-md-6">
+                {{ form_row(form.country) }}
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-6">
                 {{ form_row(form.latitude) }}
             </div>
             <div class="col-md-6">
@@ -29,8 +37,7 @@
         </div>
     </div>
     <div id="map" data-lat="{{ conference.address[0] }}" data-lng="{{ conference.address[1] }}"></div>
-    {{ form_row(form.country) }}
-    <button class="btn btn-primary" type="submit">Save</button>
+    <button class="btn btn-primary mt-3" type="submit">Save</button>
     {{ form_end(form) }}
 
     <div class="mt-1">

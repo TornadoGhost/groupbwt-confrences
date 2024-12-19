@@ -23,9 +23,9 @@ class ConferenceService
     }
 
     public function getAllConferenceWithSpecificUserPaginate(
-        ?int $userId,
         int $countPerPage,
-        int $currentPage = 1
+        int $currentPage = 1,
+        ?int $userId = null
     ): Pagerfanta
     {
         $queryResult = $this->conferenceRepository->getAllConferencesWithSpecificUser($userId);
@@ -49,7 +49,7 @@ class ConferenceService
         $this->conferenceRepository->removeUserFromConference($conference, $user);
     }
 
-    public function prepareForm(Request $request, Conference $conference, FormInterface $form): FormInterface
+    public function formPreparation(Request $request, Conference $conference, FormInterface $form): FormInterface
     {
         $latitude = $conference->getAddress()[0] ?? null;
         $longitude = $conference->getAddress()[1] ?? null;

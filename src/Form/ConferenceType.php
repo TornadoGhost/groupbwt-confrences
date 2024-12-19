@@ -12,7 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\GreaterThan;
+use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
@@ -42,6 +42,9 @@ class ConferenceType extends AbstractType
             ->add('start', DateTimeType::class, [
                 'label' => 'Date of start',
                 'widget' => 'single_text',
+                'attr' => [
+                    'min' => (new \DateTime())->format('Y-m-d\TH:i'),
+                ],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Start date cannot be blank.',
@@ -49,7 +52,11 @@ class ConferenceType extends AbstractType
                     new Type([
                         'type' => \DateTimeInterface::class,
                         'message' => 'The value {{ value }} is not a valid date.',
-                    ])
+                    ]),
+                    new GreaterThanOrEqual([
+                        'value' => new \DateTime(),
+                        'message' => 'The date and time must not be earlier than now.',
+                    ]),
                 ]
             ])
             ->add('latitude', NumberType::class, [
@@ -89,9 +96,6 @@ class ConferenceType extends AbstractType
                 ]
             ])
             ->add('country', CountryType::class, [
-                'row_attr' => [
-                    'class' => 'mt-3'
-                ],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Please select a country.',
