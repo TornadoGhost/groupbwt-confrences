@@ -20,7 +20,7 @@ class RegistrationService
     public function __construct(
         FormFactoryInterface $formFactory,
         UserRepository  $userRepository,
-        UserPasswordHasherInterface $userPasswordHasher,
+        UserPasswordHasherInterface $userPasswordHasher
     )
     {
         $this->formFactory = $formFactory;
