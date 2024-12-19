@@ -42,6 +42,9 @@ class ConferenceType extends AbstractType
             ->add('start', DateTimeType::class, [
                 'label' => 'Date of start',
                 'widget' => 'single_text',
+                'attr' => [
+                    'min' => (new \DateTime())->format('Y-m-d\TH:i'),
+                ],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Start date cannot be blank.',
