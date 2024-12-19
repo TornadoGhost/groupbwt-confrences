@@ -28,7 +28,7 @@ class ConferenceController extends AbstractController
     /**
      * @Route("/", name="app_conference_index", methods={"GET"})
      */
-    public function index(Request $request, ConferenceService $service): Response
+    public function index(Request $request): Response
     {
         $userId = !$this->getUser() ? null : $this->getUser()->getId();
         $conferences = $service->getAllConferenceWithSpecificUserPaginate(
@@ -46,7 +46,7 @@ class ConferenceController extends AbstractController
      * @Route("/new", name="app_conference_new", methods={"GET", "POST"})
      * @Security("is_granted('ROLE_ADMIN')")
      */
-    public function new(Request $request, ConferenceService $conferenceService): Response
+    public function new(Request $request): Response
     {
         $conference = new Conference();
         $form = $this->createForm(ConferenceType::class, $conference);
@@ -81,7 +81,7 @@ class ConferenceController extends AbstractController
      * @Route("/{id}/edit", name="app_conference_edit", methods={"GET", "POST"})
      * @Security("is_granted('ROLE_ADMIN')")
      */
-    public function edit(Request $request, Conference $conference, ConferenceService $conferenceService): Response
+    public function edit(Request $request, Conference $conference): Response
     {
         $form = $this->createForm(ConferenceType::class, $conference);
         $conferenceService->prepareForm($request, $conference, $form);
