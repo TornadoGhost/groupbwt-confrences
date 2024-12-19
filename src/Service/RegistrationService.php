@@ -28,7 +28,7 @@ class RegistrationService
         $this->userPasswordHasher = $userPasswordHasher;
     }
 
-    public function userFormPrep(Request $request, UserInterface $user): FormInterface
+    public function userFormPreparation(Request $request, UserInterface $user): FormInterface
     {
         $form = $this->formFactory->create(RegistrationFormType::class, $user);
         $form->handleRequest($request);
