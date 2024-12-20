@@ -51,9 +51,15 @@ class Conference
      */
     private ?string $country;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Report::class, mappedBy="conference", orphanRemoval=true)
+     */
+    private Collection $reports;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
+        $this->reports = new ArrayCollection();
         $this->setCreatedAt(new \DateTime());
         $this->setUpdatedAt(new \DateTime());
     }
@@ -142,6 +148,35 @@ class Conference
     public function setCountry(?string $country): self
     {
         $this->country = $country;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Report>
+     */
+    public function getReports(): Collection
+    {
+        return $this->reports;
+    }
+
+    public function addReport(Report $report): self
+    {
+        if (!$this->reports->contains($report)) {
+            $this->reports[] = $report;
+            $report->setConference($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReport(Report $report): self
+    {
+        if ($this->reports->removeElement($report)) {
+            if ($report->getConference() === $this) {
+                $report->setConference(null);
+            }
+        }
 
         return $this;
     }
