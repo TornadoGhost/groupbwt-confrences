@@ -62,4 +62,18 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->persist($user);
         $this->_em->flush();
     }
+
+    public function getRandomUser(): ?User
+    {
+        $ids = $this->_em->createQuery('SELECT u.id FROM App\Entity\User u')
+            ->getArrayResult();
+
+        if (empty($ids)) {
+            return null;
+        }
+
+        $randomId = $ids[array_rand($ids)]['id'];
+
+        return $this->find($randomId);
+    }
 }
