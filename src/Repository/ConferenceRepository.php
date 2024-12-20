@@ -67,4 +67,18 @@ class ConferenceRepository extends ServiceEntityRepository
         $this->_em->persist($data);
         $this->_em->flush();
     }
+
+    public function getRandomConference(): ?Conference
+    {
+        $ids = $this->_em->createQuery('SELECT u.id FROM App\Entity\Conference u')
+            ->getArrayResult();
+
+        if (empty($ids)) {
+            return null;
+        }
+
+        $randomId = $ids[array_rand($ids)]['id'];
+
+        return $this->find($randomId);
+    }
 }
