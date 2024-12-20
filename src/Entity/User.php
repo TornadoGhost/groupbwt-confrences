@@ -81,12 +81,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private ?string $phone;
 
+    /**
+     * @ORM\OneToMany(targetEntity=ReportComment::class, mappedBy="user")
+     */
+    private Collection $reportComments;
+
     public function __construct()
     {
         $this->conferences = new ArrayCollection();
         $this->setCreatedAt(new \DateTime());
         $this->setUpdatedAt(new \DateTime());
         $this->setRoles(['ROLE_USER']);
+        $this->reportComments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -270,6 +276,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPhone(string $phone): self
     {
         $this->phone = $phone;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ReportComment>
+     */
+    public function getReportComments(): Collection
+    {
+        return $this->reportComments;
+    }
+
+    public function addReportComment(ReportComment $reportComment): self
+    {
+        if (!$this->reportComments->contains($reportComment)) {
+            $this->reportComments[] = $reportComment;
+            $reportComment->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReportComment(ReportComment $reportComment): self
+    {
+        if ($this->reportComments->removeElement($reportComment)) {
+            // set the owning side to null (unless already changed)
+            if ($reportComment->getUser() === $this) {
+                $reportComment->setUser(null);
+            }
+        }
 
         return $this;
     }
