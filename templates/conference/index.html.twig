@@ -28,7 +28,7 @@
         {% for conference in conferences.currentPageResults %}
             <tr>
                 <td>{{ conference.title }}</td>
-                <td>{{ conference.start ? conference.start|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ conference.startedAt ? conference.startedAt|date('Y-m-d H:i:s') : '' }}</td>
                 <td>
                     {% if app.user %}
                         {% if is_granted('ROLE_ADMIN') %}
