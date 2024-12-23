@@ -17,10 +17,11 @@ class ConferenceFixtures extends Fixture implements DependentFixtureInterface
     {
         $faker = Factory::create();
 
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 1; $i <= 20; $i++) {
             $conference = new Conference();
             $conference->setTitle($faker->sentence);
-            $conference->setStart($faker->dateTimeBetween('now', '+1 week'));
+            $conference->setStartedAt(\DateTime::createFromFormat('Y-m-d H:i', "2024-11-$i 10:00"));
+            $conference->setEndedAt(\DateTime::createFromFormat('Y-m-d H:i', "2024-11-$i 18:00"));
             $conference->setAddress([$faker->latitude, $faker->longitude]);
             $conference->setCountry($faker->countryCode);
 
