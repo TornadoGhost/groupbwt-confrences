@@ -59,7 +59,7 @@ class Conference
     /**
      * @ORM\OneToMany(targetEntity=Report::class, mappedBy="conference", orphanRemoval=true)
      */
-    private Collection $reports;
+    private ?Collection $reports;
 
     public function __construct()
     {
