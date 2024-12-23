@@ -1,0 +1,19 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Edit Report{% endblock %}
+
+{% block body %}
+    <h1>Edit Report</h1>
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <button class="btn">{{ button_label|default('Save') }}</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('app_report_index') }}">back to list</a>
+
+    <form method="post" action="{{ path('app_report_delete', {'id': report.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ report.id) }}">
+        <button class="btn">Delete</button>
+    </form>
+{% endblock %}
