@@ -39,7 +39,7 @@ class ConferenceType extends AbstractType
                     ])
                 ]
             ])
-            ->add('start', DateTimeType::class, [
+            ->add('startedAt', DateTimeType::class, [
                 'label' => 'Date of start',
                 'widget' => 'single_text',
                 'attr' => [
