@@ -31,12 +31,12 @@ class Report
     /**
      * @ORM\Column(type="datetime")
      */
-    private ?\DateTimeInterface $startedAt;
+    private ?DateTimeInterface $startedAt;
 
     /**
      * @ORM\Column(type="datetime")
      */
-    private ?\DateTimeInterface $ended_at;
+    private ?DateTimeInterface $endedAt;
 
     /**
      * @ORM\Column(type="text", columnDefinition="TEXT")
