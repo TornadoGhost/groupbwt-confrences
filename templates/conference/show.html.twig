@@ -12,7 +12,36 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Conference</h1>
+    <div class="d-flex align-content-center justify-content-between">
+        <h1>Conference</h1>
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="d-flex justify-content-center align-items-center">
+                <form class="d-flex align-items-center"
+                      action="{{ path('app_conference_delete', { id: conference.id }) }}"
+                      method="post">
+                    <input type="hidden" name="token" value="{{ csrf_token('delete-conference') }}">
+                    <button class="btn btn-danger" type="submit">Delete</button>
+                </form>
+                <a class="btn btn-info ml-1" href="{{ path('app_conference_edit', {'id': conference.id}) }}">Edit</a>
+            </div>
+        {% else %}
+            {% if conference.users is empty %}
+                <form class="d-flex align-items-center"
+                      action="{{ path('app_conference_join', {'id': conference.id}) }}"
+                      method="post">
+                    <input type="hidden" name="token" value="{{ csrf_token('join-conference') }}">
+                    <button class="btn btn-primary" type="submit">Join</button>
+                </form>
+            {% else %}
+                <form class="d-flex align-items-center"
+                      action="{{ path('app_conference_cancel', {'id': conference.id}) }}"
+                      method="post">
+                    <input type="hidden" name="token" value="{{ csrf_token('cancel-conference') }}">
+                    <button class="btn btn-danger" type="submit">Cancel participation</button>
+                </form>
+            {% endif %}
+        {% endif %}
+    </div>
 
     <table class="table">
         <tbody>
@@ -34,37 +63,46 @@
                 <div id="map" data-lat="{{ conference.address[0] }}" data-lng="{{ conference.address[1] }}"></div>
             </td>
         </tr>
+        <tr>
+            <th>Reports</th>
+            <td>
+                <div class="row">
+                    {% for report in conference.reports %}
+                        <div class="col-sm-6 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ report.title }}</h5>
+                                    <p class="card-text">{{ report.startedAt|date('H:i') }}
+                                        -{{ report.endedAt|date('H:i') }}</p>
+                                    <span class="short-content">
+                                        {{ report.description|length > 100
+                                        ? report.description[:100] ~ '...'
+                                        : report.description }}
+                                    </span>
+                                    {% if report.description|length > 100 %}
+                                        <span class="full-content" style="display: none;">
+                                                {{ report.description }}
+                                            </span>
+                                        <button class="d-block btn btn-info mt-3 toggle-content-btn">Read more</button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </td>
+        </tr>
         </tbody>
     </table>
-
-    {% if is_granted('ROLE_ADMIN') %}
-        <form class="d-inline" action="{{ path('app_conference_delete', { id: conference.id }) }}"
-              method="post">
-            <input type="hidden" name="token" value="{{ csrf_token('delete-conference') }}">
-            <button class="btn btn-danger" type="submit">Delete</button>
-        </form>
-        <a class="btn btn-info" href="{{ path('app_conference_edit', {'id': conference.id}) }}">Edit</a>
-    {% else %}
-        {% if conference.users is empty %}
-            <form class="d-inline" action="{{ path('app_conference_join', {'id': conference.id}) }}"
-                  method="post">
-                <input type="hidden" name="token" value="{{ csrf_token('join-conference') }}">
-                <button class="btn btn-primary" type="submit">Join</button>
-            </form>
-        {% else %}
-            <form class="d-inline" action="{{ path('app_conference_cancel', {'id': conference.id}) }}"
-                  method="post">
-                <input type="hidden" name="token" value="{{ csrf_token('cancel-conference') }}">
-                <button class="btn btn-danger" type="submit">Cancel participation</button>
-            </form>
-        {% endif %}
-    {% endif %}
 
     <script
         src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}">
     </script>
     <script type="module">
-        import { initializeMap } from "{{ asset('js/fixedGoogleMap.js') }}"
+        import {initializeMap} from "{{ asset('js/fixedGoogleMap.js') }}";
+        import {showMoreContent} from "{{ asset('js/showMoreContent.js') }}";
+
         initializeMap();
+        showMoreContent();
     </script>
 {% endblock %}
