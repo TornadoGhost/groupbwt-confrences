@@ -39,7 +39,12 @@ class Conference
     /**
      * @ORM\Column(type="datetime")
      */
-    private ?DateTimeInterface $start;
+    private ?DateTimeInterface $startedAt;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private ?DateTimeInterface $endedAt = null;
 
     /**
      * @ORM\Column(type="json")
@@ -116,14 +121,14 @@ class Conference
         return $this;
     }
 
-    public function getStart(): ?DateTimeInterface
+    public function getStartedAt(): ?DateTimeInterface
     {
-        return $this->start;
+        return $this->startedAt;
     }
 
-    public function setStart(?DateTimeInterface $start): self
+    public function setStartedAt(?DateTimeInterface $startedAt): self
     {
-        $this->start = $start;
+        $this->startedAt = $startedAt;
 
         return $this;
     }
@@ -177,6 +182,18 @@ class Conference
                 $report->setConference(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getEndedAt(): ?DateTimeInterface
+    {
+        return $this->endedAt;
+    }
+
+    public function setEndedAt(?DateTimeInterface $endedAt): self
+    {
+        $this->endedAt = $endedAt;
 
         return $this;
     }

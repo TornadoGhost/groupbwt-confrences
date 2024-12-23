@@ -27,7 +27,7 @@ class AccessDeniedListener
         $exception = $event->getThrowable();
 
         if ($exception instanceof AccessDeniedException) {
-            $this->flashBag->add('error', 'Access Denied. You do not have permission to access this page.');
+            $this->flashBag->add('error', 'Access Denied. You do not have permission to access that page.');
 
             $url = $this->router->generate('app_conference_index');
 

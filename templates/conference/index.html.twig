@@ -28,7 +28,7 @@
         {% for conference in conferences.currentPageResults %}
             <tr>
                 <td>{{ conference.title }}</td>
-                <td>{{ conference.start ? conference.start|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ conference.startedAt ? conference.startedAt|date('Y-m-d H:i:s') : '' }}</td>
                 <td>
                     {% if app.user %}
                         {% if is_granted('ROLE_ADMIN') %}
@@ -40,12 +40,21 @@
                             <a class="btn btn-info"
                                href="{{ path('app_conference_edit', {'id': conference.id}) }}">Edit</a>
                         {% else %}
+
                             {% if conference.users is empty %}
-                                <form class="d-inline" action="{{ path('app_conference_join', {'id': conference.id}) }}"
-                                      method="post">
-                                    <input type="hidden" name="token" value="{{ csrf_token('join-conference') }}">
-                                    <button class="btn btn-primary" type="submit">Join</button>
-                                </form>
+
+                                {% if is_granted('ROLE_ANNOUNCER') %}
+                                    <a class="btn btn-primary"
+                                       href="{{ path('app_report_new', {'conference_id': conference.id}) }}">Join</a>
+                                {% else %}
+                                    <form class="d-inline"
+                                          action="{{ path('app_conference_join', {'id': conference.id}) }}"
+                                          method="post">
+                                        <input type="hidden" name="token" value="{{ csrf_token('join-conference') }}">
+                                        <button class="btn btn-primary" type="submit">Join</button>
+                                    </form>
+                                {% endif %}
+
                             {% else %}
                                 <form class="d-inline"
                                       action="{{ path('app_conference_cancel', {'id': conference.id}) }}"
@@ -54,9 +63,12 @@
                                     <button class="btn btn-danger" type="submit">Cancel participation</button>
                                 </form>
                             {% endif %}
+
                         {% endif %}
+
                         <a class="btn btn-primary"
                            href="{{ path('app_conference_show', {'id': conference.id}) }}">Details</a>
+
                     {% else %}
                         <a class="btn btn-primary"
                            href="{{ path('app_login') }}">Join</a>
