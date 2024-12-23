@@ -25,7 +25,7 @@ class ConferenceRepository extends ServiceEntityRepository
         parent::__construct($registry, Conference::class);
     }
 
-    public function getAllConferencesWithSpecificUser($userId): QueryBuilder
+    public function getAllConferencesWithSpecificUser(?int $userId = null): QueryBuilder
     {
         if (!$userId) {
             return $this->createQueryBuilder('c')
