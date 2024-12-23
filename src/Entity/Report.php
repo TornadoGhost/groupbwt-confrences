@@ -58,7 +58,7 @@ class Report
     /**
      * @ORM\OneToMany(targetEntity=ReportComment::class, mappedBy="report")
      */
-    private Collection $reportComments;
+    private ?Collection $reportComments;
 
     public function __construct()
     {
