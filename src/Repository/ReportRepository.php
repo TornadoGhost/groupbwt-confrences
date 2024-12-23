@@ -28,9 +28,56 @@ class ReportRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Report::class);
     }
+
     public function saveData(object $entity): void
     {
         $this->_em->persist($entity);
         $this->_em->flush();
+    }
+
+    public function getAvailableTimeForReport(int $conferenceId): QueryBuilder
+    {
+        return $this->createQueryBuilder('r')
+            ->select('r.startedAt')
+            ->join('r.conference', 'c')
+            ->where("c = $conferenceId");
+    }
+
+    public function findOverlappingReport(
+        \DateTime $startTime,
+        \DateTime $endTime,
+        int $conferenceId
+    ): ?\DateTimeInterface
+    {
+        $existingReports = $this->createQueryBuilder('r')
+            ->join('r.conference', 'c')
+            ->where("c = $conferenceId")
+            ->where('r.startedAt < :endTime')
+            ->andWhere('r.endedAt > :startTime')
+            ->setParameters([
+                'startTime' => $startTime,
+                'endTime' => $endTime,
+            ])
+            ->getQuery()
+            ->getResult();
+
+        if (count($existingReports) > 0) {
+            // Знайдемо найближчий можливий час початку
+            $closestStartTime = null;
+            foreach ($existingReports as $report) {
+                if (
+                    $report->getEndedAt() > $startTime
+                    &&
+                    ($closestStartTime === null || $report->getEndedAt() < $closestStartTime)
+                )
+                {
+                    $closestStartTime = $report->getEndedAt();
+                }
+            }
+
+            return $closestStartTime ?? null;
+        }
+
+        return null;
     }
 }
