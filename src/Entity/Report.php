@@ -95,14 +95,14 @@ class Report
         return $this;
     }
 
-    public function getEndedAt(): ?\DateTimeInterface
+    public function getEndedAt(): ?DateTimeInterface
     {
-        return $this->ended_at;
+        return $this->endedAt;
     }
 
-    public function setEndedAt(?\DateTimeInterface $ended_at): self
+    public function setEndedAt(?DateTimeInterface $endedAt): self
     {
-        $this->ended_at = $ended_at;
+        $this->endedAt = $endedAt;
 
         return $this;
     }
