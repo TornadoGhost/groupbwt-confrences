@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ReportRepository;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -83,12 +84,12 @@ class Report
         return $this;
     }
 
-    public function getStartedAt(): ?\DateTimeInterface
+    public function getStartedAt(): ?DateTimeInterface
     {
         return $this->startedAt;
     }
 
-    public function setStartedAt(?\DateTimeInterface $startedAt): self
+    public function setStartedAt(?DateTimeInterface $startedAt): self
     {
         $this->startedAt = $startedAt;
 
