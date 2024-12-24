@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/conferences/{conference_id?1}/reports")
+ * @Route("/conferences/{conference_id}/reports")
  * @ParamConverter("conference", options={"mapping": {"conference_id": "id"}})
  */
 class ReportController extends AbstractController
