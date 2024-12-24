@@ -70,11 +70,6 @@ class ReportService
         return $form;
     }
 
-    public function saveData(object $entity): void
-    {
-        $this->reportRepository->saveData($entity);
-    }
-
     public function getAvailableTimeForReport(int $conferenceId): QueryBuilder
     {
         return $this->reportRepository->getAvailableTimeForReport($conferenceId);
