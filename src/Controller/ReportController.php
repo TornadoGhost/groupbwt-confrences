@@ -172,6 +172,6 @@ class ReportController extends AbstractController
             }
         }
 
-        return $this->redirectToRoute('app_report_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
     }
 }
