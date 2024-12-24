@@ -100,6 +100,7 @@ class ReportService
             $conference->addUser($user);
         }
 
+        $report->setUser($user);
         $report->setConference($conference);
         $this->reportRepository->saveData($report);
     }
