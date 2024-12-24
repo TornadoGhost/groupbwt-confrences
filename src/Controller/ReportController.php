@@ -76,8 +76,21 @@ class ReportController extends AbstractController
         );
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $presentationFile = $form->get('document')->getData();
-            $this->reportService->saveReportWithFile($report, $presentationFile, $conference);
+            $document = $form->get('document')->getData() ?? null;
+            $user = $this->getUser();
+            $result = $this->reportService->saveReportWithFile($report, $conference, $user, $document);
+
+            if (!$result) {
+                $this->flashBag->add(
+                    'upload-file-error',
+                    'File upload error. Try again later.'
+                );
+
+                return $this->renderForm('report/new.html.twig', [
+                    'report' => $report,
+                    'form' => $form,
+                ]);
+            }
 
             return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
         }
