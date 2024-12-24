@@ -57,15 +57,13 @@ class ReportService
     public function prepareForm(
         Report $report,
         Request $request,
-        int $conferenceId,
-        \DateTimeInterface $startedAt,
-        \DateTimeInterface $endedAt
+        Conference $conference
     ): FormInterface
     {
         $form = $this->formFactory->create(ReportType::class, $report, [
-            'conference_id' => $conferenceId,
-            'conference_start' => $startedAt,
-            'conference_end' => $endedAt
+            'conference_id' => $conference->getId(),
+            'conference_start' => $conference->getStartedAt(),
+            'conference_end' => $conference->getEndedAt()
         ]);
         $form->handleRequest($request);
 
