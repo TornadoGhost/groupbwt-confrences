@@ -84,7 +84,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\OneToMany(targetEntity=ReportComment::class, mappedBy="user")
      */
-    private Collection $reportComments;
+    private ?Collection $reportComments;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Report::class, mappedBy="user")
+     */
+    private ?Collection $reports;
 
     public function __construct()
     {
@@ -93,6 +98,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->setUpdatedAt(new \DateTime());
         $this->setRoles(['ROLE_USER']);
         $this->reportComments = new ArrayCollection();
+        $this->reports = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -204,7 +210,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->conferences;
     }
 
-    public function addConference(Conference $conference): self
+    public function addConference(?Conference $conference): self
     {
         if (!$this->conferences->contains($conference)) {
             $this->conferences[] = $conference;
@@ -225,7 +231,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->firstname;
     }
 
-    public function setFirstname(string $firstname): self
+    public function setFirstname(?string $firstname): self
     {
         $this->firstname = $firstname;
 
@@ -237,7 +243,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->lastname;
     }
 
-    public function setLastname(string $lastname): self
+    public function setLastname(?string $lastname): self
     {
         $this->lastname = $lastname;
 
@@ -261,7 +267,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->country;
     }
 
-    public function setCountry(string $country): self
+    public function setCountry(?string $country): self
     {
         $this->country = $country;
 
@@ -273,7 +279,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->phone;
     }
 
-    public function setPhone(string $phone): self
+    public function setPhone(?string $phone): self
     {
         $this->phone = $phone;
 
@@ -283,12 +289,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, ReportComment>
      */
-    public function getReportComments(): Collection
+    public function getReportComments(): ?Collection
     {
         return $this->reportComments;
     }
 
-    public function addReportComment(ReportComment $reportComment): self
+    public function addReportComment(?ReportComment $reportComment): self
     {
         if (!$this->reportComments->contains($reportComment)) {
             $this->reportComments[] = $reportComment;
@@ -304,6 +310,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($reportComment->getUser() === $this) {
                 $reportComment->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Report>
+     */
+    public function getReports(): ?Collection
+    {
+        return $this->reports;
+    }
+
+    public function addReport(?Report $report): self
+    {
+        if (!$this->reports->contains($report)) {
+            $this->reports[] = $report;
+            $report->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReport(Report $report): self
+    {
+        if ($this->reports->removeElement($report)) {
+            // set the owning side to null (unless already changed)
+            if ($report->getUser() === $this) {
+                $report->setUser(null);
             }
         }
 
