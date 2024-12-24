@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Conference;
-use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -20,9 +19,15 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class ConferenceRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    protected ReportRepository $reportRepository;
+
+    public function __construct(
+        ManagerRegistry $registry,
+        ReportRepository $reportRepository
+    )
     {
         parent::__construct($registry, Conference::class);
+        $this->reportRepository = $reportRepository;
     }
 
     public function getAllConferencesWithSpecificUser(?int $userId = null): QueryBuilder
@@ -52,6 +57,12 @@ class ConferenceRepository extends ServiceEntityRepository
 
     public function removeUserFromConference(Conference $conference, UserInterface $user): void
     {
+        $report = $this->reportRepository->findByConferenceIdAndUserIdNotDeleted($conference, $user);
+
+        if ($report) {
+            $conference->removeReport($report);
+        }
+
         $conference->removeUser($user);
         $this->saveData($user);
     }

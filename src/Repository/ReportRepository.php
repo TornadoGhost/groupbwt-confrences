@@ -4,13 +4,9 @@ namespace App\Repository;
 
 use App\Entity\Conference;
 use App\Entity\Report;
-use App\Form\ReportType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\Mapping\Entity;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @extends ServiceEntityRepository<Report>
@@ -35,14 +31,6 @@ class ReportRepository extends ServiceEntityRepository
         $this->_em->flush();
     }
 
-    public function getAvailableTimeForReport(int $conferenceId): QueryBuilder
-    {
-        return $this->createQueryBuilder('r')
-            ->select('r.startedAt')
-            ->join('r.conference', 'c')
-            ->where("c = $conferenceId");
-    }
-
     public function findOverlappingReport(
         \DateTime $startTime,
         \DateTime $endTime,
@@ -51,18 +39,19 @@ class ReportRepository extends ServiceEntityRepository
     {
         $existingReports = $this->createQueryBuilder('r')
             ->join('r.conference', 'c')
-            ->where("c = $conferenceId")
             ->where('r.startedAt < :endTime')
             ->andWhere('r.endedAt > :startTime')
+            ->andWhere('c.id = :conferenceId')
+            ->andWhere('r.deletedAt IS NOT NULL')
             ->setParameters([
                 'startTime' => $startTime,
                 'endTime' => $endTime,
+                'conferenceId' => $conferenceId,
             ])
             ->getQuery()
             ->getResult();
 
         if (count($existingReports) > 0) {
-            // Знайдемо найближчий можливий час початку
             $closestStartTime = null;
             foreach ($existingReports as $report) {
                 if (
@@ -81,9 +70,37 @@ class ReportRepository extends ServiceEntityRepository
         return null;
     }
 
-    public function deleteReport(Report $report): void
+    public function deleteReport(Report $report, Conference $conference, UserInterface $user): ?string
     {
-        $this->_em->remove($report);
-        $this->_em->flush();
+        $this->_em->beginTransaction();
+
+        try {
+            $this->_em->remove($report);
+            $conference->removeUser($user);
+            $this->_em->flush();
+            $this->_em->commit();
+        } catch (\Exception $e) {
+            $this->_em->rollback();
+
+            return $e->getMessage();
+        }
+
+        return null;
+    }
+
+    public function findByConferenceIdAndUserIdNotDeleted(Conference $conference, UserInterface $user): ?Report
+    {
+        return $this->createQueryBuilder('r')
+            ->select('r')
+            ->where('r.deletedAt IS NULL')
+            ->andWhere('r.conference = :conference')
+            ->andWhere('r.user = :user')
+            ->setParameters([
+                'conference' => $conference,
+                'user' => $user
+            ])
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
     }
 }

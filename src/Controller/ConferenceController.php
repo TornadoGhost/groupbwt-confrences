@@ -130,10 +130,14 @@ class ConferenceController extends AbstractController
      * @Route("/{id}/cancel", name="app_conference_cancel", methods={"POST"})
      * @Security("is_granted('ROLE_USER')")
      */
-    public function cancel(Request $request, Conference $conference, ConferenceService $conferenceService): Response
+    public function cancel(
+        Request $request,
+        Conference $conference
+    ): Response
     {
         if ($this->isCsrfTokenValid('cancel-conference', $request->request->get('token'))) {
-            $conferenceService->removeUserFromConference($conference, $this->getUser());
+            $user = $this->getUser();
+            $this->conferenceService->removeUserFromConference($conference, $user);
         }
 
         return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);

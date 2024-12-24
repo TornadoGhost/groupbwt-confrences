@@ -7,12 +7,14 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=ReportRepository::class)
+ * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false, hardDelete=false)
  */
 class Report
 {
@@ -68,8 +70,6 @@ class Report
 
     public function __construct()
     {
-        $this->setCreatedAt(new \DateTime());
-        $this->setUpdatedAt(new \DateTime());
         $this->reportComments = new ArrayCollection();
     }
 
@@ -171,7 +171,6 @@ class Report
     public function removeReportComment(ReportComment $reportComment): self
     {
         if ($this->reportComments->removeElement($reportComment)) {
-            // set the owning side to null (unless already changed)
             if ($reportComment->getReport() === $this) {
                 $reportComment->setReport(null);
             }
