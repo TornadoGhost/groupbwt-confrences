@@ -15,6 +15,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -25,14 +26,17 @@ class ReportController extends AbstractController
 {
     protected ReportService $reportService;
     protected ConferenceService $conferenceService;
+    protected FlashBagInterface $flashBag;
 
     public function __construct(
         ReportService     $reportService,
-        ConferenceService $conferenceService
+        ConferenceService $conferenceService,
+        FlashBagInterface $flashBag
     )
     {
         $this->reportService = $reportService;
         $this->conferenceService = $conferenceService;
+        $this->flashBag = $flashBag;
     }
 
     /**
@@ -54,6 +58,16 @@ class ReportController extends AbstractController
         Conference        $conference
     ): Response
     {
+        $userId = $this->getUser()->getId();
+        $conferenceId = $conference->getId();
+        $userPartOfConference = $this->conferenceService->findParticipantByUserId($userId, $conferenceId);
+
+        if ($userPartOfConference) {
+            $this->flashBag->add('error', 'You have already joined the conference');
+
+            return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
+        }
+
         $report = new Report();
         $conferenceId = $conference->getId();
         $conferenceStart = $conference->getStartedAt();
