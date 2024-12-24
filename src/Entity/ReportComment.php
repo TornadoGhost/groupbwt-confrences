@@ -37,12 +37,6 @@ class ReportComment
      */
     private ?Report $report;
 
-    public function __construct()
-    {
-        $this->setCreatedAt(new \DateTime());
-        $this->setUpdatedAt(new \DateTime());
-    }
-
     public function getId(): ?int
     {
         return $this->id;
