@@ -82,23 +82,15 @@ class ReportService
         ?UploadedFile $document = null
     ): bool
     {
-        if ($presentationFile) {
-            $originalFilename = pathinfo($presentationFile->getClientOriginalName(), PATHINFO_FILENAME);
+        if ($document) {
+            $documentName = $this->fileUploader->upload($document);
 
-            $safeFilename = $this->slugger->slug($originalFilename);
-            $newFilename = $safeFilename.'-'.uniqid().'.'.$presentationFile->guessExtension();
-
-            $directory = $this->parameterBag->get('kernel.project_dir').'/public/uploads/reports';
-            $filesystem = new Filesystem();
-            if (!$filesystem->exists($directory)) {
-                $filesystem->mkdir($directory);
+            if (!$documentName) {
+                return false;
             }
 
-            try {
-                $presentationFile->move($directory, $newFilename);
-            } catch (FileException $e) {
-                // ... handle exception if something happens during file upload
-            }
+            $report->setDocument($documentName);
+        }
 
             $report->setDocument($newFilename);
         }
