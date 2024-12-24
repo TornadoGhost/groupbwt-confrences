@@ -69,15 +69,10 @@ class ReportController extends AbstractController
         }
 
         $report = new Report();
-        $conferenceId = $conference->getId();
-        $conferenceStart = $conference->getStartedAt();
-        $conferenceEnded = $conference->getEndedAt();
         $form = $this->reportService->prepareForm(
             $report,
             $request,
-            $conferenceId,
-            $conferenceStart,
-            $conferenceEnded
+            $conference
         );
 
         if ($form->isSubmitted() && $form->isValid()) {
