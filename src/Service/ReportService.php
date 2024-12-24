@@ -21,29 +21,20 @@ class ReportService
 {
     protected FormFactoryInterface $formFactory;
     protected ReportRepository $reportRepository;
-    protected SluggerInterface $slugger;
-    protected ParameterBagInterface $parameterBag;
     protected FileUploader $fileUploader;
     protected ConferenceService $conferenceService;
-    protected EntityManagerInterface $entityManager;
 
     public function __construct(
         FormFactoryInterface $formFactory,
         ReportRepository $reportRepository,
-        SluggerInterface $slugger,
-        ParameterBagInterface $parameterBag,
         FileUploader $fileUploader,
-        ConferenceService $conferenceService,
-        EntityManagerInterface $entityManager
+        ConferenceService $conferenceService
     )
     {
         $this->formFactory = $formFactory;
         $this->reportRepository = $reportRepository;
-        $this->slugger = $slugger;
-        $this->parameterBag = $parameterBag;
         $this->fileUploader = $fileUploader;
         $this->conferenceService = $conferenceService;
-        $this->entityManager = $entityManager;
     }
 
     /**
