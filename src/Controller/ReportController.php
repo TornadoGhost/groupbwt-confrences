@@ -81,6 +81,7 @@ class ReportController extends AbstractController
 
     /**
      * @Route("/{report_id}", name="app_report_show", methods={"GET"})
+     * @ParamConverter("report", options={"mapping": {"report_id": "id"}})
      */
     public function show(Report $report): Response
     {
