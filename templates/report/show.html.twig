@@ -7,42 +7,24 @@
 
     <table class="table">
         <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ report.id }}</td>
-            </tr>
-            <tr>
-                <th>Title</th>
-                <td>{{ report.title }}</td>
-            </tr>
-            <tr>
-                <th>StartedAt</th>
-                <td>{{ report.startedAt ? report.startedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Ended_at</th>
-                <td>{{ report.endedAt ? report.endedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ report.description }}</td>
-            </tr>
+        <tr>
+            <th>Title</th>
+            <td>{{ report.title }}</td>
+        </tr>
+        <tr>
+            <th>Time</th>
+            <td>{{ report.startedAt|date('Y-m-d H:i') }}-{{ report.endedAt|date('H:i') }}</td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>{{ report.description }}</td>
+        </tr>
+        {% if (report.document) %}
             <tr>
                 <th>Document</th>
                 <td>{{ report.document }}</td>
             </tr>
-            <tr>
-                <th>CreatedAt</th>
-                <td>{{ report.createdAt ? report.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>UpdatedAt</th>
-                <td>{{ report.updatedAt ? report.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>DeletedAt</th>
-                <td>{{ report.deletedAt ? report.deletedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
+        {% endif %}
         </tbody>
     </table>
 
