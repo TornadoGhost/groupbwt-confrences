@@ -132,14 +132,17 @@ class ReportController extends AbstractController
             $user = $this->getUser();
             $result = $this->reportService->saveReportWithFile($report, $conference, $user, $document);
 
-            return $this->redirectToRoute('app_report_index', [], Response::HTTP_SEE_OTHER);
-        }
+            if (!$result) {
+                $this->flashBag->add(
+                    'edit-page-error',
+                    'File upload error. Try again later.'
+                );
 
-        return $this->renderForm('report/edit.html.twig', [
-            'report' => $report,
-            'form' => $form,
-        ]);
-    }
+                return $this->renderForm('report/edit.html.twig', [
+                    'report' => $report,
+                    'form' => $form,
+                ]);
+            }
 
             return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
         }
