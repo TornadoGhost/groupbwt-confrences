@@ -159,11 +159,17 @@ class ReportController extends AbstractController
      * @ParamConverter("report", options={"mapping": {"report_id": "id"}})
      * @IsGranted("delete", subject="report")
      */
-    public function delete(Request $request, Report $report, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, Conference $conference, Report $report): Response
     {
         if ($this->isCsrfTokenValid('delete' . $report->getId(), $request->request->get('_token'))) {
-            $entityManager->remove($report);
-            $entityManager->flush();
+            $user = $this->getUser();
+            $result = $this->reportService->deleteReport($report, $conference, $user);
+
+            if ($result) {
+                $this->flashBag->add('edit-page-error', 'Error. ' . $result);
+
+                return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
+            }
         }
 
         return $this->redirectToRoute('app_report_index', [], Response::HTTP_SEE_OTHER);
