@@ -127,7 +127,9 @@ class ReportController extends AbstractController
         );
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            $document = $report->getDocument() ?? null;
+            $user = $this->getUser();
+            $result = $this->reportService->saveReportWithFile($report, $conference, $user, $document);
 
             return $this->redirectToRoute('app_report_index', [], Response::HTTP_SEE_OTHER);
         }
