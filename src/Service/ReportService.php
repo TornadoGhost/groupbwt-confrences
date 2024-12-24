@@ -103,4 +103,9 @@ class ReportService
             $filesystem->remove($filePath);
         }
     }
+
+    public function findOneBy(array $criteria, array $orderBy = null): ?Report
+    {
+        return $this->reportRepository->findOneBy($criteria, $orderBy);
+    }
 }
