@@ -75,7 +75,12 @@ class ReportService
         return $this->reportRepository->getAvailableTimeForReport($conferenceId);
     }
 
-    public function saveReportWithFile(Report $report, UploadedFile $presentationFile, Conference $conference)
+    public function saveReportWithFile(
+        Report $report,
+        Conference $conference,
+        UserInterface $user,
+        ?UploadedFile $document = null
+    ): bool
     {
         if ($presentationFile) {
             $originalFilename = pathinfo($presentationFile->getClientOriginalName(), PATHINFO_FILENAME);
