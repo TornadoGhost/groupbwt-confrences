@@ -9,7 +9,7 @@ use App\Repository\ConferenceRepository;
 use App\Repository\ReportRepository;
 use App\Service\ConferenceService;
 use App\Service\ReportService;
-use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -115,6 +115,7 @@ class ReportController extends AbstractController
     /**
      * @Route("/{report_id}/edit", name="app_report_edit", methods={"GET","POST"})
      * @ParamConverter("report", options={"mapping": {"report_id": "id"}})
+     * @IsGranted("edit", subject="report")
      */
     public function edit(Request $request, Report $report, EntityManagerInterface $entityManager): Response
     {
@@ -136,6 +137,7 @@ class ReportController extends AbstractController
     /**
      * @Route("/{report_id}", name="app_report_delete", methods={"POST"})
      * @ParamConverter("report", options={"mapping": {"report_id": "id"}})
+     * @IsGranted("delete", subject="report")
      */
     public function delete(Request $request, Report $report, EntityManagerInterface $entityManager): Response
     {
