@@ -109,21 +109,7 @@ class ReportService
 
     public function deleteReport(Report $report, Conference $conference, UserInterface $user): ?string
     {
-        $fileName = $report->getDocument();
-        $this->entityManager->beginTransaction();
-
-        try {
-            $this->deleteUploadedFile($fileName);
-            $this->reportRepository->deleteReport($report);
-            $this->conferenceService->removeUserFromConference($conference, $user);
-            $this->entityManager->commit();
-        } catch (\Exception $e) {
-            $this->entityManager->rollback();
-
-            return $e->getMessage();
-        }
-
-        return null;
+        return $this->reportRepository->deleteReport($report, $conference, $user);
     }
 
     public function deleteUploadedFile($fileName): void
