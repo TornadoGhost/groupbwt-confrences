@@ -6,15 +6,15 @@ use App\Entity\Conference;
 use App\Entity\Report;
 use App\Form\ReportType;
 use App\Repository\ReportRepository;
-use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
 class ReportService
@@ -23,18 +23,27 @@ class ReportService
     protected ReportRepository $reportRepository;
     protected SluggerInterface $slugger;
     protected ParameterBagInterface $parameterBag;
+    protected FileUploader $fileUploader;
+    protected ConferenceService $conferenceService;
+    protected EntityManagerInterface $entityManager;
 
     public function __construct(
         FormFactoryInterface $formFactory,
         ReportRepository $reportRepository,
         SluggerInterface $slugger,
-        ParameterBagInterface $parameterBag
+        ParameterBagInterface $parameterBag,
+        FileUploader $fileUploader,
+        ConferenceService $conferenceService,
+        EntityManagerInterface $entityManager
     )
     {
         $this->formFactory = $formFactory;
         $this->reportRepository = $reportRepository;
         $this->slugger = $slugger;
         $this->parameterBag = $parameterBag;
+        $this->fileUploader = $fileUploader;
+        $this->conferenceService = $conferenceService;
+        $this->entityManager = $entityManager;
     }
 
     /**
