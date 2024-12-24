@@ -77,8 +77,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $ids = $this->createQueryBuilder('u')
             ->select('u.id')
-            ->where('JSON_CONTAINS(u.roles, :role) = 0')
-            ->setParameter('role', json_encode('ROLE_ADMIN'))
+            ->where('JSON_CONTAINS(u.roles, :role) = 1')
+            ->setParameter('role', json_encode('ROLE_ANNOUNCER'))
             ->getQuery()
             ->getArrayResult()
         ;
