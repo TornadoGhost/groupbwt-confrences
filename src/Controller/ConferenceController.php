@@ -136,7 +136,8 @@ class ConferenceController extends AbstractController
     ): Response
     {
         if ($this->isCsrfTokenValid('cancel-conference', $request->request->get('token'))) {
-            $conferenceService->removeUserFromConference($conference, $this->getUser());
+            $user = $this->getUser();
+            $this->conferenceService->removeUserFromConference($conference, $user);
         }
 
         return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
