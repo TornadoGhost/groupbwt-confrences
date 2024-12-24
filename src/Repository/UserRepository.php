@@ -65,7 +65,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
     public function getRandomUser(): ?User
     {
-        $ids = $this->_em->createQuery('SELECT u.id FROM App\Entity\User u')
+        $ids = $this->createQueryBuilder('u')
+            ->select('u.id')
+            ->getQuery()
             ->getArrayResult();
 
         return $this->selectRandomUserFromArray($ids);
