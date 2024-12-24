@@ -34,7 +34,7 @@
                 <td>{{ report.deletedAt ? report.deletedAt|date('Y-m-d H:i:s') : '' }}</td>
                 <td>
                     <a href="{{ path('app_report_show', {'id': report.id}) }}">show</a>
-                    <a href="{{ path('app_report_edit', {'id': report.id}) }}">edit</a>
+                    <a href="{{ path('app_report_edit', {'report_id': report.id}) }}">edit</a>
                 </td>
             </tr>
         {% else %}
