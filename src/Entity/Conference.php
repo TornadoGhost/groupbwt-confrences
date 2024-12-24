@@ -67,8 +67,6 @@ class Conference
     {
         $this->users = new ArrayCollection();
         $this->reports = new ArrayCollection();
-        $this->setCreatedAt(new \DateTime());
-        $this->setUpdatedAt(new \DateTime());
     }
 
     public function getId(): ?int

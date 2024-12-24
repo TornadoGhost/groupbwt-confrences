@@ -70,8 +70,6 @@ class Report
 
     public function __construct()
     {
-        $this->setCreatedAt(new \DateTime());
-        $this->setUpdatedAt(new \DateTime());
         $this->reportComments = new ArrayCollection();
     }
 
