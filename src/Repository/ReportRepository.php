@@ -4,13 +4,11 @@ namespace App\Repository;
 
 use App\Entity\Conference;
 use App\Entity\Report;
-use App\Form\ReportType;
+use App\Service\ConferenceService;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @extends ServiceEntityRepository<Report>
@@ -22,11 +20,15 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ReportRepository extends ServiceEntityRepository
 {
+    protected ConferenceService $conferenceService;
+
     public function __construct(
-        ManagerRegistry $registry
+        ManagerRegistry $registry,
+        ConferenceService $conferenceService
     )
     {
         parent::__construct($registry, Report::class);
+        $this->conferenceService = $conferenceService;
     }
 
     public function saveData(object $entity): void
@@ -62,7 +64,6 @@ class ReportRepository extends ServiceEntityRepository
             ->getResult();
 
         if (count($existingReports) > 0) {
-            // Знайдемо найближчий можливий час початку
             $closestStartTime = null;
             foreach ($existingReports as $report) {
                 if (
@@ -81,9 +82,21 @@ class ReportRepository extends ServiceEntityRepository
         return null;
     }
 
-    public function deleteReport(Report $report): void
+    public function deleteReport(Report $report, Conference $conference, UserInterface $user): ?string
     {
-        $this->_em->remove($report);
-        $this->_em->flush();
+        $this->_em->beginTransaction();
+
+        try {
+            $this->_em->remove($report);
+            $this->_em->flush();
+            $this->conferenceService->removeUserFromConference($conference, $user);
+            $this->_em->commit();
+        } catch (\Exception $e) {
+            $this->_em->rollback();
+
+            return $e->getMessage();
+        }
+
+        return null;
     }
 }
