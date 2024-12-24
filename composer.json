@@ -9,6 +9,7 @@
         "php": ">=8.3.14",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "ext-json": "*",
         "babdev/pagerfanta-bundle": "^4.5",
         "beberlei/doctrineextensions": "^1.5",
         "composer/package-versions-deprecated": "^1.11",
