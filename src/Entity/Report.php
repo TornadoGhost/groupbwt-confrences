@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=ReportRepository::class)
@@ -59,6 +60,11 @@ class Report
      * @ORM\OneToMany(targetEntity=ReportComment::class, mappedBy="report")
      */
     private ?Collection $reportComments;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="reports")
+     */
+    private ?User $user;
 
     public function __construct()
     {
@@ -170,6 +176,18 @@ class Report
                 $reportComment->setReport(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUser(): ?UserInterface
+    {
+        return $this->user;
+    }
+
+    public function setUser(?UserInterface $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

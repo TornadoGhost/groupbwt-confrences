@@ -81,4 +81,9 @@ class ConferenceService
 
         return $form;
     }
+
+    public function findParticipantByUserId(int $userId, int $conferenceId): ?array
+    {
+        return $this->conferenceRepository->findParticipantByUserId($userId, $conferenceId);
+    }
 }

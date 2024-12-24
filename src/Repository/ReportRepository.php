@@ -80,4 +80,10 @@ class ReportRepository extends ServiceEntityRepository
 
         return null;
     }
+
+    public function deleteReport(Report $report): void
+    {
+        $this->_em->remove($report);
+        $this->_em->flush();
+    }
 }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c0927e98cef99080e0f01cdc42077383",
+    "content-hash": "12164ff99df4d3d3ff543e84d564c751",
     "packages": [
         {
             "name": "babdev/pagerfanta-bundle",
@@ -2684,6 +2684,80 @@
                 }
             ],
             "time": "2023-12-12T12:06:11+00:00"
+        },
+        {
+            "name": "scienta/doctrine-json-functions",
+            "version": "5.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ScientaNL/DoctrineJsonFunctions.git",
+                "reference": "afcb6af4d1421f795fec5cbf29c02aaf486f21c7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ScientaNL/DoctrineJsonFunctions/zipball/afcb6af4d1421f795fec5cbf29c02aaf486f21c7",
+                "reference": "afcb6af4d1421f795fec5cbf29c02aaf486f21c7",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/dbal": "^3.2",
+                "doctrine/lexer": "^2.0 || ^3.0",
+                "doctrine/orm": "^2.19 || ^3",
+                "ext-pdo": "*",
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "doctrine/annotations": "^2",
+                "doctrine/coding-standard": "^8.0 || ^9.0",
+                "phpunit/phpunit": "^8.0 || ^9.0",
+                "psalm/plugin-phpunit": "^0.18",
+                "slevomat/coding-standard": "^8.4",
+                "symfony/cache": "^5.4 || ^6.4 || ^7",
+                "vimeo/psalm": "^5.2",
+                "webmozart/assert": "^1.11"
+            },
+            "suggest": {
+                "dunglas/doctrine-json-odm": "To serialize / deserialize objects as JSON documents."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Scienta\\DoctrineJsonFunctions\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Doctrine Json Functions Contributors",
+                    "homepage": "https://github.com/ScientaNL/DoctrineJsonFunctions/contributors"
+                }
+            ],
+            "description": "A set of extensions to Doctrine 2 that add support for json query functions.",
+            "keywords": [
+                "database",
+                "doctrine",
+                "dql",
+                "json",
+                "mariadb",
+                "mysql",
+                "orm",
+                "postgres",
+                "postgresql",
+                "sqlite"
+            ],
+            "support": {
+                "issues": "https://github.com/ScientaNL/DoctrineJsonFunctions/issues",
+                "source": "https://github.com/ScientaNL/DoctrineJsonFunctions/tree/5.5.0"
+            },
+            "time": "2024-03-08T08:39:12+00:00"
         },
         {
             "name": "sensio/framework-extra-bundle",
@@ -10887,7 +10961,8 @@
     "platform": {
         "php": ">=8.3.14",
         "ext-ctype": "*",
-        "ext-iconv": "*"
+        "ext-iconv": "*",
+        "ext-json": "*"
     },
     "platform-dev": {},
     "plugin-api-version": "2.6.0"

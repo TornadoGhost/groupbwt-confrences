@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block body %}
-    <div class="d-flex align-content-center justify-content-between">
+    <div class="d-flex align-content-center justify-content-between align-items-center">
         <h1>Conference</h1>
         {% if is_granted('ROLE_ADMIN') %}
             <div class="d-flex justify-content-center align-items-center">
@@ -26,12 +26,17 @@
             </div>
         {% else %}
             {% if conference.users is empty %}
-                <form class="d-flex align-items-center"
-                      action="{{ path('app_conference_join', {'id': conference.id}) }}"
-                      method="post">
-                    <input type="hidden" name="token" value="{{ csrf_token('join-conference') }}">
-                    <button class="btn btn-primary" type="submit">Join</button>
-                </form>
+                {% if is_granted('ROLE_ANNOUNCER') %}
+                    <a class="btn btn-primary"
+                       href="{{ path('app_report_new', {'conference_id': conference.id}) }}">Join</a>
+                {% else %}
+                    <form class="d-inline"
+                          action="{{ path('app_conference_join', {'id': conference.id}) }}"
+                          method="post">
+                        <input type="hidden" name="token" value="{{ csrf_token('join-conference') }}">
+                        <button class="btn btn-primary" type="submit">Join</button>
+                    </form>
+                {% endif %}
             {% else %}
                 <form class="d-flex align-items-center"
                       action="{{ path('app_conference_cancel', {'id': conference.id}) }}"
@@ -71,7 +76,7 @@
                         <div class="col-sm-6 mb-3">
                             <div class="card">
                                 <div class="card-body">
-                                    <h5 class="card-title">{{ report.title }}</h5>
+                                    <a href="{{ path('app_report_show', {'conference_id': conference.id, 'report_id': report.id}) }}"><h5 class="card-title">{{ report.title }}</h5></a>
                                     <p class="card-text">{{ report.startedAt|date('H:i') }}
                                         -{{ report.endedAt|date('H:i') }}</p>
                                     <span class="short-content">

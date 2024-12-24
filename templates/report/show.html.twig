@@ -7,51 +7,39 @@
 
     <table class="table">
         <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ report.id }}</td>
-            </tr>
-            <tr>
-                <th>Title</th>
-                <td>{{ report.title }}</td>
-            </tr>
-            <tr>
-                <th>StartedAt</th>
-                <td>{{ report.startedAt ? report.startedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Ended_at</th>
-                <td>{{ report.endedAt ? report.endedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ report.description }}</td>
-            </tr>
+        <tr>
+            <th>Title</th>
+            <td>{{ report.title }}</td>
+        </tr>
+        <tr>
+            <th>Time</th>
+            <td>{{ report.startedAt|date('Y-m-d H:i') }}-{{ report.endedAt|date('H:i') }}</td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>{{ report.description }}</td>
+        </tr>
+        {% if (report.document) %}
             <tr>
                 <th>Document</th>
                 <td>{{ report.document }}</td>
             </tr>
-            <tr>
-                <th>CreatedAt</th>
-                <td>{{ report.createdAt ? report.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>UpdatedAt</th>
-                <td>{{ report.updatedAt ? report.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>DeletedAt</th>
-                <td>{{ report.deletedAt ? report.deletedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
+        {% endif %}
         </tbody>
     </table>
 
-    <a href="{{ path('app_report_index') }}">back to list</a>
-
-    <a href="{{ path('app_report_edit', {'id': report.id}) }}">edit</a>
-
-    <form method="post" action="{{ path('app_report_delete', {'id': report.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
-        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ report.id) }}">
-        <button class="btn">Delete</button>
-    </form>
+    {% if(is_granted('ROLE_ANNOUNCER')) %}
+        {% if(is_granted('edit', report)) %}
+            <a class="d-inline-block btn btn-primary mr-1"
+               href="{{ path('app_report_edit', {'conference_id': conferenceId,'report_id': report.id}) }}">Edit</a>
+        {% endif %}
+        {% if(is_granted('delete', report)) %}
+            <form class="d-inline" method="post"
+                  action="{{ path('app_report_delete', {'conference_id': conferenceId, 'report_id': report.id}) }}"
+                  onsubmit="return confirm('Are you sure you want to delete this item?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ report.id) }}">
+                <button class="btn btn-danger">Cancel participation</button>
+            </form>
+        {% endif %}
+    {% endif %}
 {% endblock %}
