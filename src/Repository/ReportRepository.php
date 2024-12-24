@@ -45,12 +45,14 @@ class ReportRepository extends ServiceEntityRepository
     {
         $existingReports = $this->createQueryBuilder('r')
             ->join('r.conference', 'c')
-            ->where("c = $conferenceId")
             ->where('r.startedAt < :endTime')
             ->andWhere('r.endedAt > :startTime')
+            ->andWhere('c.id = :conferenceId')
+            ->andWhere('r.deletedAt IS NOT NULL')
             ->setParameters([
                 'startTime' => $startTime,
                 'endTime' => $endTime,
+                'conferenceId' => $conferenceId,
             ])
             ->getQuery()
             ->getResult();
