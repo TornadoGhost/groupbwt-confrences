@@ -76,7 +76,7 @@
                         <div class="col-sm-6 mb-3">
                             <div class="card">
                                 <div class="card-body">
-                                    <h5 class="card-title">{{ report.title }}</h5>
+                                    <a href="{{ path('app_report_show', {'conference_id': conference.id, 'report_id': report.id}) }}"><h5 class="card-title">{{ report.title }}</h5></a>
                                     <p class="card-text">{{ report.startedAt|date('H:i') }}
                                         -{{ report.endedAt|date('H:i') }}</p>
                                     <span class="short-content">
