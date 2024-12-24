@@ -81,4 +81,17 @@ class ConferenceRepository extends ServiceEntityRepository
 
         return $this->find($randomId);
     }
+
+    public function findParticipantByUserId(int $userId, int $conferenceId): ?array
+    {
+        return $this->createQueryBuilder('c')
+            ->select('u.email')
+            ->join('c.users', 'u')
+            ->where('u.id = :userId')
+            ->andWhere('c.id = :conferenceId')
+            ->setParameter('userId', $userId)
+            ->setParameter('conferenceId', $conferenceId)
+            ->getQuery()
+            ->getResult();
+    }
 }
