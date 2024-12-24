@@ -26,12 +26,17 @@
             </div>
         {% else %}
             {% if conference.users is empty %}
-                <form class="d-flex align-items-center"
-                      action="{{ path('app_conference_join', {'id': conference.id}) }}"
-                      method="post">
-                    <input type="hidden" name="token" value="{{ csrf_token('join-conference') }}">
-                    <button class="btn btn-primary" type="submit">Join</button>
-                </form>
+                {% if is_granted('ROLE_ANNOUNCER') %}
+                    <a class="btn btn-primary"
+                       href="{{ path('app_report_new', {'conference_id': conference.id}) }}">Join</a>
+                {% else %}
+                    <form class="d-inline"
+                          action="{{ path('app_conference_join', {'id': conference.id}) }}"
+                          method="post">
+                        <input type="hidden" name="token" value="{{ csrf_token('join-conference') }}">
+                        <button class="btn btn-primary" type="submit">Join</button>
+                    </form>
+                {% endif %}
             {% else %}
                 <form class="d-flex align-items-center"
                       action="{{ path('app_conference_cancel', {'id': conference.id}) }}"
