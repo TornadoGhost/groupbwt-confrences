@@ -70,11 +70,6 @@ class ReportService
         return $form;
     }
 
-    public function getAvailableTimeForReport(int $conferenceId): QueryBuilder
-    {
-        return $this->reportRepository->getAvailableTimeForReport($conferenceId);
-    }
-
     public function saveReportWithFile(
         Report $report,
         Conference $conference,

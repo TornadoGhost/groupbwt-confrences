@@ -37,14 +37,6 @@ class ReportRepository extends ServiceEntityRepository
         $this->_em->flush();
     }
 
-    public function getAvailableTimeForReport(int $conferenceId): QueryBuilder
-    {
-        return $this->createQueryBuilder('r')
-            ->select('r.startedAt')
-            ->join('r.conference', 'c')
-            ->where("c = $conferenceId");
-    }
-
     public function findOverlappingReport(
         \DateTime $startTime,
         \DateTime $endTime,
