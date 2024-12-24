@@ -20,6 +20,8 @@ doctrine:
         dql:
             numeric_functions:
                 rand: DoctrineExtensions\Query\Mysql\Rand
+            string_functions:
+                JSON_CONTAINS: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Mysql\JsonContains
 
 when@test:
     doctrine:
