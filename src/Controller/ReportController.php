@@ -4,9 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Conference;
 use App\Entity\Report;
-use App\Form\ReportType;
-use App\Repository\ConferenceRepository;
-use App\Repository\ReportRepository;
 use App\Service\ConferenceService;
 use App\Service\ReportService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
