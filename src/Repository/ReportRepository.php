@@ -80,8 +80,8 @@ class ReportRepository extends ServiceEntityRepository
 
         try {
             $this->_em->remove($report);
+            $conference->removeUser($user);
             $this->_em->flush();
-            $this->conferenceService->removeUserFromConference($conference, $user);
             $this->_em->commit();
         } catch (\Exception $e) {
             $this->_em->rollback();
