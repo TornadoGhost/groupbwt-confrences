@@ -92,6 +92,7 @@ class ReportController extends AbstractController
 
     /**
      * @Route("/{report_id}/edit", name="app_report_edit", methods={"GET","POST"})
+     * @ParamConverter("report", options={"mapping": {"report_id": "id"}})
      */
     public function edit(Request $request, Report $report, EntityManagerInterface $entityManager): Response
     {
@@ -112,6 +113,7 @@ class ReportController extends AbstractController
 
     /**
      * @Route("/{report_id}", name="app_report_delete", methods={"POST"})
+     * @ParamConverter("report", options={"mapping": {"report_id": "id"}})
      */
     public function delete(Request $request, Report $report, EntityManagerInterface $entityManager): Response
     {
