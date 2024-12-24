@@ -103,5 +103,36 @@ class ReportService
         $report->setUser($user);
         $report->setConference($conference);
         $this->reportRepository->saveData($report);
+
+        return true;
+    }
+
+    public function deleteReport(Report $report, Conference $conference, UserInterface $user): ?string
+    {
+        $fileName = $report->getDocument();
+        $this->entityManager->beginTransaction();
+
+        try {
+            $this->deleteUploadedFile($fileName);
+            $this->reportRepository->deleteReport($report);
+            $this->conferenceService->removeUserFromConference($conference, $user);
+            $this->entityManager->commit();
+        } catch (\Exception $e) {
+            $this->entityManager->rollback();
+
+            return $e->getMessage();
+        }
+
+        return null;
+    }
+
+    public function deleteUploadedFile($fileName): void
+    {
+        $filesystem = new Filesystem();
+        $filePath = $this->fileUploader->getTargetDirectory() . '/' . $fileName ;
+
+        if ($filesystem->exists($filePath)) {
+            $filesystem->remove($filePath);
+        }
     }
 }
