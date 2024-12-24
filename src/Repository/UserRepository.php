@@ -73,7 +73,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $this->selectRandomUserFromArray($ids);
     }
 
-    public function getRandomUserWithoutAdmin(): ?User
+    public function getRandomAnnouncerUser(): ?User
     {
         $ids = $this->createQueryBuilder('u')
             ->select('u.id')
