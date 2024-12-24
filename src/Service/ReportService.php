@@ -92,7 +92,12 @@ class ReportService
             $report->setDocument($documentName);
         }
 
-            $report->setDocument($newFilename);
+        $userId = $user->getId();
+        $conferenceId = $conference->getId();
+        $userPartOfConference = $this->conferenceService->findParticipantByUserId($userId, $conferenceId);
+
+        if (!$userPartOfConference) {
+            $conference->addUser($user);
         }
 
         $report->setConference($conference);
