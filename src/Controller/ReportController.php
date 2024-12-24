@@ -118,10 +118,13 @@ class ReportController extends AbstractController
      * @ParamConverter("report", options={"mapping": {"report_id": "id"}})
      * @IsGranted("edit", subject="report")
      */
-    public function edit(Request $request, Report $report, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Conference $conference, Report $report): Response
     {
-        $form = $this->createForm(ReportType::class, $report);
-        $form->handleRequest($request);
+        $form = $this->reportService->prepareForm(
+            $report,
+            $request,
+            $conference
+        );
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
@@ -132,6 +135,16 @@ class ReportController extends AbstractController
         return $this->renderForm('report/edit.html.twig', [
             'report' => $report,
             'form' => $form,
+        ]);
+    }
+
+            return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->renderForm('report/edit.html.twig', [
+            'report' => $report,
+            'form' => $form,
+            'conferenceId' => $conference->getId()
         ]);
     }
 
