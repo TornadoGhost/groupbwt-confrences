@@ -171,7 +171,6 @@ class Report
     public function removeReportComment(ReportComment $reportComment): self
     {
         if ($this->reportComments->removeElement($reportComment)) {
-            // set the owning side to null (unless already changed)
             if ($reportComment->getReport() === $this) {
                 $reportComment->setReport(null);
             }
