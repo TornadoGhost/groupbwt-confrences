@@ -35,7 +35,7 @@ class ReportFixtures extends Fixture implements DependentFixtureInterface
             $report->setEndedAt($faker->dateTimeBetween('+2 hours', '+10 hours'));
             $report->setDescription($faker->sentence);
             $report->setConference($this->conferenceRepository->getRandomConference());
-            $report->setUser($this->userRepository->getRandomUserWithoutAdmin());
+            $report->setUser($this->userRepository->getRandomAnnouncerUser());
 
             $manager->persist($report);
         }
