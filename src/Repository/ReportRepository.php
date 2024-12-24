@@ -87,4 +87,20 @@ class ReportRepository extends ServiceEntityRepository
 
         return null;
     }
+
+    public function findByConferenceIdAndUserIdNotDeleted(Conference $conference, UserInterface $user): ?Report
+    {
+        return $this->createQueryBuilder('r')
+            ->select('r')
+            ->where('r.deletedAt IS NULL')
+            ->andWhere('r.conference = :conference')
+            ->andWhere('r.user = :user')
+            ->setParameters([
+                'conference' => $conference,
+                'user' => $user
+            ])
+            ->getQuery()
+            ->getOneOrNullResult()
+            ;
+    }
 }
