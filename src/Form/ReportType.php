@@ -132,10 +132,7 @@ class ReportType extends AbstractType
                     ])
                 ]
             ])
-            ->add('conference', HiddenType::class, [
-                'data' => $options['conference_id'],
-                'mapped' => false
-            ]);
+        ;
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($options) {
             $form = $event->getForm();
