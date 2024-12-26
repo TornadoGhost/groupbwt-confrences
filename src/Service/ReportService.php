@@ -115,4 +115,25 @@ class ReportService
     {
         return $this->reportRepository->findOneBy($criteria, $orderBy);
     }
+
+    public function downloadFile(string $fileName): StreamedResponse
+    {
+        $response = new StreamedResponse(function () use ($fileName) {
+            $file = $this->fileUploader->getTargetDirectory() . '/' . $fileName;
+            $stream = fopen($file, 'r');
+
+            while (!feof($stream)) {
+                echo fread($stream, 1024);
+                flush();
+            }
+
+            fclose($stream);
+        });
+
+        $response->headers->set('Content-Type', 'application/octet-stream');
+        $response->headers->set('Content-Disposition', "attachment; filename={$fileName}");
+
+        return $response;
+    }
+
 }
