@@ -101,7 +101,7 @@ class ReportService
         return $this->reportRepository->deleteReport($report, $conference, $user);
     }
 
-    public function deleteUploadedFile($fileName): void
+    public function deleteUploadedFile(string $fileName): void
     {
         $filesystem = new Filesystem();
         $filePath = $this->fileUploader->getTargetDirectory() . '/' . $fileName ;
