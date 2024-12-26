@@ -11,6 +11,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class ReportService
@@ -22,9 +23,9 @@ class ReportService
 
     public function __construct(
         FormFactoryInterface $formFactory,
-        ReportRepository $reportRepository,
-        FileUploader $fileUploader,
-        ConferenceService $conferenceService
+        ReportRepository     $reportRepository,
+        FileUploader         $fileUploader,
+        ConferenceService    $conferenceService
     )
     {
         $this->formFactory = $formFactory;
@@ -42,8 +43,8 @@ class ReportService
     }
 
     public function prepareForm(
-        Report $report,
-        Request $request,
+        Report     $report,
+        Request    $request,
         Conference $conference
     ): FormInterface
     {
@@ -57,14 +58,22 @@ class ReportService
         return $form;
     }
 
+    // TODO rename method
     public function saveReportWithFile(
-        Report $report,
-        Conference $conference,
+        Report        $report,
+        Conference    $conference,
         UserInterface $user,
         ?UploadedFile $document = null
     ): bool
     {
         if ($document) {
+
+            $fileExist = $this->reportRepository->fileNameExist($report->getId());
+
+            if ($fileExist) {
+                $this->deleteUploadedFile(array_shift($fileExist));
+            }
+
             $documentName = $this->fileUploader->upload($document);
 
             if (!$documentName) {
@@ -94,10 +103,10 @@ class ReportService
         return $this->reportRepository->deleteReport($report, $conference, $user);
     }
 
-    public function deleteUploadedFile($fileName): void
+    public function deleteUploadedFile(string $fileName): void
     {
         $filesystem = new Filesystem();
-        $filePath = $this->fileUploader->getTargetDirectory() . '/' . $fileName ;
+        $filePath = $this->fileUploader->getTargetDirectory() . '/' . $fileName;
 
         if ($filesystem->exists($filePath)) {
             $filesystem->remove($filePath);
@@ -108,4 +117,25 @@ class ReportService
     {
         return $this->reportRepository->findOneBy($criteria, $orderBy);
     }
+
+    public function downloadFile(string $fileName): StreamedResponse
+    {
+        $response = new StreamedResponse(function () use ($fileName) {
+            $file = $this->fileUploader->getTargetDirectory() . '/' . $fileName;
+            $stream = fopen($file, 'r');
+
+            while (!feof($stream)) {
+                echo fread($stream, 1024);
+                flush();
+            }
+
+            fclose($stream);
+        });
+
+        $response->headers->set('Content-Type', 'application/octet-stream');
+        $response->headers->set('Content-Disposition', "attachment; filename={$fileName}");
+
+        return $response;
+    }
+
 }

@@ -22,7 +22,16 @@
         {% if (report.document) %}
             <tr>
                 <th>Document</th>
-                <td>{{ report.document }}</td>
+                <td>
+                    <a href="{{
+                    path('app_report_file_download',
+                        {
+                            'conference_id': conferenceId,
+                            'report_id': report.id,
+                            'file_name': report.document
+                        }
+                    ) }}">{{ report.document }}</a>
+                </td>
             </tr>
         {% endif %}
         </tbody>

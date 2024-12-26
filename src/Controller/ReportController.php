@@ -13,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -125,7 +126,7 @@ class ReportController extends AbstractController
         );
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $document = $report->getDocument() ?? null;
+            $document = $form['document']->getData() ?? null;
             $user = $this->getUser();
             $result = $this->reportService->saveReportWithFile($report, $conference, $user, $document);
 
@@ -170,5 +171,13 @@ class ReportController extends AbstractController
         }
 
         return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    /**
+     * @Route("/{report_id}/{file_name}", name="app_report_file_download", methods={"GET"})
+     */
+    public function download(string $file_name): StreamedResponse
+    {
+        return $this->reportService->downloadFile($file_name);
     }
 }

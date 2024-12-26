@@ -34,22 +34,42 @@ class ReportRepository extends ServiceEntityRepository
     public function findOverlappingReport(
         \DateTime $startTime,
         \DateTime $endTime,
-        int $conferenceId
+        int $conferenceId,
+        ?int $reportId = null
     ): ?\DateTimeInterface
     {
-        $existingReports = $this->createQueryBuilder('r')
-            ->join('r.conference', 'c')
-            ->where('r.startedAt < :endTime')
-            ->andWhere('r.endedAt > :startTime')
-            ->andWhere('c.id = :conferenceId')
-            ->andWhere('r.deletedAt IS NOT NULL')
-            ->setParameters([
-                'startTime' => $startTime,
-                'endTime' => $endTime,
-                'conferenceId' => $conferenceId,
-            ])
-            ->getQuery()
-            ->getResult();
+        if ($reportId) {
+            $existingReports = $this->createQueryBuilder('r')
+                ->join('r.conference', 'c')
+                ->where('r.startedAt < :endTime')
+                ->andWhere('r.endedAt > :startTime')
+                ->andWhere('c.id = :conferenceId')
+                ->andWhere('r.deletedAt IS NULL')
+                ->andWhere('r.id != :reportId')
+                ->setParameters([
+                    'startTime' => $startTime,
+                    'endTime' => $endTime,
+                    'conferenceId' => $conferenceId,
+                    'reportId' => $reportId
+                ])
+                ->getQuery()
+                ->getResult();
+        } else {
+            $existingReports = $this->createQueryBuilder('r')
+                ->join('r.conference', 'c')
+                ->where('r.startedAt < :endTime')
+                ->andWhere('r.endedAt > :startTime')
+                ->andWhere('c.id = :conferenceId')
+                ->andWhere('r.deletedAt IS NULL')
+                ->setParameters([
+                    'startTime' => $startTime,
+                    'endTime' => $endTime,
+                    'conferenceId' => $conferenceId,
+                ])
+                ->getQuery()
+                ->getResult();
+        }
+
 
         if (count($existingReports) > 0) {
             $closestStartTime = null;
@@ -102,5 +122,16 @@ class ReportRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult()
             ;
+    }
+
+    public function fileNameExist(int $reportId): ?array
+    {
+        return $this->createQueryBuilder('r')
+            ->select('r.document')
+            ->where('r.id = :reportId')
+            ->setParameter('reportId', $reportId)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
     }
 }

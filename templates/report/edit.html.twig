@@ -15,14 +15,18 @@
     {% endfor %}
 
     {{ form_start(form) }}
+    {#  TODO Add file name showing to file input(Symfony bug with bootstrap theme)  #}
     {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+    <button class="btn btn-primary" type="submit">{{ button_label|default('Save') }}</button>
     {{ form_end(form) }}
 
-    <a href="{{ path('app_report_index') }}">back to list</a>
-
-    <form method="post" action="{{ path('app_report_delete', {'conference_id': conferenceId,'report_id': report.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
-        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ report.id) }}">
-        <button class="btn">Delete</button>
-    </form>
+    <div class="d-flex align-content-center mt-2">
+        <a class="d-block btn btn-primary mr-1" href="{{ path('app_report_show', {'conference_id': conferenceId, 'report_id': report.id}) }}">Back</a>
+        <form method="post"
+              action="{{ path('app_report_delete', {'conference_id': conferenceId, 'report_id': report.id}) }}"
+              onsubmit="return confirm('Are you sure you want to delete this item?');">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ report.id) }}">
+            <button class="btn btn-danger">Cancel participation</button>
+        </form>
+    </div>
 {% endblock %}

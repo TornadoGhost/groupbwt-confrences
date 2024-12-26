@@ -51,7 +51,6 @@ class ReportType extends AbstractType
                 ]
             ])
             ->add('startedAt', DateTimeType::class, [
-                'data' => $options['conference_start'],
                 'widget' => 'single_text',
                 'label' => 'Start time',
                 'attr' => [
@@ -68,16 +67,15 @@ class ReportType extends AbstractType
                     ]),
                     new LessThanOrEqual([
                         'value' => $options['conference_end'],
-                        'message' => "The time must not be earlier than {$options['conference_start']->format('d-m-Y\TH:i')}",
+                        'message' => "The time must not be earlier than {$options['conference_start']->format('d-m-Y\, H:i')}",
                     ]),
                     new GreaterThanOrEqual([
                         'value' => $options['conference_start'],
-                        'message' => "The time must not be latter than {$options['conference_end']->format('d-m-Y\TH:i')}",
+                        'message' => "The time must not be latter than {$options['conference_end']->format('d-m-Y\, H:i')}",
                     ]),
                 ]
             ])
             ->add('endedAt', DateTimeType::class, [
-                'data' => $options['conference_end'],
                 'widget' => 'single_text',
                 'label' => 'End time',
                 'attr' => [
@@ -94,11 +92,11 @@ class ReportType extends AbstractType
                     ]),
                     new LessThanOrEqual([
                         'value' => $options['conference_end'],
-                        'message' => "The time must not be earlier than {$options['conference_start']->format('d-m-Y\TH:i')}",
+                        'message' => "The time must not be earlier than {$options['conference_start']->format('d-m-Y H:i')}",
                     ]),
                     new GreaterThanOrEqual([
                         'value' => $options['conference_start'],
-                        'message' => "The time must not be latter than {$options['conference_end']->format('d-m-Y\TH:i')}",
+                        'message' => "The time must not be latter than {$options['conference_end']->format('d-m-Y H:i')}",
                     ]),
                 ]
             ])
@@ -117,6 +115,7 @@ class ReportType extends AbstractType
                 ]
             ])
             ->add('document', FileType::class, [
+                'data' => null,
                 'label' => 'Presentation',
                 'mapped' => false,
                 'required' => false,
@@ -154,7 +153,14 @@ class ReportType extends AbstractType
                 ));
             }
 
-            $overlappingReport = $this->reportRepository->findOverlappingReport($startTime, $endTime, $conferenceId);
+            $reportId = $data->getId() ?? null;
+            $overlappingReport = $this->reportRepository->findOverlappingReport(
+                $startTime,
+                $endTime,
+                $conferenceId,
+                $reportId
+            );
+
             if (!empty($overlappingReport)) {
                 $form
                     ->get('startedAt')
