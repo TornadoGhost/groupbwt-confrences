@@ -123,4 +123,15 @@ class ReportRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
             ;
     }
+
+    public function fileExist(int $reportId): ?array
+    {
+        return $this->createQueryBuilder('r')
+            ->select('r.document')
+            ->where('r.id = :reportId')
+            ->setParameter('reportId', $reportId)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
 }
