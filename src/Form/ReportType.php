@@ -67,11 +67,11 @@ class ReportType extends AbstractType
                     ]),
                     new LessThanOrEqual([
                         'value' => $options['conference_end'],
-                        'message' => "The time must not be earlier than {$options['conference_start']->format('d-m-Y\TH:i')}",
+                        'message' => "The time must not be earlier than {$options['conference_start']->format('d-m-Y\, H:i')}",
                     ]),
                     new GreaterThanOrEqual([
                         'value' => $options['conference_start'],
-                        'message' => "The time must not be latter than {$options['conference_end']->format('d-m-Y\TH:i')}",
+                        'message' => "The time must not be latter than {$options['conference_end']->format('d-m-Y\, H:i')}",
                     ]),
                 ]
             ])
@@ -92,11 +92,11 @@ class ReportType extends AbstractType
                     ]),
                     new LessThanOrEqual([
                         'value' => $options['conference_end'],
-                        'message' => "The time must not be earlier than {$options['conference_start']->format('d-m-Y\TH:i')}",
+                        'message' => "The time must not be earlier than {$options['conference_start']->format('d-m-Y H:i')}",
                     ]),
                     new GreaterThanOrEqual([
                         'value' => $options['conference_start'],
-                        'message' => "The time must not be latter than {$options['conference_end']->format('d-m-Y\TH:i')}",
+                        'message' => "The time must not be latter than {$options['conference_end']->format('d-m-Y H:i')}",
                     ]),
                 ]
             ])
