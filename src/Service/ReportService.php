@@ -65,6 +65,13 @@ class ReportService
     ): bool
     {
         if ($document) {
+
+            $fileExist = $this->reportRepository->fileNameExist($report->getId());
+
+            if ($fileExist) {
+                $this->deleteUploadedFile(array_shift($fileExist));
+            }
+
             $documentName = $this->fileUploader->upload($document);
 
             if (!$documentName) {
