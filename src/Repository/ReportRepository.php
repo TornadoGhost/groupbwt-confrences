@@ -124,7 +124,7 @@ class ReportRepository extends ServiceEntityRepository
             ;
     }
 
-    public function fileExist(int $reportId): ?array
+    public function fileNameExist(int $reportId): ?array
     {
         return $this->createQueryBuilder('r')
             ->select('r.document')
