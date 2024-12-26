@@ -152,7 +152,14 @@ class ReportType extends AbstractType
                 ));
             }
 
-            $overlappingReport = $this->reportRepository->findOverlappingReport($startTime, $endTime, $conferenceId);
+            $reportId = $data->getId() ?? null;
+            $overlappingReport = $this->reportRepository->findOverlappingReport(
+                $startTime,
+                $endTime,
+                $conferenceId,
+                $reportId
+            );
+
             if (!empty($overlappingReport)) {
                 $form
                     ->get('startedAt')
