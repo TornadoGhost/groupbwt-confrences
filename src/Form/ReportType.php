@@ -115,6 +115,7 @@ class ReportType extends AbstractType
                 ]
             ])
             ->add('document', FileType::class, [
+                'data' => null,
                 'label' => 'Presentation',
                 'mapped' => false,
                 'required' => false,
