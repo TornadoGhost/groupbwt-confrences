@@ -125,7 +125,7 @@ class ReportController extends AbstractController
         );
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $document = $report->getDocument() ?? null;
+            $document = $form['document']->getData() ?? null;
             $user = $this->getUser();
             $result = $this->reportService->saveReportWithFile($report, $conference, $user, $document);
 
