@@ -23,9 +23,9 @@ class ReportService
 
     public function __construct(
         FormFactoryInterface $formFactory,
-        ReportRepository $reportRepository,
-        FileUploader $fileUploader,
-        ConferenceService $conferenceService
+        ReportRepository     $reportRepository,
+        FileUploader         $fileUploader,
+        ConferenceService    $conferenceService
     )
     {
         $this->formFactory = $formFactory;
@@ -43,8 +43,8 @@ class ReportService
     }
 
     public function prepareForm(
-        Report $report,
-        Request $request,
+        Report     $report,
+        Request    $request,
         Conference $conference
     ): FormInterface
     {
@@ -58,9 +58,10 @@ class ReportService
         return $form;
     }
 
+    // TODO rename method
     public function saveReportWithFile(
-        Report $report,
-        Conference $conference,
+        Report        $report,
+        Conference    $conference,
         UserInterface $user,
         ?UploadedFile $document = null
     ): bool
@@ -105,7 +106,7 @@ class ReportService
     public function deleteUploadedFile(string $fileName): void
     {
         $filesystem = new Filesystem();
-        $filePath = $this->fileUploader->getTargetDirectory() . '/' . $fileName ;
+        $filePath = $this->fileUploader->getTargetDirectory() . '/' . $fileName;
 
         if ($filesystem->exists($filePath)) {
             $filesystem->remove($filePath);
