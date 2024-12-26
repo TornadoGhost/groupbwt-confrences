@@ -51,7 +51,6 @@ class ReportType extends AbstractType
                 ]
             ])
             ->add('startedAt', DateTimeType::class, [
-                'data' => $options['conference_start'],
                 'widget' => 'single_text',
                 'label' => 'Start time',
                 'attr' => [
@@ -77,7 +76,6 @@ class ReportType extends AbstractType
                 ]
             ])
             ->add('endedAt', DateTimeType::class, [
-                'data' => $options['conference_end'],
                 'widget' => 'single_text',
                 'label' => 'End time',
                 'attr' => [
