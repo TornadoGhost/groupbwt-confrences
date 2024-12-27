@@ -204,6 +204,7 @@ class ReportController extends AbstractController
      * @Security("is_granted('ROLE_USER')")
      */
     public function loadComments(
+        Request $request,
         Conference $conference,
         Report $report,
         ReportCommentService $commentService,
@@ -211,6 +212,7 @@ class ReportController extends AbstractController
         int $page = 1
     ): JsonResponse
     {
+        $page = $request->query->get('page');
         $reportId = $report->getId();
         $report = $reportRepository->find($reportId);
 
