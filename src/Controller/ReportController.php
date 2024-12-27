@@ -93,6 +93,7 @@ class ReportController extends AbstractController
     /**
      * @Route("/{report_id}", name="app_report_show", methods={"GET", "POST"})
      * @ParamConverter("report", options={"mapping": {"report_id": "id"}})
+     * @Security("is_granted('ROLE_USER')")
      */
     public function show(
         Request $request,
@@ -187,6 +188,7 @@ class ReportController extends AbstractController
 
     /**
      * @Route("/{report_id}/{file_name}", name="app_report_file_download", methods={"GET"})
+     * @Security("is_granted('ROLE_USER')")
      */
     public function download(string $file_name): StreamedResponse
     {
