@@ -28,6 +28,17 @@ class ReportCommentVoter extends Voter
         /** @var ReportComment $comment */
         $comment = $subject;
 
+        if ($attribute === self::EDIT) {
+            $commentTime = $comment->getCreatedAt()->modify("+10 minutes");
+            $now =  new \DateTime();
+
+            if ($comment->getUser() === $user && $commentTime >= $now) {
+                return true;
+            }
+
+            return false;
+        }
+
         return $comment->getUser() === $user;
     }
 }
