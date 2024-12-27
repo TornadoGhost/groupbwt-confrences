@@ -6,6 +6,7 @@ use App\Entity\Conference;
 use App\Entity\Report;
 use App\Form\ReportType;
 use App\Repository\ReportRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
@@ -20,18 +21,21 @@ class ReportService
     protected ReportRepository $reportRepository;
     protected FileUploader $fileUploader;
     protected ConferenceService $conferenceService;
+    protected EntityManagerInterface $entityManager;
 
     public function __construct(
         FormFactoryInterface $formFactory,
         ReportRepository     $reportRepository,
         FileUploader         $fileUploader,
-        ConferenceService    $conferenceService
+        ConferenceService    $conferenceService,
+        EntityManagerInterface $entityManager
     )
     {
         $this->formFactory = $formFactory;
         $this->reportRepository = $reportRepository;
         $this->fileUploader = $fileUploader;
         $this->conferenceService = $conferenceService;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -67,10 +71,10 @@ class ReportService
     ): bool
     {
         if ($document) {
+            $reportId = $this->entityManager->contains($report) ? $report->getId() : null;
 
-            $fileExist = $this->reportRepository->fileNameExist($report->getId());
-
-            if ($fileExist) {
+            if ($reportId) {
+                $fileExist = $this->reportRepository->fileNameExist($reportId);
                 $this->deleteUploadedFile(array_shift($fileExist));
             }
 
