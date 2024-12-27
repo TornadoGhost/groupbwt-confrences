@@ -9,8 +9,8 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class ReportVoter extends Voter
 {
-    const EDIT = 'edit';
-    const DELETE = 'delete';
+    public const EDIT = 'EDIT';
+    public const DELETE = 'DELETE';
 
     protected function supports(string $attribute, $subject): bool
     {
