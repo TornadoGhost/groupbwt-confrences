@@ -131,7 +131,6 @@ class ReportController extends AbstractController
      */
     public function edit(Request $request, Conference $conference, Report $report): Response
     {
-        // TODO Was added for showing template. This part was not tested and need improvements
         $form = $this->reportService->prepareForm(
             $report,
             $request,
