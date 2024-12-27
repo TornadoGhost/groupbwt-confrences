@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Report;
 use App\Repository\ReportRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -22,13 +23,16 @@ use Symfony\Component\Validator\Constraints\Type;
 
 class ReportType extends AbstractType
 {
-    private $reportRepository;
+    private ReportRepository $reportRepository;
+    private EntityManagerInterface $entityManager;
 
     public function __construct(
-        ReportRepository $reportRepository
+        ReportRepository       $reportRepository,
+        EntityManagerInterface $entityManager
     )
     {
         $this->reportRepository = $reportRepository;
+        $this->entityManager = $entityManager;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -130,11 +134,11 @@ class ReportType extends AbstractType
                         'mimeTypesMessage' => 'Please upload a valid PPT or PPTX file.',
                     ])
                 ]
-            ])
-        ;
+            ]);
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($options) {
             $form = $event->getForm();
+            /** @var Report $data */
             $data = $event->getData();
 
             $startTime = $data->getStartedAt();
@@ -153,7 +157,8 @@ class ReportType extends AbstractType
                 ));
             }
 
-            $reportId = $data->getId() ?? null;
+            $reportId = $this->entityManager->contains($data) ? $data->getId() : null;
+
             $overlappingReport = $this->reportRepository->findOverlappingReport(
                 $startTime,
                 $endTime,
