@@ -6,6 +6,7 @@ use App\Entity\Report;
 use App\Entity\ReportComment;
 use App\Form\ReportCommentType;
 use App\Repository\ReportCommentRepository;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -78,4 +79,9 @@ class ReportCommentService
     {
         $this->reportCommentRepository->remove($comment, $flush);
     }
-}
+
+    public function getCommentsByReportQueryBuilder(Report $report): QueryBuilder
+    {
+        return $this->reportCommentRepository->getCommentsByReportQueryBuilder($report);
+    }
+ }
