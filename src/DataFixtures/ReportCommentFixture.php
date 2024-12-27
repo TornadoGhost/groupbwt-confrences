@@ -28,7 +28,7 @@ class ReportCommentFixture extends Fixture implements DependentFixtureInterface
     {
         $faker = Factory::create();
 
-        for ($i = 1; $i <= 60; $i++) {
+        for ($i = 1; $i <= 5000; $i++) {
             $comment = new ReportComment();
             $comment->setContent($faker->sentence);
             $comment->setUser($this->userRepository->getRandomUser());
