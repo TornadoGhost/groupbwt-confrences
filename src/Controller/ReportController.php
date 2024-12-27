@@ -4,13 +4,17 @@ namespace App\Controller;
 
 use App\Entity\Conference;
 use App\Entity\Report;
+use App\Repository\ReportRepository;
 use App\Service\ConferenceService;
 use App\Service\ReportCommentService;
 use App\Service\ReportService;
+use Pagerfanta\Doctrine\ORM\QueryAdapter;
+use Pagerfanta\Pagerfanta;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -143,6 +147,7 @@ class ReportController extends AbstractController
             $result = $this->reportService->saveReportWithFile($report, $conference, $user, $document);
 
             if (!$result) {
+                // TODO Move to service
                 $this->flashBag->add(
                     'edit-page-error',
                     'File upload error. Try again later.'
@@ -192,5 +197,47 @@ class ReportController extends AbstractController
     public function download(string $file_name): StreamedResponse
     {
         return $this->reportService->downloadFile($file_name);
+    }
+
+    /**
+     * @Route("/{report_id}/comments/load", name="app_report_comments_load", methods={"GET"})
+     * @Security("is_granted('ROLE_USER')")
+     */
+    public function loadComments(
+        Conference $conference,
+        Report $report,
+        ReportCommentService $commentService,
+        ReportRepository $reportRepository,
+        int $page = 1
+    ): JsonResponse
+    {
+        $reportId = $report->getId();
+        $report = $reportRepository->find($reportId);
+
+        $qb = $commentService->getCommentsByReportQueryBuilder($report);
+
+        $adapter = new QueryAdapter($qb);
+        $pager = new Pagerfanta($adapter);
+        $pager->setCurrentPage($page);
+        $pager->setMaxPerPage(5);
+
+        $comments = $pager->getCurrentPageResults();
+
+        $commentsHtml = '';
+        $conferenceId = $conference->getId();
+        foreach ($comments as $comment) {
+            $commentsHtml .= $this->renderView('report/_comment_item.html.twig', [
+                'comment' => $comment,
+                'conferenceId' => $conferenceId,
+                'reportId' => $reportId,
+            ]);
+        }
+
+        $nextPage = ($pager->hasNextPage()) ? $page + 1 : null;
+
+        return new JsonResponse([
+            'comments' => $commentsHtml,
+            'nextPage' => $nextPage,
+        ]);
     }
 }
