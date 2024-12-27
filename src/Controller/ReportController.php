@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Conference;
 use App\Entity\Report;
 use App\Service\ConferenceService;
+use App\Service\ReportCommentService;
 use App\Service\ReportService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
