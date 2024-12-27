@@ -32,7 +32,7 @@ class ReportCommentFixture extends Fixture implements DependentFixtureInterface
             $comment = new ReportComment();
             $comment->setContent($faker->sentence);
             $comment->setUser($this->userRepository->getRandomUser());
-            $comment->setReport($this->reportRepository->find($i));
+            $comment->setReport($this->reportRepository->getRandomReport());
 
             $manager->persist($comment);
         }
