@@ -31,6 +31,7 @@ class ReportFixtures extends Fixture implements DependentFixtureInterface
             $report = new Report();
 
             $report->setTitle($faker->sentence);
+            // TODO Set the right time for the report
             $report->setStartedAt($faker->dateTimeBetween('now', '+8 hours'));
             $report->setEndedAt($faker->dateTimeBetween('+2 hours', '+10 hours'));
             $report->setDescription($faker->sentence);
