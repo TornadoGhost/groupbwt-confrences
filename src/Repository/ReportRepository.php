@@ -32,8 +32,8 @@ class ReportRepository extends ServiceEntityRepository
     }
 
     public function findOverlappingReport(
-        \DateTime $startTime,
-        \DateTime $endTime,
+        \DateTimeInterface $startTime,
+        \DateTimeInterface $endTime,
         int $conferenceId,
         ?int $reportId = null
     ): ?\DateTimeInterface
