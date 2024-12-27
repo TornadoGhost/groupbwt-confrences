@@ -38,4 +38,18 @@ class ReportCommentRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
+    public function getAllCommentsByReportId(int $reportId): ?array
+    {
+        return $this->createQueryBuilder('c')
+            ->join('c.report', 'r')
+            ->where('r.id = :reportId')
+            ->orderBy('c.createdAt', 'DESC')
+            ->setParameters([
+                'reportId' => $reportId
+            ])
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 }
