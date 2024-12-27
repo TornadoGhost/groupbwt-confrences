@@ -74,32 +74,8 @@
             </form>
         {% endif %}
     {% endif %}
-    <script>
-        let page = 1;
-        const commentsContainer = document.getElementById('comment-list');
-
-        function loadComments() {
-            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
-                page++;
-                fetch('{{ path('app_report_comments_load', {'conference_id': conferenceId, 'report_id': report.id}) }}?page=' + page)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.comments) {
-                            commentsContainer.insertAdjacentHTML('beforeend', data.comments);
-                        }
-
-                        if (!data.nextPage) {
-                            window.removeEventListener('scroll', loadComments);
-                        }
-                    });
-            }
-        }
-
-        window.addEventListener('load', function() {
-            loadComments();
-        });
-
-        // Додаємо слухач події для прокручування
-        window.addEventListener('scroll', loadComments);
+    <script type="module">
+        import { commentsLazyLoading } from "{{ asset('js/commentsLazyLoading.js') }}";
+        commentsLazyLoading('{{ path('app_report_comments_load', {'conference_id': conferenceId, 'report_id': report.id}) }}');
     </script>
 {% endblock %}
