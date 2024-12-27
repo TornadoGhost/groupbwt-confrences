@@ -151,6 +151,12 @@ class ReportType extends AbstractType
                 ));
             }
 
+            if ($endTime->getTimestamp() - $startTime->getTimestamp() < 900) {
+                $form->get('startedAt')->addError(new FormError(
+                    'A report can not be less than 15 minutes'
+                ));
+            }
+
             if ($endTime->getTimestamp() - $startTime->getTimestamp() > 3600) {
                 $form->get('endedAt')->addError(new FormError(
                     'A report can not be longer than 60 minutes'
