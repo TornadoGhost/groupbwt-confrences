@@ -38,16 +38,6 @@ class ReportController extends AbstractController
     }
 
     /**
-     * @Route("/", name="app_report_index", methods={"GET"})
-     */
-    public function index(): Response
-    {
-        return $this->render('report/index.html.twig', [
-            'reports' => $this->reportService->getAllReports(),
-        ]);
-    }
-
-    /**
      * @Route("/new", name="app_report_new", methods={"GET","POST"})
      * @Security("is_granted('ROLE_ANNOUNCER')")
      */
