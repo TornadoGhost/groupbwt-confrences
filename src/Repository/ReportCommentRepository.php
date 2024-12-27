@@ -2,8 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\Report;
 use App\Entity\ReportComment;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -51,5 +53,13 @@ class ReportCommentRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
             ;
+    }
+
+    public function getCommentsByReportQueryBuilder(Report $report): QueryBuilder
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.report = :report')
+            ->setParameter('report', $report)
+            ->orderBy('c.createdAt', 'DESC');
     }
 }
