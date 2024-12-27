@@ -32,20 +32,19 @@ class ConferenceRepository extends ServiceEntityRepository
 
     public function getAllConferencesWithSpecificUser(?int $userId = null): QueryBuilder
     {
-        if (!$userId) {
-            return $this->createQueryBuilder('c')
-                ->select('c, u')
-                ->leftJoin('c.users', 'u')
-                ->where("c.deletedAt IS NULL")
-                ->orderBy('c.createdAt', 'DESC')
-                ;
-        }
-        return $this->createQueryBuilder('c')
+        $queryBuilder = $this->createQueryBuilder('c')
             ->select('c, u')
-            ->leftJoin('c.users', 'u', Join::WITH, 'u.id = :userId')
             ->where("c.deletedAt IS NULL")
-            ->setParameter('userId', $userId)
             ->orderBy('c.createdAt', 'DESC')
+        ;
+
+        if (!$userId) {
+            return $queryBuilder->leftJoin('c.users', 'u');
+        }
+
+        return $queryBuilder
+            ->leftJoin('c.users', 'u', Join::WITH, 'u.id = :userId')
+            ->setParameter('userId', $userId)
             ;
     }
 
