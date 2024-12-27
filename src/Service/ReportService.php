@@ -24,11 +24,11 @@ class ReportService
     protected EntityManagerInterface $entityManager;
 
     public function __construct(
-        FormFactoryInterface $formFactory,
-        ReportRepository     $reportRepository,
-        FileUploader         $fileUploader,
-        ConferenceService    $conferenceService,
-        EntityManagerInterface $entityManager
+        FormFactoryInterface   $formFactory,
+        ReportRepository       $reportRepository,
+        FileUploader           $fileUploader,
+        ConferenceService      $conferenceService,
+        EntityManagerInterface $entityManager,
     )
     {
         $this->formFactory = $formFactory;
@@ -62,8 +62,7 @@ class ReportService
         return $form;
     }
 
-    // TODO rename method
-    public function saveReportWithFile(
+    public function saveReport(
         Report        $report,
         Conference    $conference,
         UserInterface $user,
