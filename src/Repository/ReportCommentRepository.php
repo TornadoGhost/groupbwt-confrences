@@ -59,6 +59,7 @@ class ReportCommentRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('c')
             ->where('c.report = :report')
+            ->andWhere('c.deletedAt IS NULL')
             ->setParameter('report', $report)
             ->orderBy('c.createdAt', 'DESC');
     }
