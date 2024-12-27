@@ -2,8 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\Report;
 use App\Entity\ReportComment;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -37,5 +39,27 @@ class ReportCommentRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function getAllCommentsByReportId(int $reportId): ?array
+    {
+        return $this->createQueryBuilder('c')
+            ->join('c.report', 'r')
+            ->where('r.id = :reportId')
+            ->orderBy('c.createdAt', 'DESC')
+            ->setParameters([
+                'reportId' => $reportId
+            ])
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    public function getCommentsByReportQueryBuilder(Report $report): QueryBuilder
+    {
+        return $this->createQueryBuilder('c')
+            ->where('c.report = :report')
+            ->setParameter('report', $report)
+            ->orderBy('c.createdAt', 'DESC');
     }
 }

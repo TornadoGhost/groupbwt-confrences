@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Security;
+namespace App\Security\Voter;
 
 use App\Entity\Report;
-use App\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class ReportVoter extends Voter
 {
-    const EDIT = 'edit';
-    const DELETE = 'delete';
+    public const EDIT = 'EDIT';
+    public const DELETE = 'DELETE';
 
     protected function supports(string $attribute, $subject): bool
     {
@@ -21,7 +21,7 @@ class ReportVoter extends Voter
     {
         $user = $token->getUser();
 
-        if (!$user instanceof User) {
+        if (!$user instanceof UserInterface) {
             return false;
         }
 

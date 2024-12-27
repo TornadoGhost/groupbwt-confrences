@@ -2,6 +2,10 @@
 
 {% block title %}Report{% endblock %}
 
+{% block links %}
+    <script type="text/javascript" src="{{ asset('/bundles/fosckeditor/ckeditor.js') }}"></script>
+{% endblock %}
+
 {% block body %}
     <h1>Report</h1>
 
@@ -23,8 +27,7 @@
             <tr>
                 <th>Document</th>
                 <td>
-                    <a href="{{
-                    path('app_report_file_download',
+                    <a href="{{ path('app_report_file_download',
                         {
                             'conference_id': conferenceId,
                             'report_id': report.id,
@@ -36,6 +39,26 @@
         {% endif %}
         </tbody>
     </table>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card widget">
+                <div class="card-header d-flex align-items-center">
+                    <span class="mr-2"><i class="fas fa-comment"></i></span>
+                    <h3 class="card-title mb-0 flex-grow-1">Recent Comments</h3>
+                </div>
+                <div>
+                    {{ form_start(commentForm) }}
+                    {{ form_row(commentForm.content) }}
+                    <button class="btn btn-primary mb-2" type="submit">Comment</button>
+                    {{ form_end(commentForm) }}
+                </div>
+                <div class="card-body pt-0 pb-0">
+                    <ul class="list-group list-group-flush" id="comment-list"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
 
     {% if(is_granted('ROLE_ANNOUNCER')) %}
         {% if(is_granted('edit', report)) %}
@@ -51,4 +74,32 @@
             </form>
         {% endif %}
     {% endif %}
+    <script>
+        let page = 1;
+        const commentsContainer = document.getElementById('comment-list');
+
+        function loadComments() {
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+                page++;
+                fetch('{{ path('app_report_comments_load', {'conference_id': conferenceId, 'report_id': report.id}) }}?page=' + page)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.comments) {
+                            commentsContainer.insertAdjacentHTML('beforeend', data.comments);
+                        }
+
+                        if (!data.nextPage) {
+                            window.removeEventListener('scroll', loadComments);
+                        }
+                    });
+            }
+        }
+
+        window.addEventListener('load', function() {
+            loadComments();
+        });
+
+        // Додаємо слухач події для прокручування
+        window.addEventListener('scroll', loadComments);
+    </script>
 {% endblock %}

@@ -32,8 +32,8 @@ class ReportRepository extends ServiceEntityRepository
     }
 
     public function findOverlappingReport(
-        \DateTime $startTime,
-        \DateTime $endTime,
+        \DateTimeInterface $startTime,
+        \DateTimeInterface $endTime,
         int $conferenceId,
         ?int $reportId = null
     ): ?\DateTimeInterface
@@ -133,5 +133,21 @@ class ReportRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult()
         ;
+    }
+
+    public function getRandomReport(): ?Report
+    {
+        $ids = $this->createQueryBuilder('r')
+            ->select('r.id')
+            ->getQuery()
+            ->getArrayResult();
+
+        if (empty($ids)) {
+            return null;
+        }
+
+        $randomReport = $ids[array_rand($ids)]['id'];
+
+        return $this->find($randomReport);
     }
 }
