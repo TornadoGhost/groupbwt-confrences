@@ -134,4 +134,20 @@ class ReportRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
+
+    public function getRandomReport(): ?Report
+    {
+        $ids = $this->createQueryBuilder('r')
+            ->select('r.id')
+            ->getQuery()
+            ->getArrayResult();
+
+        if (empty($ids)) {
+            return null;
+        }
+
+        $randomReport = $ids[array_rand($ids)]['id'];
+
+        return $this->find($randomReport);
+    }
 }
