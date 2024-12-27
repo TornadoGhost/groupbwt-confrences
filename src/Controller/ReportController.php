@@ -93,11 +93,32 @@ class ReportController extends AbstractController
      * @Route("/{report_id}", name="app_report_show", methods={"GET", "POST"})
      * @ParamConverter("report", options={"mapping": {"report_id": "id"}})
      */
-    public function show(Conference $conference, Report $report): Response
+    public function show(
+        Request $request,
+        Conference $conference,
+        Report $report,
+        ReportCommentService $reportCommentService
+    ): Response
     {
+        $user = $this->getUser();
+        $reportId = $report->getId();
+        $conferenceId = $conference->getId();
+        $comments = $reportCommentService->getAllCommentsByReportId($reportId);
+
+        $form = $reportCommentService->createReportComment($request, $user, $report);
+
+        if (!$form) {
+            return $this->redirectToRoute('app_report_show', [
+                'conference_id' => $conferenceId,
+                'report_id' => $reportId
+            ]);
+        }
+
         return $this->render('report/show.html.twig', [
             'report' => $report,
-            'conferenceId' => $conference->getId()
+            'conferenceId' => $conferenceId,
+            'comments' => $comments,
+            'commentForm' => $form->createView()
         ]);
     }
 
