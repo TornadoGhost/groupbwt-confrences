@@ -207,39 +207,20 @@ class ReportController extends AbstractController
         Request $request,
         Conference $conference,
         Report $report,
-        ReportCommentService $commentService,
-        ReportRepository $reportRepository,
-        int $page = 1
+        ReportCommentService $commentService
     ): JsonResponse
     {
         $page = $request->query->get('page');
-        $reportId = $report->getId();
-        $report = $reportRepository->find($reportId);
-
-        $qb = $commentService->getCommentsByReportQueryBuilder($report);
-
-        $adapter = new QueryAdapter($qb);
-        $pager = new Pagerfanta($adapter);
-        $pager->setCurrentPage($page);
-        $pager->setMaxPerPage(5);
-
-        $comments = $pager->getCurrentPageResults();
-
-        $commentsHtml = '';
         $conferenceId = $conference->getId();
-        foreach ($comments as $comment) {
-            $commentsHtml .= $this->renderView('report/_comment_item.html.twig', [
-                'comment' => $comment,
-                'conferenceId' => $conferenceId,
-                'reportId' => $reportId,
-            ]);
-        }
 
-        $nextPage = ($pager->hasNextPage()) ? $page + 1 : null;
+        $comments = $commentService->getCommentsByPage(
+            $report,
+            $conferenceId,
+            (int) $page,
+            $commentService::MAX_PER_PAGE
+        );
 
-        return new JsonResponse([
-            'comments' => $commentsHtml,
-            'nextPage' => $nextPage,
-        ]);
+
+        return new JsonResponse($comments);
     }
 }
