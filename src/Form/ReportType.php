@@ -189,7 +189,6 @@ class ReportType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Report::class,
-            'required' => false,
             'conference_id' => null,
             'conference_start' => null,
             'conference_end' => null
