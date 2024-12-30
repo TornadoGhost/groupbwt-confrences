@@ -71,7 +71,7 @@ class ReportController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $document = $form->get('document')->getData() ?? null;
             $user = $this->getUser();
-            $result = $this->reportService->saveReportWithFile($report, $conference, $user, $document);
+            $result = $this->reportService->saveReport($report, $conference, $user, $document);
 
             if (!$result) {
                 $this->flashBag->add(
@@ -144,7 +144,7 @@ class ReportController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $document = $form['document']->getData() ?? null;
             $user = $this->getUser();
-            $result = $this->reportService->saveReportWithFile($report, $conference, $user, $document);
+            $result = $this->reportService->saveReport($report, $conference, $user, $document);
 
             if (!$result) {
                 // TODO Move to service

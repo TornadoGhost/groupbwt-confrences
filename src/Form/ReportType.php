@@ -23,6 +23,8 @@ use Symfony\Component\Validator\Constraints\Type;
 
 class ReportType extends AbstractType
 {
+    protected const MAX_REPORT_TIME = 3600;
+    protected const MIN_REPORT_TIME = 900;
     private ReportRepository $reportRepository;
     private EntityManagerInterface $entityManager;
 
@@ -151,13 +153,13 @@ class ReportType extends AbstractType
                 ));
             }
 
-            if ($endTime->getTimestamp() - $startTime->getTimestamp() < 900) {
+            if ($endTime->getTimestamp() - $startTime->getTimestamp() < self::MIN_REPORT_TIME) {
                 $form->get('startedAt')->addError(new FormError(
                     'A report can not be less than 15 minutes'
                 ));
             }
 
-            if ($endTime->getTimestamp() - $startTime->getTimestamp() > 3600) {
+            if ($endTime->getTimestamp() - $startTime->getTimestamp() > self::MAX_REPORT_TIME) {
                 $form->get('endedAt')->addError(new FormError(
                     'A report can not be longer than 60 minutes'
                 ));
@@ -187,7 +189,6 @@ class ReportType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Report::class,
-            'required' => false,
             'conference_id' => null,
             'conference_start' => null,
             'conference_end' => null
