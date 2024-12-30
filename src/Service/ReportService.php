@@ -28,7 +28,7 @@ class ReportService
         ReportRepository       $reportRepository,
         FileUploader           $fileUploader,
         ConferenceService      $conferenceService,
-        EntityManagerInterface $entityManager,
+        EntityManagerInterface $entityManager
     )
     {
         $this->formFactory = $formFactory;
