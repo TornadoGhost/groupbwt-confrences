@@ -22,13 +22,14 @@ class ConferenceService
         $this->conferenceRepository = $conferenceRepository;
     }
 
-    public function getAllConferenceWithSpecificUserPaginate(
-        int $countPerPage,
-        int $currentPage = 1,
-        ?int $userId = null
+    public function getAllConferencesWithFiltersPaginate(
+        int  $countPerPage,
+        int  $currentPage = 1,
+        ?int $userId = null,
+        ?array $filters = []
     ): Pagerfanta
     {
-        $queryResult = $this->conferenceRepository->getAllConferencesWithSpecificUser($userId);
+        $queryResult = $this->conferenceRepository->getAllConferencesWithFiltersPaginate($userId, $filters);
 
         $adapter = new QueryAdapter($queryResult);
         $conferences = new Pagerfanta($adapter);
