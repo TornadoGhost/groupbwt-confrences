@@ -26,7 +26,7 @@ class ConferenceRepository extends ServiceEntityRepository
     protected ReportRepository $reportRepository;
 
     public function __construct(
-        ManagerRegistry $registry,
+        ManagerRegistry  $registry,
         ReportRepository $reportRepository
     )
     {
@@ -37,10 +37,8 @@ class ConferenceRepository extends ServiceEntityRepository
     public function getAllConferencesWithFiltersPaginate(?int $userId = null, array $filters = []): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('c')
-            ->select('c, u')
-            ->where("c.deletedAt IS NULL")
-            ->orderBy('c.createdAt', 'DESC')
-        ;
+            ->where('c.deletedAt IS NULL')
+            ->orderBy('c.createdAt', 'DESC');
 
         if (!$userId) {
             $queryBuilder->leftJoin('c.users', 'u');
@@ -131,7 +129,9 @@ class ConferenceRepository extends ServiceEntityRepository
 
     public function getRandomConference(): ?Conference
     {
-        $ids = $this->_em->createQuery('SELECT u.id FROM App\Entity\Conference u')
+        $ids = $this->createQueryBuilder('c')
+            ->select('c.id')
+            ->getQuery()
             ->getArrayResult();
 
         if (empty($ids)) {
