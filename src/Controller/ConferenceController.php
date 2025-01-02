@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Conference;
+use App\Form\ConferenceFiltersType;
 use App\Form\ConferenceType;
 use App\Service\ConferenceService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,14 +32,26 @@ class ConferenceController extends AbstractController
     public function index(Request $request): Response
     {
         $userId = !$this->getUser() ? null : $this->getUser()->getId();
-        $conferences = $this->conferenceService->getAllConferenceWithSpecificUserPaginate(
-            ConferenceService::COUNT_PER_PAGE,
-            $request->query->getInt('page', 1),
-            $userId
-        );
+        $perPage = ConferenceService::COUNT_PER_PAGE;
+        $page = $request->query->getInt('page', 1);
+
+        $filtersForm = $this->createForm(ConferenceFiltersType::class);
+        $filtersForm->handleRequest($request);
+
+        if ($filtersForm->isSubmitted()) {
+            $conferences = $this->conferenceService->getAllConferencesWithFiltersPaginate(
+                $perPage,
+                $page,
+                $userId,
+                $filtersForm->getData()
+            );
+        } else {
+            $conferences = $this->conferenceService->getAllConferencesWithFiltersPaginate($perPage, $page, $userId);
+        }
 
         return $this->render('conference/index.html.twig', [
             'conferences' => $conferences,
+            'filtersForm' => $filtersForm->createView()
         ]);
     }
 

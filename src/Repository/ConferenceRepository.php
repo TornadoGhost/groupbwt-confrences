@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Conference;
+use App\Entity\Report;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -19,6 +20,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class ConferenceRepository extends ServiceEntityRepository
 {
+    private const MINIMUM_REPORT_TIME_MINUTES = 15;
+    private const REPORT_SELECT_NUMBER = '1';
+
     protected ReportRepository $reportRepository;
 
     public function __construct(
@@ -39,13 +43,60 @@ class ConferenceRepository extends ServiceEntityRepository
         ;
 
         if (!$userId) {
-            return $queryBuilder->leftJoin('c.users', 'u');
+            $queryBuilder->leftJoin('c.users', 'u');
+        } else {
+            $queryBuilder->leftJoin('c.users', 'u', Join::WITH, 'u.id = :userId')
+                ->setParameter('userId', $userId);
         }
 
-        return $queryBuilder
-            ->leftJoin('c.users', 'u', Join::WITH, 'u.id = :userId')
-            ->setParameter('userId', $userId)
-            ;
+        if ($filters['report_number'] ?? null) {
+            $queryBuilder->where(
+                $queryBuilder->expr()->eq(
+                    '(SELECT COUNT(r.id) FROM ' . Report::class . ' r WHERE r.conference = c.id)',
+                    $filters['report_number']
+                )
+            );
+        }
+
+        if ($filters['start_date'] ?? null) {
+            $queryBuilder->where('c.startedAt = :started_at')
+                ->setParameter('started_at', $filters['start_date']);
+        }
+
+        if ($filters['end_date'] ?? null) {
+            $queryBuilder->where('c.startedAt = :started_at')
+                ->setParameter('started_at', $filters['start_date']);
+        }
+
+        if ($filters['is_available'] ?? null) {
+            $subQueryBeforeFirst = $this->getEntityManager()->createQueryBuilder()
+                ->select(self::REPORT_SELECT_NUMBER)
+                ->from(Report::class, 'r1')
+                ->where('r1.conference = c.id')
+                ->andWhere('TIMESTAMPDIFF(MINUTE, c.startedAt, r1.startedAt) >= ' . self::MINIMUM_REPORT_TIME_MINUTES);
+
+            $subQueryBetween = $this->getEntityManager()->createQueryBuilder()
+                ->select(self::REPORT_SELECT_NUMBER)
+                ->from(Report::class, 'r2')
+                ->innerJoin(Report::class, 'r3', 'WITH', 'r2.conference = r3.conference AND r2.endedAt <= r3.startedAt')
+                ->where('r2.conference = c.id')
+                ->andWhere('TIMESTAMPDIFF(MINUTE, r2.endedAt, r3.startedAt) >= ' . self::MINIMUM_REPORT_TIME_MINUTES);
+
+            $subQueryAfterLast = $this->getEntityManager()->createQueryBuilder()
+                ->select(self::REPORT_SELECT_NUMBER)
+                ->from(Report::class, 'r4')
+                ->where('r4.conference = c.id')
+                ->andWhere('TIMESTAMPDIFF(MINUTE, r4.endedAt, c.endedAt) >= ' . self::MINIMUM_REPORT_TIME_MINUTES);
+
+            $queryBuilder
+                ->where($queryBuilder->expr()->orX(
+                    $queryBuilder->expr()->not($queryBuilder->expr()->exists($subQueryBeforeFirst->getDQL())),
+                    $queryBuilder->expr()->not($queryBuilder->expr()->exists($subQueryBetween->getDQL())),
+                    $queryBuilder->expr()->not($queryBuilder->expr()->exists($subQueryAfterLast->getDQL())),
+                ));
+        }
+
+        return $queryBuilder;
     }
 
     public function addUserToConference(Conference $conference, UserInterface $user): void
