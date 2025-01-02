@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Conference;
 use App\Form\ConferenceFiltersType;
 use App\Form\ConferenceType;
+use App\Form\ReportFiltersType;
 use App\Service\ConferenceService;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -82,11 +83,18 @@ class ConferenceController extends AbstractController
      * @Route("/{id}", name="app_conference_show", methods={"GET"})
      * @Security("is_granted('ROLE_USER')")
      */
-    public function show(Conference $conference): Response
+    public function show(Request $request, Conference $conference): Response
     {
+        $requestFormFilters = $this->createForm(ReportFiltersType::class,null, [
+            'start_time' => $conference->getStartedAt(),
+            'end_time' => $conference->getEndedAt(),
+        ]);
+        $requestFormFilters->handleRequest($request);
+
         return $this->render('conference/show.html.twig', [
             'conference' => $conference,
-            'google_maps_api_key' => $_ENV['GOOGLE_MAPS_API_KEY']
+            'google_maps_api_key' => $_ENV['GOOGLE_MAPS_API_KEY'],
+            'report_form_filters' => $requestFormFilters->createView()
         ]);
     }
 
