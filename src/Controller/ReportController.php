@@ -74,6 +74,7 @@ class ReportController extends AbstractController
             $result = $this->reportService->saveReport($report, $conference, $user, $document);
 
             if (!$result) {
+                // TODO: Move to service and reuse
                 $this->flashBag->add(
                     'upload-file-error',
                     'File upload error. Try again later.'
@@ -147,7 +148,7 @@ class ReportController extends AbstractController
             $result = $this->reportService->saveReport($report, $conference, $user, $document);
 
             if (!$result) {
-                // TODO Move to service
+                // TODO Move to service and reuse
                 $this->flashBag->add(
                     'edit-page-error',
                     'File upload error. Try again later.'
@@ -203,6 +204,7 @@ class ReportController extends AbstractController
      * @Route("/{report_id}/comments/load", name="app_report_comments_load", methods={"GET"})
      * @Security("is_granted('ROLE_USER')")
      */
+    // TODO: move to api controller
     public function loadComments(
         Request $request,
         Conference $conference,
