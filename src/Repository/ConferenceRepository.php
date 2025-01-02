@@ -30,7 +30,7 @@ class ConferenceRepository extends ServiceEntityRepository
         $this->reportRepository = $reportRepository;
     }
 
-    public function getAllConferencesWithSpecificUser(?int $userId = null): QueryBuilder
+    public function getAllConferencesWithFiltersPaginate(?int $userId = null, array $filters = []): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('c')
             ->select('c, u')
