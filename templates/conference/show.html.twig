@@ -71,6 +71,17 @@
         <tr>
             <th>Reports</th>
             <td>
+                <div>
+                    {{ form_start(report_form_filters) }}
+                    {{ form_row(report_form_filters.start_time) }}
+                    {{ form_row(report_form_filters.end_time) }}
+                    {{ form_row(report_form_filters.duration) }}
+                    <div class="mt-auto ml-3 mb-3">
+                        <a class="btn btn-danger" href="{{ path('app_conference_show', { 'id': conference.id }) }}">Reset</a>
+                        <button class="btn btn-primary" type="submit">Filter</button>
+                    </div>
+                    {{ form_end(report_form_filters) }}
+                </div>
                 <div class="row">
                     {% for report in conference.reports %}
                         <div class="col-sm-6 mb-3">
