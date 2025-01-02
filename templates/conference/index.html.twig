@@ -12,32 +12,18 @@
                 Toggle Filters
             </button>
             <aside class="mt-3 collapse" id="filter-panel">
-                <form id="filter-form">
-                    <h3>Filters</h3>
-                    <div class="form-group">
-                        <label for="per-page">Per page</label>
-                        <select class="form-control" id="per-page" name="per_page">
-                            <option>5</option>
-                            <option>10</option>
-                            <option>15</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="start-date">Start date</label>
-                        <input class="form-control" id="start-date" type="date" name="start_date">
-                    </div>
-                    <div class="form-group">
-                        <label for="end-date">End date</label>
-                        <input class="form-control" id="end-date" type="date" name="end_date">
-                    </div>
-                    <div class="form-check">
-                        <label class="form-check-label">
-                            <input type="checkbox" class="form-check-input" value="true">
-                            There are available slots
-                        </label>
-                    </div>
-                    <button class="btn btn-primary mt-3" id="reset-filters" type="button">Reset Filters</button>
-                </form>
+                {#                    {{ form('filtersForm') }} #}
+                {{ form_start(filtersForm) }}
+                <h3>Filters</h3>
+                {{ form_row(filtersForm.report_number) }}
+                {{ form_row(filtersForm.start_date) }}
+                {{ form_row(filtersForm.end_date) }}
+                {{ form_row(filtersForm.is_available) }}
+                <div class="form-group">
+                    <a class="btn btn-danger" href="{{ path('app_conference_index') }}">Reset</a>
+                    <button class="btn btn-primary" id="reset-filters" type="submit">Filter</button>
+                </div>
+                {{ form_end(filtersForm) }}
             </aside>
         </div>
 
@@ -132,9 +118,4 @@
             <a class="btn btn-primary" href="{{ path('app_conference_new') }}">Create new</a>
         </section>
     </div>
-    <script type="module">
-        import {resetConferencesFilters} from "{{ asset('js/resetConferencesFilters.js') }}";
-
-        resetConferencesFilters('reset-filters', 'filter-form');
-    </script>
 {% endblock %}
