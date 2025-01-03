@@ -6,10 +6,10 @@
                     on {{ comment.createdAt|date('F j, Y H:i') }}</small>
             </div>
             <p class="comment-text">{{ comment.content | raw }}</p>
-            <p>{{ comment.createdAt|date('d-m-Y H:i:s') }} {{ date('now')|date('d-m-Y H:i:s') }}</p>
+            <p>{{ comment.createdAt|date('d-m-Y H:i:s') }}</p>
             <div class="action d-flex">
                 {% if app.user.id == comment.user.id %}
-                    {% if comment.createdAt|date('d-m-Y H:i:s') >= date('now')|date('d-m-Y H:i:s') %}
+                    {% if comment.createdAt|date_modify("+15 minutes")|date('d-m-Y H:i:s') >= date('now')|date('d-m-Y H:i:s') %}
                         <a class="btn btn-primary mr-1" href="{{ path('app_report_comment_edit', {
                             'conference_id': comment.report.conference.id,
                             'report_id': comment.report.id,
