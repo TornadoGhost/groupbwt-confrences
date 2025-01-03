@@ -4,12 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Conference;
 use App\Entity\Report;
-use App\Repository\ReportRepository;
 use App\Service\ConferenceService;
 use App\Service\ReportCommentService;
 use App\Service\ReportService;
-use Pagerfanta\Doctrine\ORM\QueryAdapter;
-use Pagerfanta\Pagerfanta;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -110,8 +107,6 @@ class ReportController extends AbstractController
         $user = $this->getUser();
         $reportId = $report->getId();
         $conferenceId = $conference->getId();
-        $comments = $reportCommentService->getAllCommentsByReportId($reportId);
-
         $form = $reportCommentService->createReportComment($request, $user, $report);
 
         if (!$form) {
@@ -124,7 +119,6 @@ class ReportController extends AbstractController
         return $this->render('report/show.html.twig', [
             'report' => $report,
             'conferenceId' => $conferenceId,
-            'comments' => $comments,
             'commentForm' => $form->createView()
         ]);
     }
@@ -193,6 +187,7 @@ class ReportController extends AbstractController
 
     /**
      * @Route("/{report_id}/{file_name}", name="app_report_file_download", methods={"GET"})
+     * @ParamConverter("report", options={"mapping": {"report_id": "id"}})
      * @Security("is_granted('ROLE_USER')")
      */
     public function download(string $file_name): StreamedResponse
@@ -202,6 +197,7 @@ class ReportController extends AbstractController
 
     /**
      * @Route("/{report_id}/comments/load", name="app_report_comments_load", methods={"GET"})
+     * @ParamConverter("report", options={"mapping": {"report_id": "id"}})
      * @Security("is_granted('ROLE_USER')")
      */
     // TODO: move to api controller

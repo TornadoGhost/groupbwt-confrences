@@ -30,4 +30,4 @@ export function commentsLazyLoading(path) {
   });
 
   window.addEventListener('scroll', loadComments);
-}commentsLazyLoading();
+}

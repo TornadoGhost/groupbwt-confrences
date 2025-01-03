@@ -7,6 +7,7 @@ use App\Form\ConferenceFiltersType;
 use App\Form\ConferenceType;
 use App\Form\ReportFiltersType;
 use App\Service\ConferenceService;
+use App\Service\ReportService;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,6 +21,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class ConferenceController extends AbstractController
 {
     private ConferenceService $conferenceService;
+
     public function __construct(
         ConferenceService $conferenceService
     )
@@ -83,18 +85,30 @@ class ConferenceController extends AbstractController
      * @Route("/{id}", name="app_conference_show", methods={"GET"})
      * @Security("is_granted('ROLE_USER')")
      */
-    public function show(Request $request, Conference $conference): Response
+    public function show(
+        Request       $request,
+        Conference    $conference,
+        ReportService $reportService
+    ): Response
     {
-        $requestFormFilters = $this->createForm(ReportFiltersType::class,null, [
+        $requestFormFilters = $this->createForm(ReportFiltersType::class, null, [
             'start_time' => $conference->getStartedAt(),
             'end_time' => $conference->getEndedAt(),
         ]);
         $requestFormFilters->handleRequest($request);
 
+        if ($requestFormFilters->isSubmitted()) {
+            $filters = $reportService->prepareReportFilters($requestFormFilters->getData(), $conference);
+            $reports = $reportService->getAllReportsWithFilters($conference, $filters);
+        } else {
+            $reports = $reportService->getAllReportsWithFilters($conference);
+        }
+
         return $this->render('conference/show.html.twig', [
             'conference' => $conference,
             'google_maps_api_key' => $_ENV['GOOGLE_MAPS_API_KEY'],
-            'report_form_filters' => $requestFormFilters->createView()
+            'report_form_filters' => $requestFormFilters->createView(),
+            'reports' => $reports
         ]);
     }
 
@@ -152,7 +166,7 @@ class ConferenceController extends AbstractController
      * @Security("is_granted('ROLE_USER')")
      */
     public function cancel(
-        Request $request,
+        Request    $request,
         Conference $conference
     ): Response
     {

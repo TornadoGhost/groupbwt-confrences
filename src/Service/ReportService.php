@@ -141,4 +141,29 @@ class ReportService
         return $response;
     }
 
+    public function getAllReportsWithFilters(Conference $conference, array $filters = []): array
+    {
+        return $this->reportRepository->getAllReportsWithFilters($conference, $filters);
+    }
+
+    public function prepareReportFilters(array $filters, Conference $conference): array
+    {
+        if ($filters['start_time']) {
+            $filters['start_time'] = (new \DateTime($conference->getStartedAt()->format('Y-m-d')))->setTime(
+                $filters['start_time']->format('H'),
+                $filters['start_time']->format('i'),
+                $filters['start_time']->format('s')
+            );
+        }
+
+        if ($filters['end_time']) {
+            $filters['end_time'] = (new \DateTime($conference->getEndedAt()->format('Y-m-d')))->setTime(
+                $filters['end_time']->format('H'),
+                $filters['end_time']->format('i'),
+                $filters['end_time']->format('s')
+            );
+        }
+
+        return $filters;
+    }
 }
