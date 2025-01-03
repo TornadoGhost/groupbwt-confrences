@@ -1,0 +1,40 @@
+.modal-search {
+    width: 500px;
+    height: 200px;
+    z-index: 1000;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translate(-58%, 20%)
+}
+
+@media (max-width: 767px) {
+    .modal-search {
+        width: 100%;
+        height: 300px;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        transform: translate(0, 15%);
+    }
+}
+
+@media (max-width: 490px) {
+    .text-sm {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 444px) {
+    .text-sm {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 400px) {
+    .text-sm {
+        font-size: 10px;
+    }
+}
