@@ -16,18 +16,22 @@ class ReportFiltersType extends AbstractType
     {
         $builder->add('start_time', TimeType::class, [
             'hours' => range($options['start_time']->format('H'), $options['end_time']->format('H')),
+            'widget' => 'choice',
+            'html5' => true,
             'attr' => [
                 'class' => 'mr-sm-3'
-            ],
+            ]
         ]);
         $builder->add('end_time', TimeType::class, [
             'hours' => range($options['start_time']->format('H'), $options['end_time']->format('H')),
+            'data' => (new \DateTime())->setTime((int)$options['end_time']->format('H'), (int)$options['end_time']->format('i')),
             'attr' => [
                 'class' => 'mr-sm-3'
             ]
         ]);
         $builder->add('duration', ChoiceType::class, [
-            'choices' => array_combine(range(1, 59), range(1, 59)),
+            'choices' => ['15min' => 15,'30min' => 30,'45min' => 45,'60min' => 60],
+            'placeholder' => 'Select duration time',
             'label' => 'Duration',
             'label_attr' => [
                 'class' => 'col-form-label '
