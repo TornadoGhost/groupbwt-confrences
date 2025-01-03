@@ -187,6 +187,7 @@ class ReportController extends AbstractController
 
     /**
      * @Route("/{report_id}/{file_name}", name="app_report_file_download", methods={"GET"})
+     * @ParamConverter("report", options={"mapping": {"report_id": "id"}})
      * @Security("is_granted('ROLE_USER')")
      */
     public function download(string $file_name): StreamedResponse
@@ -196,6 +197,7 @@ class ReportController extends AbstractController
 
     /**
      * @Route("/{report_id}/comments/load", name="app_report_comments_load", methods={"GET"})
+     * @ParamConverter("report", options={"mapping": {"report_id": "id"}})
      * @Security("is_granted('ROLE_USER')")
      */
     // TODO: move to api controller
