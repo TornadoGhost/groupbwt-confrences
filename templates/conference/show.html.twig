@@ -59,8 +59,8 @@
             <td id="country-name" data-country="{{ conference.country }}">{{ conference.country }}</td>
         </tr>
         <tr>
-            <th>Day of Start</th>
-            <td>{{ conference.startedAt ? conference.startedAt|date('Y-m-d H:i:s') : '' }}</td>
+            <th>Time</th>
+            <td>{{ conference.startedAt ? conference.startedAt|date('Y-m-d H:i') ~ '-' ~conference.endedAt|date('H:i') : 'Undefined' }}</td>
         </tr>
         <tr>
             <th>Address</th>
@@ -83,7 +83,7 @@
                     {{ form_end(report_form_filters) }}
                 </div>
                 <div class="row">
-                    {% for report in conference.reports %}
+                    {% for report in reports %}
                         <div class="col-sm-6 mb-3">
                             <div class="card">
                                 <div class="card-body">
@@ -92,10 +92,9 @@
                                             <h5 class="card-title">{{ report.title }}
                                             </h5>
                                         </a>
-                                        <span class="badge badge-info ml-auto">{{ report.reportComments|length }}</span>
+                                        <span class="badge badge-info ml-auto">{{ report.commentsNumber }}</span>
                                     </div>
-                                    <p class="card-text">{{ report.startedAt|date('H:i') }}
-                                        -{{ report.endedAt|date('H:i') }}</p>
+                                    <p class="card-text">{{ report.startedAt|date('H:i') ~ '-' ~ report.endedAt|date('H:i') }}</p>
                                     <span class="short-content">
                                         {{ report.description|length > 100
                                         ? report.description[:100] ~ '...'
