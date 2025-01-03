@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Conference;
 use App\Entity\Report;
+use App\Entity\ReportComment;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -140,5 +141,50 @@ class ReportRepository extends ServiceEntityRepository
         $randomReport = $ids[array_rand($ids)]['id'];
 
         return $this->find($randomReport);
+    }
+
+    public function getAllReportsWithFilters(Conference $conference, array $filters = []): array
+    {
+        $subQuery = $this->getEntityManager()->createQueryBuilder()
+            ->select('COUNT(c.id)')
+            ->from(ReportComment::class, 'c')
+            ->where('c.deletedAt IS NULL')
+            ->andWhere('c.report = r')
+            ->getDQL();
+
+        $queryBuilder = $this->createQueryBuilder('r')
+            ->select(
+                'r.id',
+                'r.title',
+                'r.description',
+                'r.startedAt',
+                'r.endedAt',
+                "($subQuery) as commentsNumber"
+            )
+            ->where('r.deletedAt IS NULL')
+            ->andWhere('r.conference = :conference')
+            ->setParameter('conference', $conference)
+            ->orderBy('r.createdAt', 'DESC')
+        ;
+
+        if (($filters['start_time'] ?? null) && !$filters['duration']) {
+            $queryBuilder
+                ->andWhere('r.startedAt >= :startTime')
+                ->setParameter('startTime', $filters['start_time']);
+        }
+
+        if (($filters['end_time'] ?? null) && !$filters['duration']) {
+            $queryBuilder
+                ->andWhere('r.endedAt <= :endTime')
+                ->setParameter('endTime', $filters['end_time']);
+        }
+
+        if ($filters['duration'] ?? null) {
+            $queryBuilder
+                ->andWhere('TIMESTAMPDIFF(MINUTE, r.startedAt, r.endedAt) <= :duration')
+                ->setParameter('duration', $filters['duration']);
+        }
+
+        return $queryBuilder->getQuery()->getResult();
     }
 }
