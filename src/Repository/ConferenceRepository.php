@@ -48,7 +48,7 @@ class ConferenceRepository extends ServiceEntityRepository
         }
 
         if ($filters['report_number'] ?? null) {
-            $queryBuilder->where(
+            $queryBuilder->andWhere(
                 $queryBuilder->expr()->eq(
                     '(SELECT COUNT(r.id) FROM ' . Report::class . ' r WHERE r.conference = c.id)',
                     $filters['report_number']
@@ -57,13 +57,13 @@ class ConferenceRepository extends ServiceEntityRepository
         }
 
         if ($filters['start_date'] ?? null) {
-            $queryBuilder->where('c.startedAt = :started_at')
+            $queryBuilder->andWhere('c.startedAt = :started_at')
                 ->setParameter('started_at', $filters['start_date']);
         }
 
         if ($filters['end_date'] ?? null) {
-            $queryBuilder->where('c.startedAt = :started_at')
-                ->setParameter('started_at', $filters['start_date']);
+            $queryBuilder->andWhere('c.endedAt = :ended_at')
+                ->setParameter('ended_at', $filters['end_date']);
         }
 
         if ($filters['is_available'] ?? null) {
@@ -87,7 +87,7 @@ class ConferenceRepository extends ServiceEntityRepository
                 ->andWhere('TIMESTAMPDIFF(MINUTE, r4.endedAt, c.endedAt) >= ' . self::MINIMUM_REPORT_TIME_MINUTES);
 
             $queryBuilder
-                ->where($queryBuilder->expr()->orX(
+                ->andWhere($queryBuilder->expr()->orX(
                     $queryBuilder->expr()->not($queryBuilder->expr()->exists($subQueryBeforeFirst->getDQL())),
                     $queryBuilder->expr()->not($queryBuilder->expr()->exists($subQueryBetween->getDQL())),
                     $queryBuilder->expr()->not($queryBuilder->expr()->exists($subQueryAfterLast->getDQL())),
