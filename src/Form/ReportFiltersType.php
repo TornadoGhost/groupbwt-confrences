@@ -24,7 +24,6 @@ class ReportFiltersType extends AbstractType
         ]);
         $builder->add('end_time', TimeType::class, [
             'hours' => range($options['start_time']->format('H'), $options['end_time']->format('H')),
-            'data' => (new \DateTime())->setTime((int)$options['end_time']->format('H'), (int)$options['end_time']->format('i')),
             'attr' => [
                 'class' => 'mr-sm-3'
             ]

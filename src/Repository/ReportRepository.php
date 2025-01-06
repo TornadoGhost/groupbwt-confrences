@@ -164,16 +164,15 @@ class ReportRepository extends ServiceEntityRepository
             ->where('r.deletedAt IS NULL')
             ->andWhere('r.conference = :conference')
             ->setParameter('conference', $conference)
-            ->orderBy('r.createdAt', 'DESC')
-        ;
+            ->orderBy('r.createdAt', 'DESC');
 
-        if (($filters['start_time'] ?? null) && !$filters['duration']) {
+        if (($filters['start_time'] ?? null)) {
             $queryBuilder
                 ->andWhere('r.startedAt >= :startTime')
                 ->setParameter('startTime', $filters['start_time']);
         }
 
-        if (($filters['end_time'] ?? null) && !$filters['duration']) {
+        if (($filters['end_time'] ?? null)) {
             $queryBuilder
                 ->andWhere('r.endedAt <= :endTime')
                 ->setParameter('endTime', $filters['end_time']);
