@@ -5,7 +5,7 @@
 {% block body %}
     <h1>Create new Report</h1>
 
-    {% for message in app.flashes('upload-file-error') %}
+    {% for message in app.flashes('file-error') %}
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             {{ message }}
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">

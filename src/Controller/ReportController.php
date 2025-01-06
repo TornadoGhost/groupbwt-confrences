@@ -71,12 +71,6 @@ class ReportController extends AbstractController
             $result = $this->reportService->saveReport($report, $conference, $user, $document);
 
             if (!$result) {
-                // TODO: Move to service and reuse
-                $this->flashBag->add(
-                    'upload-file-error',
-                    'File upload error. Try again later.'
-                );
-
                 return $this->renderForm('report/new.html.twig', [
                     'report' => $report,
                     'form' => $form,
@@ -142,12 +136,6 @@ class ReportController extends AbstractController
             $result = $this->reportService->saveReport($report, $conference, $user, $document);
 
             if (!$result) {
-                // TODO Move to service and reuse
-                $this->flashBag->add(
-                    'edit-page-error',
-                    'File upload error. Try again later.'
-                );
-
                 return $this->renderForm('report/edit.html.twig', [
                     'report' => $report,
                     'form' => $form,
@@ -193,32 +181,5 @@ class ReportController extends AbstractController
     public function download(string $file_name): StreamedResponse
     {
         return $this->reportService->downloadFile($file_name);
-    }
-
-    /**
-     * @Route("/{report_id}/comments/load", name="app_report_comments_load", methods={"GET"})
-     * @ParamConverter("report", options={"mapping": {"report_id": "id"}})
-     * @Security("is_granted('ROLE_USER')")
-     */
-    // TODO: move to api controller
-    public function loadComments(
-        Request $request,
-        Conference $conference,
-        Report $report,
-        ReportCommentService $commentService
-    ): JsonResponse
-    {
-        $page = $request->query->get('page');
-        $conferenceId = $conference->getId();
-
-        $comments = $commentService->getCommentsByPage(
-            $report,
-            $conferenceId,
-            (int) $page,
-            $commentService::MAX_PER_PAGE
-        );
-
-
-        return new JsonResponse($comments);
     }
 }
