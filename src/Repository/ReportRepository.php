@@ -187,4 +187,15 @@ class ReportRepository extends ServiceEntityRepository
 
         return $queryBuilder->getQuery()->getResult();
     }
+
+    public function fullTextSearchByTitle(string $title): ?array
+    {
+        return $this->createQueryBuilder('r')
+            ->select('r.id', 'r.title', 'c.id as conference_id')
+            ->leftJoin(Conference::class, 'c', 'WITH', 'r.conference = c')
+            ->where('MATCH(r.title) AGAINST(:title) > 1')
+            ->setParameter('title', $title)
+            ->getQuery()
+            ->getResult();
+    }
 }

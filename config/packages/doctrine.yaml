@@ -22,6 +22,7 @@ doctrine:
                 rand: DoctrineExtensions\Query\Mysql\Rand
             string_functions:
                 JSON_CONTAINS: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Mysql\JsonContains
+                match: DoctrineExtensions\Query\Mysql\MatchAgainst
             datetime_functions:
                 timestampdiff: DoctrineExtensions\Query\Mysql\TimestampDiff
         filters:

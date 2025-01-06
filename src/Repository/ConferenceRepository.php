@@ -155,4 +155,14 @@ class ConferenceRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function fullTextSearchByTitle(string $title): ?array
+    {
+        return $this->createQueryBuilder('c')
+            ->select('c.id', 'c.title')
+            ->where('MATCH(c.title) AGAINST(:title) > 1')
+            ->setParameter('title', $title)
+            ->getQuery()
+            ->getResult();
+    }
 }

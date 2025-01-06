@@ -11,6 +11,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=ReportRepository::class)
@@ -24,11 +25,13 @@ class Report
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column
+     * @Groups({"global_search"})
      */
     private ?int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"global_search"})
      */
     private ?string $title;
 
@@ -55,6 +58,7 @@ class Report
     /**
      * @ORM\ManyToOne(targetEntity=Conference::class, inversedBy="reports")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"global_search"})
      */
     private ?Conference $conference;
 
