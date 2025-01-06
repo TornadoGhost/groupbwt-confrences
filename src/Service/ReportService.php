@@ -157,6 +157,13 @@ class ReportService
 
     public function prepareReportFilters(array $filters, Conference $conference): array
     {
+        if ($filters['start_time']->format('Y-m-d H:i:s') === $filters['end_time']->format('Y-m-d H:i:s')) {
+            $filters['start_time'] = null;
+            $filters['end_time'] = null;
+
+            return $filters;
+        }
+
         if ($filters['start_time']) {
             $filters['start_time'] = (new \DateTime($conference->getStartedAt()->format('Y-m-d')))->setTime(
                 $filters['start_time']->format('H'),
