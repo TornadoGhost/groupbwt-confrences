@@ -164,16 +164,15 @@ class ReportRepository extends ServiceEntityRepository
             ->where('r.deletedAt IS NULL')
             ->andWhere('r.conference = :conference')
             ->setParameter('conference', $conference)
-            ->orderBy('r.createdAt', 'DESC')
-        ;
+            ->orderBy('r.createdAt', 'DESC');
 
-        if (($filters['start_time'] ?? null) && !$filters['duration']) {
+        if (($filters['start_time'] ?? null)) {
             $queryBuilder
                 ->andWhere('r.startedAt >= :startTime')
                 ->setParameter('startTime', $filters['start_time']);
         }
 
-        if (($filters['end_time'] ?? null) && !$filters['duration']) {
+        if (($filters['end_time'] ?? null)) {
             $queryBuilder
                 ->andWhere('r.endedAt <= :endTime')
                 ->setParameter('endTime', $filters['end_time']);
@@ -186,5 +185,16 @@ class ReportRepository extends ServiceEntityRepository
         }
 
         return $queryBuilder->getQuery()->getResult();
+    }
+
+    public function fullTextSearchByTitle(string $title): ?array
+    {
+        return $this->createQueryBuilder('r')
+            ->select('r.id', 'r.title', 'c.id as conference_id')
+            ->leftJoin(Conference::class, 'c', 'WITH', 'r.conference = c')
+            ->where('MATCH(r.title) AGAINST(:title) > 1')
+            ->setParameter('title', $title)
+            ->getQuery()
+            ->getResult();
     }
 }

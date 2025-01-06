@@ -71,7 +71,11 @@
         <tr>
             <th>Reports</th>
             <td>
-                <div>
+                <button class="d-inline-block m-auto btn btn-secondary mb-md-3" type="button" data-toggle="collapse"
+                        data-target="#filter-panel">
+                    Toggle Filters
+                </button>
+                <div class="collapse" id="filter-panel">
                     {{ form_start(report_form_filters) }}
                     {{ form_row(report_form_filters.start_time) }}
                     {{ form_row(report_form_filters.end_time) }}
