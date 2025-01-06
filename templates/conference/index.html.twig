@@ -5,7 +5,8 @@
 {% block isActive %}active{% endblock %}
 
 {% block body %}
-    <div class="row">
+    <div {% if is_granted('ROLE_USER') %}class="row"{% endif %}>
+        {% if is_granted('ROLE_USER') %}
         <div class="col-md-2 filters mt-md-5">
             <button class="d-block m-auto btn btn-secondary mt-md-3" type="button" data-toggle="collapse"
                     data-target="#filter-panel">
@@ -26,8 +27,9 @@
                 {{ form_end(filtersForm) }}
             </aside>
         </div>
+        {% endif %}
 
-        <section class="col-md-10 table-section">
+        <section class="{% if is_granted('ROLE_USER') %}col-md-10{% endif %} table-section">
             {% for message in app.flashes('error') %}
                 <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
                     {{ message }}
