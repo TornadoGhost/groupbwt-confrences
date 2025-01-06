@@ -71,12 +71,6 @@ class ReportController extends AbstractController
             $result = $this->reportService->saveReport($report, $conference, $user, $document);
 
             if (!$result) {
-                // TODO: Move to service and reuse
-                $this->flashBag->add(
-                    'upload-file-error',
-                    'File upload error. Try again later.'
-                );
-
                 return $this->renderForm('report/new.html.twig', [
                     'report' => $report,
                     'form' => $form,
@@ -142,12 +136,6 @@ class ReportController extends AbstractController
             $result = $this->reportService->saveReport($report, $conference, $user, $document);
 
             if (!$result) {
-                // TODO Move to service and reuse
-                $this->flashBag->add(
-                    'edit-page-error',
-                    'File upload error. Try again later.'
-                );
-
                 return $this->renderForm('report/edit.html.twig', [
                     'report' => $report,
                     'form' => $form,

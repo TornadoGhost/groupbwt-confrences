@@ -12,6 +12,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -22,13 +23,15 @@ class ReportService
     protected FileUploader $fileUploader;
     protected ConferenceService $conferenceService;
     protected EntityManagerInterface $entityManager;
+    protected FlashBagInterface $flashBag;
 
     public function __construct(
         FormFactoryInterface   $formFactory,
         ReportRepository       $reportRepository,
         FileUploader           $fileUploader,
         ConferenceService      $conferenceService,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        FlashBagInterface      $flashBag
     )
     {
         $this->formFactory = $formFactory;
@@ -36,6 +39,7 @@ class ReportService
         $this->fileUploader = $fileUploader;
         $this->conferenceService = $conferenceService;
         $this->entityManager = $entityManager;
+        $this->flashBag = $flashBag;
     }
 
     /**
@@ -80,6 +84,11 @@ class ReportService
             $documentName = $this->fileUploader->upload($document);
 
             if (!$documentName) {
+                $this->flashBag->add(
+                    'file-error',
+                    'File upload error. Try again later.'
+                );
+
                 return false;
             }
 
