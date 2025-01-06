@@ -182,31 +182,4 @@ class ReportController extends AbstractController
     {
         return $this->reportService->downloadFile($file_name);
     }
-
-    /**
-     * @Route("/{report_id}/comments/load", name="app_report_comments_load", methods={"GET"})
-     * @ParamConverter("report", options={"mapping": {"report_id": "id"}})
-     * @Security("is_granted('ROLE_USER')")
-     */
-    // TODO: move to api controller
-    public function loadComments(
-        Request $request,
-        Conference $conference,
-        Report $report,
-        ReportCommentService $commentService
-    ): JsonResponse
-    {
-        $page = $request->query->get('page');
-        $conferenceId = $conference->getId();
-
-        $comments = $commentService->getCommentsByPage(
-            $report,
-            $conferenceId,
-            (int) $page,
-            $commentService::MAX_PER_PAGE
-        );
-
-
-        return new JsonResponse($comments);
-    }
 }
