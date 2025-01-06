@@ -15,17 +15,9 @@
                             'report_id': comment.report.id,
                             'comment_id': comment.id}) }}">Edit</a>
                     {% endif %}
-                    <form class="d-inline" method="post"
-                          action="{{ path('app_report_comment_delete',{
-                              'conference_id': comment.report.conference.id,
-                              'report_id': comment.report.id,
-                              'comment_id': comment.id
-                          }) }}"
-                          onsubmit="return confirm('Are you sure you want to delete this comment?');">
-                        <input type="hidden" name="_token"
-                               value="{{ csrf_token('delete' ~ comment.report.id ~ comment.report.conference.id) }}">
-                        <button class="btn btn-danger" type="submit">Delete</button>
-                    </form>
+                    <button class="btn btn-danger" data-toggle="modal" data-target="#modal"
+                            data-comment="{{ comment.id }}">Delete
+                    </button>
                 {% endif %}
             </div>
         </div>

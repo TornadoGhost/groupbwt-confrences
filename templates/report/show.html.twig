@@ -74,8 +74,43 @@
             </form>
         {% endif %}
     {% endif %}
+
+    <div class="modal fade" id="modal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <script type="module">
-        import { commentsLazyLoading } from "{{ asset('js/commentsLazyLoading.js') }}";
+        import {commentsLazyLoading} from "{{ asset('js/commentsLazyLoading.js') }}";
+        import {modalDeleteComment} from "{{ asset('js/modalDeleteComment.js') }}";
+
         commentsLazyLoading('{{ path('app_report_comments_load', {'conference_id': conferenceId, 'report_id': report.id}) }}');
+
+        document.addEventListener('click', function (event) {
+            if (event.target.classList.contains('btn') && event.target.dataset.comment) {
+                const commentId = event.target.dataset.comment;
+                modalDeleteComment(
+                    'modal',
+                    {{ conferenceId }},
+                    {{ report.id }},
+                    commentId,
+                    '{{ csrf_token('delete' ~ report.id ~ conferenceId) }}');
+            }
+        });
+
+        console.log('{{ path('app_report_comment_delete', {conference_id: conferenceId, report_id: report.id, comment_id: 5555}) }}')
     </script>
 {% endblock %}
