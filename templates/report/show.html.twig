@@ -99,12 +99,14 @@
                     {{ report.id }},
                     commentId,
                     '{{ csrf_token('delete' ~ report.id ~ conferenceId) }}');
+            } else if (event.target.dataset.cancel === 'participation'){
+                cancelParticipationModal(
+                    'modal',
+                    '{{ path('app_report_delete', {'conference_id': conferenceId, 'report_id': report.id}) }}',
+                    '{{ csrf_token('delete' ~ report.id) }}');
             }
         });
 
-        cancelParticipationModal(
-            'modal',
-            '{{ path('app_report_delete', {'conference_id': conferenceId, 'report_id': report.id}) }}',
-            '{{ csrf_token('delete' ~ report.id) }}');
+
     </script>
 {% endblock %}
