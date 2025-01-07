@@ -16,12 +16,12 @@
         <h1>Conference</h1>
         {% if is_granted('ROLE_ADMIN') %}
             <div class="d-flex justify-content-center align-items-center">
-                <form class="d-flex align-items-center"
-                      action="{{ path('app_conference_delete', { id: conference.id }) }}"
-                      method="post">
-                    <input type="hidden" name="token" value="{{ csrf_token('delete-conference') }}">
-                    <button class="btn btn-danger" type="submit">Delete</button>
-                </form>
+                <button class="btn btn-danger"
+                        data-toggle="modal"
+                        data-target="#modal"
+                        data-admin="delete">
+                    Delete
+                </button>
                 <a class="btn btn-info ml-1" href="{{ path('app_conference_edit', {'id': conference.id}) }}">Edit</a>
             </div>
         {% else %}
@@ -38,12 +38,9 @@
                     </form>
                 {% endif %}
             {% else %}
-                <form class="d-flex align-items-center"
-                      action="{{ path('app_conference_cancel', {'id': conference.id}) }}"
-                      method="post">
-                    <input type="hidden" name="token" value="{{ csrf_token('cancel-conference') }}">
-                    <button class="btn btn-danger" type="submit">Cancel participation</button>
-                </form>
+                <button class="btn btn-danger" data-toggle="modal" data-target="#modal" data-cancel="participation">
+                    Cancel Participation
+                </button>
             {% endif %}
         {% endif %}
     </div>
@@ -120,14 +117,28 @@
         </tbody>
     </table>
 
+    {% include 'components/modal.html.twig' %}
+
     <script
         src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}">
     </script>
     <script type="module">
         import {initializeMap} from "{{ asset('js/fixedGoogleMap.js') }}";
         import {showMoreContent} from "{{ asset('js/showMoreContent.js') }}";
+        import {cancelParticipationModal} from "{{ asset('js/cancelParticipationModal.js') }}";
+        import {deleteAdminModal} from "{{ asset('js/deleteAdminModal.js') }}";
 
         initializeMap();
         showMoreContent();
+
+        document.addEventListener('click', function (event) {
+            if (event.target.dataset.admin === 'delete') {
+                 const url = `https://localhost/conferences/{{ conference.id }}/delete`;
+                 deleteAdminModal('modal', url, '{{ csrf_token('delete-conference') }}');
+            } else if (event.target.dataset.cancel === 'participation') {
+                const url = `https://localhost/conferences/{{ conference.id }}/cancel`;
+                cancelParticipationModal('modal', url, "{{ csrf_token('cancel-conference') }}");
+            }
+        });
     </script>
 {% endblock %}

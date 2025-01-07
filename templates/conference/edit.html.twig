@@ -41,20 +41,27 @@
     {{ form_end(form) }}
 
     <div class="mt-1">
-        <form class="d-inline" action="{{ path('app_conference_delete', { id: conference.id }) }}"
-              method="post">
-            <input type="hidden" name="token" value="{{ csrf_token('delete-conference') }}">
-            <button class="btn btn-danger" type="submit">Delete</button>
-        </form>
+        <button class="btn btn-danger"
+                data-toggle="modal"
+                data-target="#modal"
+                data-admin="delete">
+            Delete
+        </button>
 
         <a class="btn btn-primary" href="{{ path('app_conference_index') }}">Back to list</a>
     </div>
+
+    {% include 'components/modal.html.twig' %}
 
     <script
         src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}">
     </script>
     <script type="module">
         import { initializeMap } from "{{ asset('js/interactiveGoogleMap.js') }}";
+        import {deleteAdminModal} from "{{ asset('js/deleteAdminModal.js') }}";
+
+        const url = `https://localhost/conferences/{{ conference.id }}/delete`;
         initializeMap();
+        deleteAdminModal('modal', url, '{{ csrf_token('delete-conference') }}');
     </script>
 {% endblock %}

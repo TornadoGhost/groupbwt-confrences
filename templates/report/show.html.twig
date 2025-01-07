@@ -7,7 +7,28 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Report</h1>
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>Report</h1>
+        <div>
+            {% if(is_granted('ROLE_ANNOUNCER')) %}
+                {% if(is_granted('EDIT', report)) %}
+                    <a class="d-inline-block btn btn-primary mr-1"
+                       href="{{ path('app_report_edit', {'conference_id': conferenceId,'report_id': report.id}) }}">Edit</a>
+                {% endif %}
+                {% if(is_granted('DELETE', report)) %}
+                    {#<form class="d-inline" method="post"
+                          action="{{ path('app_report_delete', {'conference_id': conferenceId, 'report_id': report.id}) }}"
+                          onsubmit="return confirm('Are you sure you want to delete this item?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ report.id) }}">
+                        <button class="btn btn-danger">Cancel participation</button>
+                    </form>#}
+                    <button class="btn btn-danger" data-toggle="modal" data-target="#modal">
+                        Cancel Participation
+                    </button>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
 
     <table class="table">
         <tbody>
@@ -60,42 +81,12 @@
         </div>
     </div>
 
-    {% if(is_granted('ROLE_ANNOUNCER')) %}
-        {% if(is_granted('edit', report)) %}
-            <a class="d-inline-block btn btn-primary mr-1"
-               href="{{ path('app_report_edit', {'conference_id': conferenceId,'report_id': report.id}) }}">Edit</a>
-        {% endif %}
-        {% if(is_granted('delete', report)) %}
-            <form class="d-inline" method="post"
-                  action="{{ path('app_report_delete', {'conference_id': conferenceId, 'report_id': report.id}) }}"
-                  onsubmit="return confirm('Are you sure you want to delete this item?');">
-                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ report.id) }}">
-                <button class="btn btn-danger">Cancel participation</button>
-            </form>
-        {% endif %}
-    {% endif %}
-
-    <div class="modal fade" id="modal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                </div>
-                <div class="modal-footer">
-                </div>
-            </div>
-        </div>
-    </div>
-
+    {% include 'components/modal.html.twig' %}
 
     <script type="module">
         import {commentsLazyLoading} from "{{ asset('js/commentsLazyLoading.js') }}";
         import {modalDeleteComment} from "{{ asset('js/modalDeleteComment.js') }}";
+        import {cancelParticipationModal} from "{{ asset('js/cancelParticipationModal.js') }}";
 
         commentsLazyLoading('{{ path('app_report_comments_load', {'conference_id': conferenceId, 'report_id': report.id}) }}');
 
@@ -111,6 +102,9 @@
             }
         });
 
-        console.log('{{ path('app_report_comment_delete', {conference_id: conferenceId, report_id: report.id, comment_id: 5555}) }}')
+        cancelParticipationModal(
+            'modal',
+            '{{ path('app_report_delete', {'conference_id': conferenceId, 'report_id': report.id}) }}',
+            '{{ csrf_token('delete' ~ report.id) }}');
     </script>
 {% endblock %}
