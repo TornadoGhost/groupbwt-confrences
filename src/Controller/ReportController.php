@@ -153,7 +153,7 @@ class ReportController extends AbstractController
     }
 
     /**
-     * @Route("/{report_id}", name="app_report_delete", methods={"POST"})
+     * @Route("/{report_id}/delete", name="app_report_delete", methods={"POST"})
      * @ParamConverter("report", options={"mapping": {"report_id": "id"}})
      * @IsGranted("DELETE", subject="report")
      */
