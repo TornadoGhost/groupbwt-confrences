@@ -120,7 +120,7 @@ class ReportController extends AbstractController
     /**
      * @Route("/{report_id}/edit", name="app_report_edit", methods={"GET","POST"})
      * @ParamConverter("report", options={"mapping": {"report_id": "id"}})
-     * @IsGranted("edit", subject="report")
+     * @IsGranted("EDIT", subject="report")
      */
     public function edit(Request $request, Conference $conference, Report $report): Response
     {
@@ -153,13 +153,13 @@ class ReportController extends AbstractController
     }
 
     /**
-     * @Route("/{report_id}", name="app_report_delete", methods={"POST"})
+     * @Route("/{report_id}/delete", name="app_report_delete", methods={"POST"})
      * @ParamConverter("report", options={"mapping": {"report_id": "id"}})
-     * @IsGranted("delete", subject="report")
+     * @IsGranted("DELETE", subject="report")
      */
     public function delete(Request $request, Conference $conference, Report $report): Response
     {
-        if ($this->isCsrfTokenValid('delete' . $report->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $report->getId(), $request->request->get('token'))) {
             $user = $this->getUser();
             $result = $this->reportService->deleteReport($report, $conference, $user);
 

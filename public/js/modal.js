@@ -1,6 +1,6 @@
 export function modal(modal, modalTitle, modalBody, modalFooter) {
-  fillModalWindow(modal, modalTitle, modalBody, modalFooter);
   removeEvents(modal);
+  fillModalWindow(modal, modalTitle, modalBody, modalFooter);
 }
 
 function fillModalWindow(modal, modalTitle, modalBody, modalFooter) {
@@ -10,7 +10,7 @@ function fillModalWindow(modal, modalTitle, modalBody, modalFooter) {
 }
 
 function removeEvents(modal) {
-  document.addEventListener('click', function (event) {
+  function clickHandler(event) {
     if (
       event.target.dataset.dismiss === 'modal' ||
       event.target.parentElement.dataset.dismiss === 'modal' ||
@@ -18,19 +18,24 @@ function removeEvents(modal) {
     ) {
       removeModalData(modal);
     }
-  });
 
-  document.addEventListener('keyup', function (event) {
+    document.removeEventListener('click', clickHandler);
+  }
+
+  function keyupHandler(event) {
     if (event.key === 'Escape') {
       removeModalData(modal);
     }
-  });
+
+    document.removeEventListener('keyup', keyupHandler);
+  }
+
+  document.addEventListener('click', clickHandler);
+  document.addEventListener('keyup', keyupHandler);
 }
 
 function removeModalData(modal) {
-  setTimeout(function () {
-    modal.querySelector('.modal-title').innerHTML = '';
-    modal.querySelector('.modal-body').innerHTML = '';
-    modal.querySelector('.modal-footer').innerHTML = '';
-  }, 500);
+  modal.querySelector('.modal-title').innerHTML = '';
+  modal.querySelector('.modal-body').innerHTML = '';
+  modal.querySelector('.modal-footer').innerHTML = '';
 }
