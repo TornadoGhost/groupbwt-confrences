@@ -159,7 +159,7 @@ class ReportController extends AbstractController
      */
     public function delete(Request $request, Conference $conference, Report $report): Response
     {
-        if ($this->isCsrfTokenValid('delete' . $report->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $report->getId(), $request->request->get('token'))) {
             $user = $this->getUser();
             $result = $this->reportService->deleteReport($report, $conference, $user);
 
