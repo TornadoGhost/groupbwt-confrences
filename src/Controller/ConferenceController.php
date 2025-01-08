@@ -64,6 +64,7 @@ class ConferenceController extends AbstractController
      */
     public function new(Request $request): Response
     {
+        // TODO: add field endedAt to form
         $conference = new Conference();
         $form = $this->createForm(ConferenceType::class, $conference);
         $this->conferenceService->formPreparation($request, $conference, $form);
