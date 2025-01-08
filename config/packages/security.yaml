@@ -5,9 +5,9 @@ security:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     role_hierarchy:
-        ROLE_LISTENER: [ROLE_USER]
-        ROLE_ANNOUNCER: [ROLE_USER]
-        ROLE_ADMIN: [ROLE_USER, ROLE_LISTENER, ROLE_ANNOUNCER]
+        ROLE_LISTENER: [ ROLE_USER ]
+        ROLE_ANNOUNCER: [ ROLE_USER ]
+        ROLE_ADMIN: [ ROLE_USER, ROLE_LISTENER, ROLE_ANNOUNCER ]
     providers:
         # used to reload user from session & other features (e.g. switch_user)
         app_user_provider:
@@ -19,6 +19,18 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        login:
+            pattern: ^/api/login
+            stateless: true
+            json_login:
+                check_path: /api/login_check
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+                
+        api:
+            pattern:   ^/api
+            stateless: true
+            jwt: ~
         main:
             lazy: true
             provider: app_user_provider
