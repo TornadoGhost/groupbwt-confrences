@@ -134,4 +134,9 @@ class ConferenceService extends BaseService
     {
         return $this->conferenceRepository->findParticipantByUserId($userId, $conferenceId);
     }
+
+    public function delete(Conference $conference): void
+    {
+        $this->conferenceRepository->delete($conference);
+    }
 }

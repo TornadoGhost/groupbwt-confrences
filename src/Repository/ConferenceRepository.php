@@ -167,4 +167,10 @@ class ConferenceRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function delete(Conference $conference): void
+    {
+        $this->_em->remove($conference);
+        $this->_em->flush();
+    }
 }
