@@ -7,19 +7,23 @@ use App\Repository\ConferenceRepository;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class ConferenceService
+class ConferenceService extends BaseService
 {
     const COUNT_PER_PAGE = 15;
     private ConferenceRepository $conferenceRepository;
+    protected UrlGeneratorInterface $urlGenerator;
 
     public function __construct(
-        ConferenceRepository $conferenceRepository
+        ConferenceRepository $conferenceRepository,
+        UrlGeneratorInterface $urlGenerator
     )
     {
         $this->conferenceRepository = $conferenceRepository;
+        $this->urlGenerator = $urlGenerator;
     }
 
     public function getAllConferencesWithFiltersPaginate(
@@ -38,6 +42,49 @@ class ConferenceService
         $conferences->setCurrentPage($currentPage);
 
         return $conferences;
+    }
+
+    public function getAllConferencesWithFiltersPaginateApi(
+        int  $countPerPage,
+        int  $currentPage = 1,
+        ?int $userId = null,
+        ?array $filters = []
+    ): array
+    {
+        $pagerfanta = $this->getAllConferencesWithFiltersPaginate($countPerPage, $currentPage, $userId, $filters);
+
+        $conferences = [];
+        foreach ($pagerfanta->getCurrentPageResults() as $result) {
+            $conferences[] = $result;
+        }
+
+        // TODO: Reread how to make response with pagination https://restfulapi.net/api-pagination-sorting-filtering/
+        return [
+            'data' => $conferences,
+            'total' => $pagerfanta->getNbResults(),
+            'count' => count($conferences),
+            'current_page' => $pagerfanta->getCurrentPage(),
+            'first_page_url' => $this->urlGenerator->generate('api_conference_index', ['page' => 1]),
+            'last_page' => $pagerfanta->getNbPages(),
+            'last_page_url' => $this->urlGenerator->generate('api_conference_index', [
+                'page' => $pagerfanta->getNbPages()]
+            ),
+            'next_page_url' =>
+                $pagerfanta->hasNextPage()
+                    ? $this->urlGenerator->generate('api_conference_index', [
+                        'page' => $pagerfanta->getNextPage()
+                ])
+                    : null,
+            'path' => $this->urlGenerator->generate('api_conference_index'),
+            'per_page' => $countPerPage,
+            'prev_page_url' =>
+                $pagerfanta->hasPreviousPage()
+                    ? $this->urlGenerator->generate('api_conference_index', [
+                        'page' => $pagerfanta->getPreviousPage()
+                ])
+                    : null,
+            'to' => $pagerfanta->getCurrentPageResults()->count(),
+        ];
     }
 
     public function addUserToConference(Conference $conference, UserInterface $user): void
@@ -61,16 +108,16 @@ class ConferenceService
         return $form;
     }
 
-    public function saveFormChanges(FormInterface $form, Conference $conference): void
+    public function saveFormChanges(FormInterface $form, Conference $conference): Conference
     {
         $latitude = $form->get('latitude')->getData();
         $longitude = $form->get('longitude')->getData();
 
         $address = [$latitude, $longitude];
-        $this->conferenceRepository->saveEditFormChanges($conference, $address);
+        return $this->conferenceRepository->saveEditFormChanges($conference, $address);
     }
 
-    protected function setCustomDataForForm(FormInterface $form, array $fieldsData = []): FormInterface
+    public function setCustomDataForForm(FormInterface $form, array $fieldsData = []): FormInterface
     {
         if (!$fieldsData) {
             return $form;

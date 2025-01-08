@@ -25,7 +25,7 @@ class Conference
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column
-     * @Groups({"global_search"})
+     * @Groups({"global_search", "api_conferences_all"})
      */
     private ?int $id;
 
@@ -37,17 +37,19 @@ class Conference
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"global_search"})
+     * @Groups({"global_search", "api_conferences_all"})
      */
     private ?string $title;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"global_search", "api_conferences_all"})
      */
     private ?DateTimeInterface $startedAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"global_search", "api_conferences_all"})
      */
     private ?DateTimeInterface $endedAt = null;
 

@@ -45,3 +45,13 @@ services:
             - { name: doctrine.event_listener, event: 'loadClassMetadata' }
         calls:
             - [ setAnnotationReader, [ '@annotation_reader' ] ]
+            
+    app.normalizer.object_normalizer:
+        class: Symfony\Component\Serializer\Normalizer\ObjectNormalizer
+        tags: ['serializer.normalizer']
+        arguments:
+            $defaultContext:
+                callbacks: {
+                   'startedAt': '@App\Serializer\StartedAtConferenceCallback',
+                   'endedAt': '@App\Serializer\EndedAtConferenceCallback',
+                }

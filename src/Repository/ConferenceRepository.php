@@ -115,10 +115,12 @@ class ConferenceRepository extends ServiceEntityRepository
         $this->saveData($user);
     }
 
-    public function saveEditFormChanges(Conference $conference, array $address): void
+    public function saveEditFormChanges(Conference $conference, array $address): Conference
     {
         $conference->setAddress($address);
         $this->saveData($conference);
+
+        return $conference;
     }
 
     protected function saveData(object $data): void
