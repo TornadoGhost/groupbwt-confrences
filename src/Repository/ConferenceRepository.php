@@ -160,7 +160,7 @@ class ConferenceRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('c')
             ->select('c.id', 'c.title')
-            ->where('MATCH(c.title) AGAINST(:title) > 1')
+            ->where('MATCH(c.title) AGAINST(:title) > 0')
             ->setParameter('title', $title)
             ->getQuery()
             ->getResult();

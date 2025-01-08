@@ -28,6 +28,10 @@ class ReportCommentVoter extends Voter
         /** @var ReportComment $comment */
         $comment = $subject;
 
+        if (in_array('ROLE_ADMIN', $user->getRoles())) {
+            return true;
+        }
+
         if ($attribute === self::EDIT) {
             $commentTime = $comment->getCreatedAt()->modify("+10 minutes");
             $now =  new \DateTime();
