@@ -2,6 +2,7 @@
 
 namespace App\EventListener;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
@@ -15,7 +16,7 @@ class AccessDeniedListener
 
     public function __construct(
         FlashBagInterface $flashBag,
-        RouterInterface $router
+        RouterInterface   $router
     )
     {
         $this->flashBag = $flashBag;
@@ -27,11 +28,17 @@ class AccessDeniedListener
         $exception = $event->getThrowable();
 
         if ($exception instanceof AccessDeniedException) {
-            $this->flashBag->add('error', 'Access Denied. You do not have permission to access that page.');
+            $request = $event->getRequest();
 
-            $url = $this->router->generate('app_conference_index');
+            if (str_starts_with($request->getPathInfo(), '/api')) {
+                $event->setResponse(new JsonResponse(null, 403));
+            } else {
+                $this->flashBag->add('error', 'Access Denied. You do not have permission to access that page.');
 
-            $event->setResponse(new RedirectResponse($url));
+                $url = $this->router->generate('app_conference_index');
+
+                $event->setResponse(new RedirectResponse($url));
+            }
         }
     }
 }
