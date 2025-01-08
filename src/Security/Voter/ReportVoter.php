@@ -28,6 +28,10 @@ class ReportVoter extends Voter
         /** @var Report $report */
         $report = $subject;
 
+        if (in_array('ROLE_ADMIN', $user->getRoles())) {
+            return true;
+        }
+
         return $report->getUser() === $user;
     }
 }

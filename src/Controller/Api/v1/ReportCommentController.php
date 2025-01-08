@@ -28,7 +28,6 @@ class ReportCommentController extends AbstractController
      * @Security("is_granted('ROLE_USER')")
      */
 
-//    TODO: Check url by not passing 'page' query parameter
     public function loadComments(
         Request $request,
         Conference $conference,
@@ -36,7 +35,7 @@ class ReportCommentController extends AbstractController
         ReportCommentService $commentService
     ): JsonResponse
     {
-        $page = $request->query->get('page');
+        $page = $request->query->get('page', 1);
         $conferenceId = $conference->getId();
 
         $comments = $commentService->getCommentsByPage(
