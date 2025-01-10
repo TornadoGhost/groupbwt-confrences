@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class ReportService
+class ReportService extends BaseService
 {
     protected FormFactoryInterface $formFactory;
     protected ReportRepository $reportRepository;
@@ -71,7 +71,7 @@ class ReportService
         Conference    $conference,
         UserInterface $user,
         ?UploadedFile $document = null
-    ): bool
+    ): ?Report
     {
         if ($document) {
             $reportId = $this->entityManager->contains($report) ? $report->getId() : null;
@@ -89,15 +89,13 @@ class ReportService
                     'File upload error. Try again later.'
                 );
 
-                return false;
+                return null;
             }
 
             $report->setDocument($documentName);
         }
 
-        $userId = $user->getId();
-        $conferenceId = $conference->getId();
-        $userPartOfConference = $this->conferenceService->findParticipantByUserId($userId, $conferenceId);
+        $userPartOfConference = $this->conferenceService->findParticipantByUserId($user->getId(), $conference->getId());
 
         if (!$userPartOfConference) {
             $conference->addUser($user);
@@ -107,10 +105,48 @@ class ReportService
         $report->setConference($conference);
         $this->reportRepository->saveData($report);
 
-        return true;
+        return $report;
     }
 
-    public function deleteReport(Report $report, Conference $conference, UserInterface $user): ?string
+    public function saveReportApi(
+        Report        $report,
+        Conference    $conference,
+        UserInterface $user,
+        ?UploadedFile $document = null
+    ): Report
+    {
+        if ($document) {
+
+            $reportId = $this->entityManager->contains($report) ? $report->getId() : null;
+
+            if ($reportId) {
+                $fileExist = $this->reportRepository->fileNameExist($reportId);
+                $this->deleteUploadedFile(array_shift($fileExist));
+            }
+
+            $documentName = $this->fileUploader->upload($document);
+
+            if (!$documentName) {
+                throw new \RuntimeException("File upload failed due to server error.", 500);
+            }
+
+            $report->setDocument($documentName);
+        }
+
+        $userPartOfConference = $this->conferenceService->findParticipantByUserId($user->getId(), $conference->getId());
+
+        if (!$userPartOfConference) {
+            $conference->addUser($user);
+        }
+
+        $report->setUser($user);
+        $report->setConference($conference);
+        $this->reportRepository->saveData($report);
+
+        return $report;
+    }
+
+    public function deleteReport(Report $report, Conference $conference, UserInterface $user): ?\Exception
     {
         return $this->reportRepository->deleteReport($report, $conference, $user);
     }
@@ -146,6 +182,32 @@ class ReportService
 
         $response->headers->set('Content-Type', 'application/octet-stream');
         $response->headers->set('Content-Disposition', "attachment; filename={$fileName}");
+
+        return $response;
+    }
+
+    public function downloadFileApi(string $fileName): StreamedResponse
+    {
+        $response = new StreamedResponse(function () use ($fileName) {
+            $file = $this->fileUploader->getTargetDirectory() . '/' . $fileName;
+
+            if (!file_exists($file)) {
+                throw $this->createNotFoundException('File not found.');
+            }
+
+            $stream = fopen($file, 'r');
+
+            while (!feof($stream)) {
+                echo fread($stream, 1024);
+                flush();
+            }
+
+            fclose($stream);
+        });
+
+        // Встановлення заголовків для завантаження файлу
+        $response->headers->set('Content-Type', 'application/octet-stream');
+        $response->headers->set('Content-Disposition', "attachment; filename=\"{$fileName}\"");
 
         return $response;
     }

@@ -143,9 +143,13 @@ class ReportType extends AbstractType
             /** @var Report $data */
             $data = $event->getData();
 
-            $startTime = $data->getStartedAt();
-            $endTime = $data->getEndedAt();
+            $startTime = $this->entityManager->contains($data) ? $data->getStartedAt() : null;
+            $endTime = $this->entityManager->contains($data) ? $data->getEndedAt() : null;
             $conferenceId = $options['conference_id'];
+
+            if (!$startTime && !$endTime) {
+                return;
+            }
 
             if ($startTime >= $endTime) {
                 $form->get('startedAt')->addError(new FormError(
@@ -191,7 +195,8 @@ class ReportType extends AbstractType
             'data_class' => Report::class,
             'conference_id' => null,
             'conference_start' => null,
-            'conference_end' => null
+            'conference_end' => null,
+            'csrf_protection' => false
         ]);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Report;
 use App\Entity\ReportComment;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -23,13 +24,17 @@ class ReportCommentRepository extends ServiceEntityRepository
         parent::__construct($registry, ReportComment::class);
     }
 
-    public function add(ReportComment $entity, bool $flush = false): void
+    public function add(ReportComment $entity, bool $flush = false): ?ReportComment
     {
         $this->getEntityManager()->persist($entity);
 
         if ($flush) {
             $this->getEntityManager()->flush();
+
+            return $entity;
         }
+
+        return null;
     }
 
     public function remove(ReportComment $entity, bool $flush = false): void
@@ -58,6 +63,7 @@ class ReportCommentRepository extends ServiceEntityRepository
     public function getCommentsByReportQueryBuilder(Report $report): QueryBuilder
     {
         return $this->createQueryBuilder('c')
+            ->leftJoin('c.user', 'u', Join::WITH)
             ->where('c.report = :report')
             ->andWhere('c.deletedAt IS NULL')
             ->setParameter('report', $report)

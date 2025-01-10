@@ -45,13 +45,10 @@ services:
             - { name: doctrine.event_listener, event: 'loadClassMetadata' }
         calls:
             - [ setAnnotationReader, [ '@annotation_reader' ] ]
-            
-    app.normalizer.object_normalizer:
-        class: Symfony\Component\Serializer\Normalizer\ObjectNormalizer
-        tags: ['serializer.normalizer']
+
+    serializer.normalizer.datetime:
+        class: 'Symfony\Component\Serializer\Normalizer\DateTimeNormalizer'
         arguments:
-            $defaultContext:
-                callbacks: {
-                   'startedAt': '@App\Serializer\StartedAtConferenceCallback',
-                   'endedAt': '@App\Serializer\EndedAtConferenceCallback',
-                }
+            - !php/const Symfony\Component\Serializer\Normalizer\DateTimeNormalizer::FORMAT_KEY: 'Y-m-d H:i'
+        tags:
+            - { name: serializer.normalizer, priority: -910 }

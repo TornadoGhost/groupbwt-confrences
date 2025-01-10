@@ -84,7 +84,7 @@ class ReportRepository extends ServiceEntityRepository
         return null;
     }
 
-    public function deleteReport(Report $report, Conference $conference, UserInterface $user): ?string
+    public function deleteReport(Report $report, Conference $conference, UserInterface $user): ?\Exception
     {
         $this->_em->beginTransaction();
 
@@ -96,7 +96,7 @@ class ReportRepository extends ServiceEntityRepository
         } catch (\Exception $e) {
             $this->_em->rollback();
 
-            return $e->getMessage();
+            return $e;
         }
 
         return null;

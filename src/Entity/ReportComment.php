@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=ReportCommentRepository::class)
@@ -19,16 +20,19 @@ class ReportComment
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"api_report_comments"})
      */
     private ?int $id;
 
     /**
      * @ORM\Column(type="text", columnDefinition="TEXT")
+     * @Groups({"api_report_comments"})
      */
     private ?string $content;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="reportComments")
+     * @Groups({"api_report_comments"})
      */
     private ?User $user;
 

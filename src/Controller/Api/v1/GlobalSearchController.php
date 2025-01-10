@@ -4,7 +4,6 @@ namespace App\Controller\Api\v1;
 
 use App\Service\GlobalSearchService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -25,9 +24,9 @@ class GlobalSearchController extends AbstractController
         $data = $globalSearchService->search($request);
 
         if (!$data) {
-            return new Response('', 204);
+            return $this->json(null, Response::HTTP_NO_CONTENT);
         }
 
-        return JsonResponse::fromJsonString($data);
+        return $this->json($data);
     }
 }

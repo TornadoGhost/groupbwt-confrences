@@ -7,7 +7,6 @@ use App\Form\ConferenceType;
 use App\Service\ConferenceService;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,25 +26,23 @@ class ConferenceController extends AbstractController
     }
 
     /**
-     * @Route("/", name="conference_index", methods={"GET"})
+     * @Route("/", name="conferences_index", methods={"GET"})
      */
     public function index(Request $request): Response
     {
-        $perPage = ConferenceService::COUNT_PER_PAGE;
-        $page = $request->query->getInt('page', 1);
         $userId = !$this->getUser() ? null : $this->getUser()->getId();
         $conferences = $this->conferenceService->getAllConferencesWithFiltersPaginateApi(
-            $perPage,
-            $page,
+            ConferenceService::COUNT_PER_PAGE,
+            $request->query->getInt('page', 1),
             $userId,
             $request->query->all()
         );
 
-        return $this->json($conferences, 200, [], ['groups' => ['api_conferences_all']]);
+        return $this->json($conferences, Response::HTTP_OK, [], ['groups' => ['api_conferences_all']]);
     }
 
     /**
-     * @Route("", name="conference_store", methods={"POST"})
+     * @Route("", name="conferences_store", methods={"POST"})
      * @Security("is_granted('ROLE_ADMIN')")
      */
     public function store(Request $request): Response
@@ -57,46 +54,25 @@ class ConferenceController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $conference = $this->conferenceService->saveFormChanges($form, $conference);
 
-            return new JsonResponse([
-                'id' => $conference->getId(),
-                'title' => $conference->getTitle(),
-                'address' => $conference->getAddress(),
-                'country' => $conference->getCountry(),
-                'started_at' => $conference->getStartedAt(),
-                'ended_at' => $conference->getEndedAt(),
-                'created_at' => $conference->getCreatedAt()
-            ], 201);
+            return $this->json($conference, Response::HTTP_CREATED, ['groups' => ['api_conferences_store']]);
         }
 
-        $errors = [];
+        $errors = $this->conferenceService->getFormErrors($form);
 
-        foreach ($form->all() as $fieldName => $formField) {
-            foreach ($formField->getErrors() as $error) {
-                $errors[$fieldName][] = $error->getMessage();
-            }
-        }
-
-        return new JsonResponse(['errors' => $errors], 422);
+        return $this->json(['errors' => $errors], Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
-     * @Route("/{id}", name="conference_show", methods={"GET"})
+     * @Route("/{id}", name="conferences_show", methods={"GET"})
      * @Security("is_granted('ROLE_USER')")
      */
     public function show(Conference $conference): Response
     {
-        return new JsonResponse([
-            'id' => $conference->getId(),
-            'title' => $conference->getTitle(),
-            'address' => $conference->getAddress(),
-            'country' => $conference->getCountry(),
-            'started_at' => $conference->getStartedAt()->format('Y-m-d H:i'),
-            'ended_at' => $conference->getEndedAt()->format('Y-m-d H:i')
-        ]);
+        return $this->json($conference, Response::HTTP_OK, [], ['groups' => ['api_conferences_show']]);
     }
 
     /**
-     * @Route("/{id}", name="conference_update", methods={"PUT"})
+     * @Route("/{id}", name="conferences_update", methods={"PUT"})
      * @Security("is_granted('ROLE_ADMIN')")
      */
     public function update(Request $request, Conference $conference): Response
@@ -107,51 +83,44 @@ class ConferenceController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $conference = $this->conferenceService->saveFormChanges($form, $conference);
 
-            return new JsonResponse([
-                'id' => $conference->getId(),
-                'title' => $conference->getTitle(),
-                'address' => $conference->getAddress(),
-                'country' => $conference->getCountry(),
-                'started_at' => $conference->getStartedAt()->format('Y-m-d H:i'),
-                'ended_at' => $conference->getEndedAt()->format('Y-m-d H:i')
-            ]);
+            return $this->json($conference, Response::HTTP_OK, [], ['groups' => ['api_conferences_show']]);
         }
 
-        return new JsonResponse([
+        return $this->json([
             'errors' => $this->conferenceService->getFormErrors($form)
-        ], 422);
+        ], Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
-     * @Route("/{id}", name="conference_delete", methods={"DELETE"})
+     * @Route("/{id}", name="conferences_delete", methods={"DELETE"})
      * @Security("is_granted('ROLE_ADMIN')")
      */
     public function delete(Conference $conference): Response
     {
         $this->conferenceService->delete($conference);
 
-        return new JsonResponse(null, 204);
+        return $this->json(null, Response::HTTP_NO_CONTENT);
     }
 
     /**
-     * @Route("/{id}/join", name="conference_join", methods={"POST"})
+     * @Route("/{id}/join", name="conferences_join", methods={"POST"})
      * @Security("is_granted('ROLE_USER')")
      */
     public function join(Conference $conference, ConferenceService $conferenceService): Response
     {
         $conferenceService->addUserToConference($conference, $this->getUser());
 
-        return new JsonResponse(null, 204);
+        return $this->json(null, Response::HTTP_NO_CONTENT);
     }
 
     /**
-     * @Route("/{id}/cancel", name="conference_cancel", methods={"POST"})
+     * @Route("/{id}/cancel", name="conferences_cancel", methods={"POST"})
      * @Security("is_granted('ROLE_USER')")
      */
     public function cancel(Conference $conference): Response
     {
         $this->conferenceService->removeUserFromConference($conference, $this->getUser());
 
-        return new JsonResponse(null, 204);
+        return $this->json(null, Response::HTTP_NO_CONTENT);
     }
 }

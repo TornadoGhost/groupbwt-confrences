@@ -64,22 +64,22 @@ class ConferenceService extends BaseService
             'total' => $pagerfanta->getNbResults(),
             'count' => count($conferences),
             'current_page' => $pagerfanta->getCurrentPage(),
-            'first_page_url' => $this->urlGenerator->generate('api_conference_index', ['page' => 1]),
+            'first_page_url' => $this->urlGenerator->generate('api_conferences_index', ['page' => 1]),
             'last_page' => $pagerfanta->getNbPages(),
-            'last_page_url' => $this->urlGenerator->generate('api_conference_index', [
+            'last_page_url' => $this->urlGenerator->generate('api_conferences_index', [
                 'page' => $pagerfanta->getNbPages()]
             ),
             'next_page_url' =>
                 $pagerfanta->hasNextPage()
-                    ? $this->urlGenerator->generate('api_conference_index', [
+                    ? $this->urlGenerator->generate('api_conferences_index', [
                         'page' => $pagerfanta->getNextPage()
                 ])
                     : null,
-            'path' => $this->urlGenerator->generate('api_conference_index'),
+            'path' => $this->urlGenerator->generate('api_conferences_index'),
             'per_page' => $countPerPage,
             'prev_page_url' =>
                 $pagerfanta->hasPreviousPage()
-                    ? $this->urlGenerator->generate('api_conference_index', [
+                    ? $this->urlGenerator->generate('api_conferences_index', [
                         'page' => $pagerfanta->getPreviousPage()
                 ])
                     : null,

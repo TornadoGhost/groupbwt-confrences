@@ -15,9 +15,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Twig\Environment;
 
-class ReportCommentService
+class ReportCommentService extends BaseService
 {
-    const MAX_PER_PAGE = 5;
+    const MAX_PER_PAGE = 4;
     protected ReportCommentRepository $reportCommentRepository;
     protected FormFactoryInterface $formFactory;
     protected Environment $twig;
@@ -62,6 +62,18 @@ class ReportCommentService
 
         return $commentForm;
     }
+
+    public function createReportCommentApi(
+        UserInterface  $user,
+        Report         $report,
+        ?ReportComment $comment = null
+    ): ?ReportComment
+    {
+        $comment->setUser($user);
+        $comment->setReport($report);
+        return $this->reportCommentRepository->add($comment, true);
+    }
+
 
     public function updateComment(
         Request        $request,
@@ -123,5 +135,30 @@ class ReportCommentService
             'comments' => $commentsHtml,
             'nextPage' => $nextPage,
         ];
+    }
+
+    public function getCommentsPaginate(
+        Report $report,
+        int    $page,
+        int    $maxPerPage
+    ): ?array
+    {
+        $qb = $this->getCommentsByReportQueryBuilder($report);
+        $adapter = new QueryAdapter($qb);
+        $pagerfanta = new Pagerfanta($adapter);
+        $pagerfanta->setCurrentPage($page);
+        $pagerfanta->setMaxPerPage($maxPerPage);
+
+        $comments = [];
+        foreach ($pagerfanta->getCurrentPageResults() as $result) {
+            $comments[] = $result;
+        }
+
+        return $comments;
+    }
+
+    public function save(ReportComment $entity, bool $flush = false): ?ReportComment
+    {
+        return $this->reportCommentRepository->add($entity, $flush);
     }
 }
