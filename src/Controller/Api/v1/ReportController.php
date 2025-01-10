@@ -60,8 +60,6 @@ class ReportController extends AbstractController
         Conference $conference
     ): Response
     {
-        dd($request->files->all());
-
         // TODO: make download pptx file (via base64, because other variants not working and postman not working properly too)
         $user = $this->getUser();
         $userPartOfConference = $this->conferenceService->findParticipantByUserId(
