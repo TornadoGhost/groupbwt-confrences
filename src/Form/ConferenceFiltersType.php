@@ -39,7 +39,8 @@ class ConferenceFiltersType extends AbstractType
             'required' => false,
             'attr' => [
                 'id' => 'filter-form'
-            ]
+            ],
+            'csrf_protection' => false
         ]);
     }
 }

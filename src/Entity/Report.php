@@ -25,40 +25,44 @@ class Report
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column
-     * @Groups({"global_search"})
+     * @Groups({"global_search", "api_reports_all", "api_reports_store", "api_reports_show"})
      */
     private ?int $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"global_search"})
+     * @Groups({"global_search", "api_reports_all", "api_reports_store", "api_reports_show"})
      */
     private ?string $title;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"api_reports_all", "api_reports_store", "api_reports_show"})
      */
     private ?DateTimeInterface $startedAt;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"api_reports_all", "api_reports_store", "api_reports_show"})
      */
     private ?DateTimeInterface $endedAt;
 
     /**
      * @ORM\Column(type="text", columnDefinition="TEXT")
+     * @Groups({"api_reports_all", "api_reports_store", "api_reports_show"})
      */
     private ?string $description;
 
     /**
      * @ORM\Column(type="string", length=100, nullable=true)
+     * @Groups({"api_reports_store", "api_reports_show"})
      */
-    private ?string $document;
+    private ?string $document = null;
 
     /**
      * @ORM\ManyToOne(targetEntity=Conference::class, inversedBy="reports")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"global_search"})
+     * @Groups({"global_search", "api_reports_store"})
      */
     private ?Conference $conference;
 
@@ -69,8 +73,18 @@ class Report
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="reports")
+     * @Groups({"global_search", "api_reports_store"})
      */
     private ?User $user;
+
+    /**
+     * @var \DateTime|null
+     *
+     * @Gedmo\Timestampable(on="create")
+     * @ORM\Column(type="datetime")
+     * @Groups({"api_reports_store"})
+     */
+    protected $createdAt = null;
 
     public function __construct()
     {

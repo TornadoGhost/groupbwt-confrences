@@ -82,6 +82,7 @@
         import {modalDeleteComment} from "{{ asset('js/modalDeleteComment.js') }}";
         import {cancelParticipationModal} from "{{ asset('js/cancelParticipationModal.js') }}";
 
+        {# TODO: need api token to work because of security #}
         commentsLazyLoading('{{ path('app_report_comments_load', {'conference_id': conferenceId, 'report_id': report.id}) }}');
 
         document.addEventListener('click', function (event) {

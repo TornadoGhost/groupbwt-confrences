@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ConferenceRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -25,7 +26,13 @@ class Conference
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column
-     * @Groups({"global_search"})
+     * @Groups({
+     *     "global_search",
+     *     "api_conferences_all",
+     *     "api_reports_store",
+     *     "api_conferences_store",
+     *     "api_conferences_show"
+     * })
      */
     private ?int $id;
 
@@ -37,27 +44,31 @@ class Conference
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"global_search"})
+     * @Groups({"global_search", "api_conferences_all", "api_conferences_store", "api_conferences_show"})
      */
     private ?string $title;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"global_search", "api_conferences_all", "api_conferences_store", "api_conferences_show"})
      */
     private ?DateTimeInterface $startedAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"global_search", "api_conferences_all", "api_conferences_store", "api_conferences_show"})
      */
     private ?DateTimeInterface $endedAt = null;
 
     /**
      * @ORM\Column(type="json")
+     * @Groups({"api_conferences_store", "api_conferences_show"})
      */
     private ?array $address = [];
 
     /**
      * @ORM\Column(type="string", length=30)
+     * @Groups({"api_conferences_store", "api_conferences_show"})
      */
     private ?string $country;
 
@@ -65,6 +76,16 @@ class Conference
      * @ORM\OneToMany(targetEntity=Report::class, mappedBy="conference", orphanRemoval=true)
      */
     private ?Collection $reports;
+
+    /**
+     * @var DateTime|null
+     *
+     * @Gedmo\Timestampable(on="create")
+     *
+     * @ORM\Column(type="datetime")
+     * @Groups({"api_conferences_store"})
+     */
+    protected $createdAt;
 
     public function __construct()
     {

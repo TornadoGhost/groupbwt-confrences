@@ -47,6 +47,7 @@ class ReportCommentType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => ReportComment::class,
+            'csrf_protection' => false
         ]);
     }
 }

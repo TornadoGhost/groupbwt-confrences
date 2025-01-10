@@ -59,6 +59,20 @@ class ConferenceType extends AbstractType
                     ]),
                 ]
             ])
+            // TODO: Make right constraints and attr
+            ->add('endedAt', DateTimeType::class, [
+                'label' => 'Date of start',
+                'widget' => 'single_text',
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Start date cannot be blank.',
+                    ]),
+                    new Type([
+                        'type' => \DateTimeInterface::class,
+                        'message' => 'The value {{ value }} is not a valid date.',
+                    ]),
+                ]
+            ])
             ->add('latitude', NumberType::class, [
                 'mapped' => false,
                 'required' => true,
@@ -109,6 +123,7 @@ class ConferenceType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Conference::class,
+            'csrf_protection' => false
         ]);
     }
 }

@@ -64,6 +64,7 @@ class ConferenceController extends AbstractController
      */
     public function new(Request $request): Response
     {
+        // TODO: add field endedAt to form
         $conference = new Conference();
         $form = $this->createForm(ConferenceType::class, $conference);
         $this->conferenceService->formPreparation($request, $conference, $form);
@@ -138,11 +139,10 @@ class ConferenceController extends AbstractController
      * @Route("/{id}/delete", name="app_conference_delete", methods={"POST"})
      * @Security("is_granted('ROLE_ADMIN')")
      */
-    public function delete(Request $request, Conference $conference, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, Conference $conference): Response
     {
         if ($this->isCsrfTokenValid('delete-conference', $request->request->get('token'))) {
-            $entityManager->remove($conference);
-            $entityManager->flush();
+            $this->conferenceService->delete($conference);
         }
 
         return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
