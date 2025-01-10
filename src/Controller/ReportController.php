@@ -48,9 +48,10 @@ class ReportController extends AbstractController
         Conference        $conference
     ): Response
     {
-        $userId = $this->getUser()->getId();
-        $conferenceId = $conference->getId();
-        $userPartOfConference = $this->conferenceService->findParticipantByUserId($userId, $conferenceId);
+        $userPartOfConference = $this->conferenceService->findParticipantByUserId(
+            $this->getUser()->getId(),
+            $conference->getId()
+        );
 
         if ($userPartOfConference) {
             $this->flashBag->add('error', 'You have already joined the conference');
@@ -164,7 +165,7 @@ class ReportController extends AbstractController
             $result = $this->reportService->deleteReport($report, $conference, $user);
 
             if ($result) {
-                $this->flashBag->add('edit-page-error', 'Error. ' . $result);
+                $this->flashBag->add('edit-page-error', 'Error. ' . $result->getMessage());
 
                 return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
             }
