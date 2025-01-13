@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class ReportService extends BaseService
@@ -168,9 +169,18 @@ class ReportService extends BaseService
 
     public function downloadFile(string $fileName): StreamedResponse
     {
-        $response = new StreamedResponse(function () use ($fileName) {
-            $file = $this->fileUploader->getTargetDirectory() . '/' . $fileName;
-            $stream = fopen($file, 'r');
+        $filePath = $this->fileUploader->getTargetDirectory() . '/' . $fileName;
+
+        if (!file_exists($filePath) || !is_readable($filePath)) {
+            throw new NotFoundHttpException('File not found or unavailable');
+        }
+
+        $response = new StreamedResponse(function () use ($filePath) {
+            $stream = fopen($filePath, 'r');
+
+            if ($stream === false) {
+                throw new \RuntimeException('Failed to open the file for reading');
+            }
 
             while (!feof($stream)) {
                 echo fread($stream, 1024);
@@ -181,7 +191,7 @@ class ReportService extends BaseService
         });
 
         $response->headers->set('Content-Type', 'application/octet-stream');
-        $response->headers->set('Content-Disposition', "attachment; filename={$fileName}");
+        $response->headers->set('Content-Disposition', "attachment; filename=\"{$fileName}\"");
 
         return $response;
     }
