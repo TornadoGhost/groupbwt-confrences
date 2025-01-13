@@ -26,7 +26,7 @@ class GlobalSearchService
         $this->serializer = $serializer;
     }
 
-    public function search($request): ?string
+    public function search($request): ?array
     {
         $conferences = [];
         $reports = [];
@@ -57,15 +57,7 @@ class GlobalSearchService
             $data['reports'] = $reports;
         }
 
-        if (!empty($data)) {
-            $searchResult = $this->serializer->serialize(
-                ['data' => $data],
-                'json',
-                ['groups' => ['global_search']]
-            );
-        }
-
-        return $searchResult ?? null;
+        return $data ?? null;
     }
 
     public function fullTextSearchConferenceByTitle(string $title): array
