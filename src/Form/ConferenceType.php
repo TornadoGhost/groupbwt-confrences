@@ -29,7 +29,7 @@ class ConferenceType extends AbstractType
                 ],
                 'constraints' => [
                     new NotNull([
-                        'message' => 'Title should be not null'
+                        'message' => 'The title should be not null'
                     ]),
                     new Length([
                         'min' => '2',
@@ -47,15 +47,15 @@ class ConferenceType extends AbstractType
                 ],
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Start date cannot be blank.',
+                        'message' => 'The start date cannot be blank',
                     ]),
                     new Type([
                         'type' => \DateTimeInterface::class,
-                        'message' => 'The value {{ value }} is not a valid date.',
+                        'message' => 'The value {{ value }} is not a valid date',
                     ]),
                     new GreaterThanOrEqual([
                         'value' => new \DateTime(),
-                        'message' => 'The date and time must not be earlier than now.',
+                        'message' => 'The date and time must not be earlier than now',
                     ]),
                 ]
             ])
@@ -65,11 +65,11 @@ class ConferenceType extends AbstractType
                 'widget' => 'single_text',
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Start date cannot be blank.',
+                        'message' => 'The start date cannot be blank',
                     ]),
                     new Type([
                         'type' => \DateTimeInterface::class,
-                        'message' => 'The value {{ value }} is not a valid date.',
+                        'message' => 'The value {{ value }} is not a valid date',
                     ]),
                 ]
             ])
@@ -115,8 +115,7 @@ class ConferenceType extends AbstractType
                         'message' => 'Please select a country.',
                     ])
                 ],
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
