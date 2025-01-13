@@ -55,10 +55,10 @@ class Conference
     private ?DateTimeInterface $startedAt;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="datetime")
      * @Groups({"global_search", "api_conferences_all", "api_conferences_store", "api_conferences_show"})
      */
-    private ?DateTimeInterface $endedAt = null;
+    private ?DateTimeInterface $endedAt;
 
     /**
      * @ORM\Column(type="json")
