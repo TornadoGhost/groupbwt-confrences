@@ -28,7 +28,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"api_reports_store", "api_report_comments"})
+     * @Groups({"api_reports_store", "api_report_comments_index"})
      */
     private ?int $id;
 
@@ -61,13 +61,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @Groups({"api_report_comments"})
+     * @Groups({"api_report_comments_index"})
      */
     private ?string $firstname;
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @Groups({"api_report_comments"})
+     * @Groups({"api_report_comments_index"})
      */
     private ?string $lastname;
 
