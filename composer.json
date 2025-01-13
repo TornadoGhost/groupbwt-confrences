@@ -21,6 +21,7 @@
         "friendsofsymfony/ckeditor-bundle": "^2.5",
         "gedmo/doctrine-extensions": "^3.17",
         "lexik/jwt-authentication-bundle": "2.x-dev",
+        "nelmio/api-doc-bundle": "4.x-dev",
         "pagerfanta/doctrine-orm-adapter": "^4.7",
         "pagerfanta/twig": "^4.7",
         "phpdocumentor/reflection-docblock": "^5.6",

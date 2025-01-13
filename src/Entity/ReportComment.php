@@ -20,19 +20,19 @@ class ReportComment
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"api_report_comments"})
+     * @Groups({"api_report_comments_index"})
      */
     private ?int $id;
 
     /**
      * @ORM\Column(type="text", columnDefinition="TEXT")
-     * @Groups({"api_report_comments"})
+     * @Groups({"api_report_comments_index"})
      */
     private ?string $content;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="reportComments")
-     * @Groups({"api_report_comments"})
+     * @Groups({"api_report_comments_index"})
      */
     private ?User $user;
 

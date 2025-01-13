@@ -62,7 +62,7 @@ class Report
     /**
      * @ORM\ManyToOne(targetEntity=Conference::class, inversedBy="reports")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"global_search", "api_reports_store"})
+     * @Groups({"global_search"})
      */
     private ?Conference $conference;
 
@@ -73,7 +73,7 @@ class Report
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="reports")
-     * @Groups({"global_search", "api_reports_store"})
+     * @Groups({"global_search"})
      */
     private ?User $user;
 

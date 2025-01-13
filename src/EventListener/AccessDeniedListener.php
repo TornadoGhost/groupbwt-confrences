@@ -11,8 +11,8 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class AccessDeniedListener
 {
-    private $flashBag;
-    private $router;
+    private FlashBagInterface $flashBag;
+    private RouterInterface $router;
 
     public function __construct(
         FlashBagInterface $flashBag,

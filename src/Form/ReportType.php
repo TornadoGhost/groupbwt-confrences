@@ -128,7 +128,7 @@ class ReportType extends AbstractType
                 'constraints' => [
                     new File([
                         'maxSize' => '10M',
-                        'maxSizeMessage' => 'File should be not bigger than 10 mb',
+                        'maxSizeMessage' => 'The file should be not bigger than 10 mb',
                         'mimeTypes' => [
                             'application/vnd.ms-powerpoint',
                             'application/vnd.openxmlformats-officedocument.presentationml.presentation',
@@ -159,13 +159,13 @@ class ReportType extends AbstractType
 
             if ($endTime->getTimestamp() - $startTime->getTimestamp() < self::MIN_REPORT_TIME) {
                 $form->get('startedAt')->addError(new FormError(
-                    'A report can not be less than 15 minutes'
+                    'The report can not be less than 15 minutes'
                 ));
             }
 
             if ($endTime->getTimestamp() - $startTime->getTimestamp() > self::MAX_REPORT_TIME) {
                 $form->get('endedAt')->addError(new FormError(
-                    'A report can not be longer than 60 minutes'
+                    'The report can not be longer than 60 minutes'
                 ));
             }
 

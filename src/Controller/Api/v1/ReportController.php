@@ -7,6 +7,7 @@ use App\Entity\Report;
 use App\Form\ReportType;
 use App\Service\ConferenceService;
 use App\Service\ReportService;
+use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
@@ -18,6 +19,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
 
 /**
  * @Route("/api/v1/conferences/{conference_id}/reports", name="api_")
@@ -40,13 +42,51 @@ class ReportController extends AbstractController
     /**
      * @Route("", name="reports_index", methods={"GET"})
      * @Security("is_granted('ROLE_USER')")
+     *
+     * @OA\Parameter(
+     *     name="start_time",
+     *     in="query",
+     *     description="The start time of a report",
+     *     @OA\Schema(type="date_time"),
+     *     example="2024-12-27T12:00"
+     * )
+     * @OA\Parameter(
+     *     name="end_time",
+     *     in="query",
+     *     description="The end time of a report",
+     *     @OA\Schema(type="date_time"),
+     *     example="2024-12-27T18:00"
+     * )
+     * @OA\Parameter(
+     *     name="duration",
+     *     in="query",
+     *     description="The duration of the a report in minutes",
+     *     @OA\Schema(type="integer"),
+     *     example="30"
+     * )
+     * @OA\Response(response="200", description="Got all reports for specific conference",
+     *         @OA\JsonContent(
+     *          type="object",
+     *          @OA\Property(property="id", type="integer", example=455),
+     *          @OA\Property(property="title", type="string", example="Soluta sed ipsum consequuntur odio."),
+     *          @OA\Property(property="description", type="string", example="Beatae pariatur omnis omnis explicabo dolores pariatur fugit porro."),
+     *          @OA\Property(property="startedAt", type="string", format="datetime", example="2024-12-27 17:10"),
+     *          @OA\Property(property="endedAt", type="string", format="datetime", example="2024-12-27 16:50"),
+     *          @OA\Property(property="commentsNumber", type="integer", example=84)
+     *      )
+     * )
+     * @OA\Response(response="403", description="The user doesn't have permissions to a resource or action")
+     * @OA\Response(response="404", description="The requested resource could not be found")
+     * @OA\Response(response="500", description="Server error")
      */
     public function index(
+        Request $request,
         Conference    $conference,
         ReportService $reportService
     ): Response
     {
-        $reports = $reportService->getAllReportsWithFilters($conference);
+        $filters = $request->query->all() ?? [];
+        $reports = $reportService->getAllReportsWithFilters($conference, $filters);
 
         return $this->json($reports, Response::HTTP_OK, [], ['groups' => ['api_reports_all']]);
     }
@@ -54,6 +94,35 @@ class ReportController extends AbstractController
     /**
      * @Route("", name="reports_store", methods={"POST"})
      * @Security("is_granted('ROLE_ANNOUNCER')")
+     *
+     * @OA\RequestBody(required=true,
+     *       @OA\JsonContent(
+     *           type="object",
+     *           required={"title", "description", "startedAt", "endedAt"},
+     *           @OA\Property(property="title", type="string", example="Title"),
+     *           @OA\Property(property="description", type="string", example="Description"),
+     *           @OA\Property(property="startedAt", type="string", format="date-time", example="2025-10-01T11:00"),
+     *           @OA\Property(property="endedAt", type="string", format="date-time", example="2025-10-01T18:00"),
+     *           @OA\Property(property="document", type="file", format="pptx", example="document.pptx")
+     *      )
+     * )
+     * @OA\Response(response="201", description="Created a report for a specific conference",
+     *       @OA\JsonContent(type="object", ref=@Model(type=Report::class, groups={"api_reports_store"})))
+     * @OA\Response(response="422", description="Form validations errors",
+     *        @OA\JsonContent(
+     *            type="object",
+     *            @OA\Property(
+     *                property="errors",
+     *                type="object",
+     *                @OA\Property(property="title", type="string", example={"The title should be not null"}),
+     *                @OA\Property(property="description", type="string", example={"The description should be not null"}),
+     *                @OA\Property(property="startedAt", type="string", example={"The start time cannot be blank"}),
+     *                @OA\Property(property="endedAt", type="string", example={"The end time cannot be blank"}),
+     *                @OA\Property(property="document", type="string",
+     *                      example={"The file should be not bigger than 10 mb"})))))
+     * @OA\Response(response="403", description="The user doesn't have permissions to a resource or action")
+     * @OA\Response(response="404", description="The requested resource could not be found")
+     * @OA\Response(response="500", description="Server error")
      */
     public function store(
         Request    $request,
@@ -95,6 +164,13 @@ class ReportController extends AbstractController
     /**
      * @Route("/{id}", name="reports_show", methods={"GET"})
      * @Security("is_granted('ROLE_USER')")
+     *
+     * @OA\Response(response="200", description="Showed the specified report for the specific conference",
+     *     @OA\JsonContent(type="object", ref=@Model(type=Report::class, groups={"api_reports_show"}))
+     * )
+     * @OA\Response(response="403", description="The user doesn't have permissions to a resource or action")
+     * @OA\Response(response="404", description="The requested resource could not be found")
+     * @OA\Response(response="500", description="Server error")
      */
     public function show(Report $report): Response
     {
@@ -104,6 +180,24 @@ class ReportController extends AbstractController
     /**
      * @Route("/{id}", name="reports_update", methods={"PUT"})
      * @IsGranted("EDIT", subject="report")
+     *
+     * @OA\Response(response="200", description="Updated the specified report for a specific conference",
+     *        @OA\JsonContent(type="object", ref=@Model(type=Report::class, groups={"api_reports_store"})))
+     * @OA\Response(response="422", description="Form validations errors",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+     *                 @OA\Property(property="title", type="string", example={"The title should be not null"}),
+     *                 @OA\Property(property="description", type="string", example={"The description should be not null"}),
+     *                 @OA\Property(property="startedAt", type="string", example={"The start time cannot be blank"}),
+     *                 @OA\Property(property="endedAt", type="string", example={"The end time cannot be blank"}),
+     *                 @OA\Property(property="document", type="string",
+     *                       example={"The file should be not bigger than 10 mb"})))))
+     * @OA\Response(response="403", description="The user doesn't have permissions to a resource or action")
+     * @OA\Response(response="404", description="The requested resource could not be found")
+     * @OA\Response(response="500", description="Server error")
      */
     public function update(Request $request, Report $report, Conference $conference): Response
     {
@@ -126,6 +220,11 @@ class ReportController extends AbstractController
     /**
      * @Route("/{id}", name="reports_delete", methods={"DELETE"})
      * @IsGranted("DELETE", subject="report")
+     *
+     * @OA\Response(response="204", description="Deleted the specified report for a specific conference")
+     * @OA\Response(response="403", description="The user doesn't have permissions to a resource or action")
+     * @OA\Response(response="404", description="The requested resource could not be found")
+     * @OA\Response(response="500", description="Server error")
      */
     public function delete(Report $report, Conference $conference): Response
     {
@@ -140,8 +239,13 @@ class ReportController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/{file_name}", name="app_report_file_download", methods={"GET"})
+     * @Route("/{id}/{file_name}", name="report_file_download", methods={"GET"})
      * @Security("is_granted('ROLE_USER')")
+     *
+     * @OA\Response(response="200", description="Downloading the specified file")
+     * @OA\Response(response="403", description="The user doesn't have permissions to a resource or action")
+     * @OA\Response(response="404", description="The requested resource could not be found")
+     * @OA\Response(response="500", description="Failed to open the file for reading")
      */
     public function download(string $file_name): StreamedResponse
     {
@@ -167,9 +271,9 @@ class ReportController extends AbstractController
         $errors = $this->reportService->getFormErrors($form);
 
         if (!empty($errors)) {
-            return $this->json(['errors' => $errors], 422);
+            return $this->json(['errors' => $errors], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        return $this->json($report, 200, [], ['groups' => ['api_reports_store']]);
+        return $this->json($report, Response::HTTP_CREATED, [], ['groups' => ['api_reports_store']]);
     }
 }
