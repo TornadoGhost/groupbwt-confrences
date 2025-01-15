@@ -130,6 +130,13 @@ class ConferenceController extends AbstractController
      *               @OA\Property(property="latitude", type="string", example={"The latitude should be not null"}),
      *               @OA\Property(property="longitude", type="string", example={"The longitude should be not null"}),
      *               @OA\Property(property="country", type="string", example={"Please select a country"})))))
+     * @OA\Response(response="401", description="The request is unauthenticated",
+     *      @OA\JsonContent(
+     *          type="object",
+     *          @OA\Property(property="code", type="integer", example=401),
+     *          @OA\Property(property="message", type="string", example="JWT Token not found")
+     *      )
+     * )
      * @OA\Response(response="403", description="The user doesn't have permissions to a resource or action")
      * @OA\Response(response="500", description="Server error")
      */
@@ -156,6 +163,13 @@ class ConferenceController extends AbstractController
      *
      * @OA\Response(response="200", description="Showed the specified conference",
      *      @OA\JsonContent(type="object", ref=@Model(type=Conference::class, groups={"api_conferences_show"})))
+     * @OA\Response(response="401", description="The request is unauthenticated",
+     *       @OA\JsonContent(
+     *           type="object",
+     *           @OA\Property(property="code", type="integer", example=401),
+     *           @OA\Property(property="message", type="string", example="JWT Token not found")
+     *       )
+     *  )
      * @OA\Response(response="403", description="The user doesn't have permissions to a resource or action")
      * @OA\Response(response="404", description="The requested resource could not be found")
      * @OA\Response(response="500", description="Server error")
@@ -172,6 +186,13 @@ class ConferenceController extends AbstractController
      *
      * @OA\Response(response="200", description="Updated the specified conference",
      *     @OA\JsonContent(type="object", ref=@Model(type=Conference::class, groups={"api_conferences_show"})))
+     * @OA\Response(response="401", description="The request is unauthenticated",
+     *       @OA\JsonContent(
+     *           type="object",
+     *           @OA\Property(property="code", type="integer", example=401),
+     *           @OA\Property(property="message", type="string", example="JWT Token not found")
+     *       )
+     *  )
      * @OA\Response(response="403", description="The user doesn't have permissions to a resource or action")
      * @OA\Response(response="404", description="The requested resource could not be found")
      * @OA\Response(response="500", description="Server error")
@@ -197,6 +218,13 @@ class ConferenceController extends AbstractController
      * @Security("is_granted('ROLE_ADMIN')")
      *
      * @OA\Response(response="204", description="Deleted the specified conference")
+     * @OA\Response(response="401", description="The request is unauthenticated",
+     *       @OA\JsonContent(
+     *           type="object",
+     *           @OA\Property(property="code", type="integer", example=401),
+     *           @OA\Property(property="message", type="string", example="JWT Token not found")
+     *       )
+     *  )
      * @OA\Response(response="403", description="The user doesn't have permissions to a resource or action")
      * @OA\Response(response="404", description="The requested resource could not be found")
      * @OA\Response(response="500", description="Server error")
@@ -213,6 +241,13 @@ class ConferenceController extends AbstractController
      * @Security("is_granted('ROLE_USER')")
      *
      * @OA\Response(response="204", description="Joined the specified conference")
+     * @OA\Response(response="401", description="The request is unauthenticated",
+     *       @OA\JsonContent(
+     *           type="object",
+     *           @OA\Property(property="code", type="integer", example=401),
+     *           @OA\Property(property="message", type="string", example="JWT Token not found")
+     *       )
+     *  )
      * @OA\Response(response="403", description="The user doesn't have permissions to a resource or action")
      * @OA\Response(response="404", description="The requested resource could not be found")
      * @OA\Response(response="500", description="Server error")
@@ -229,6 +264,13 @@ class ConferenceController extends AbstractController
      * @Security("is_granted('ROLE_USER')")
      *
      * @OA\Response(response="204", description="Canceled the specified conference")
+     * @OA\Response(response="401", description="The request is unauthenticated",
+     *       @OA\JsonContent(
+     *           type="object",
+     *           @OA\Property(property="code", type="integer", example=401),
+     *           @OA\Property(property="message", type="string", example="JWT Token not found")
+     *       )
+     *  )
      * @OA\Response(response="403", description="The user doesn't have permissions to a resource or action")
      * @OA\Response(response="404", description="The requested resource could not be found")
      * @OA\Response(response="500", description="Server error")

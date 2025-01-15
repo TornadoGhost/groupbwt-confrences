@@ -75,6 +75,13 @@ class ReportController extends AbstractController
      *          @OA\Property(property="commentsNumber", type="integer", example=84)
      *      )
      * )
+     * @OA\Response(response="401", description="The request is unauthenticated",
+     *       @OA\JsonContent(
+     *           type="object",
+     *           @OA\Property(property="code", type="integer", example=401),
+     *           @OA\Property(property="message", type="string", example="JWT Token not found")
+     *       )
+     *  )
      * @OA\Response(response="403", description="The user doesn't have permissions to a resource or action")
      * @OA\Response(response="404", description="The requested resource could not be found")
      * @OA\Response(response="500", description="Server error")
@@ -108,6 +115,13 @@ class ReportController extends AbstractController
      * )
      * @OA\Response(response="201", description="Created a report for a specific conference",
      *       @OA\JsonContent(type="object", ref=@Model(type=Report::class, groups={"api_reports_store"})))
+     * @OA\Response(response="401", description="The request is unauthenticated",
+     *       @OA\JsonContent(
+     *           type="object",
+     *           @OA\Property(property="code", type="integer", example=401),
+     *           @OA\Property(property="message", type="string", example="JWT Token not found")
+     *       )
+     *  )
      * @OA\Response(response="422", description="Form validations errors",
      *        @OA\JsonContent(
      *            type="object",
@@ -168,6 +182,13 @@ class ReportController extends AbstractController
      * @OA\Response(response="200", description="Showed the specified report for the specific conference",
      *     @OA\JsonContent(type="object", ref=@Model(type=Report::class, groups={"api_reports_show"}))
      * )
+     * @OA\Response(response="401", description="The request is unauthenticated",
+     *       @OA\JsonContent(
+     *           type="object",
+     *           @OA\Property(property="code", type="integer", example=401),
+     *           @OA\Property(property="message", type="string", example="JWT Token not found")
+     *       )
+     *  )
      * @OA\Response(response="403", description="The user doesn't have permissions to a resource or action")
      * @OA\Response(response="404", description="The requested resource could not be found")
      * @OA\Response(response="500", description="Server error")
@@ -183,6 +204,13 @@ class ReportController extends AbstractController
      *
      * @OA\Response(response="200", description="Updated the specified report for a specific conference",
      *        @OA\JsonContent(type="object", ref=@Model(type=Report::class, groups={"api_reports_store"})))
+     * @OA\Response(response="401", description="The request is unauthenticated",
+     *       @OA\JsonContent(
+     *           type="object",
+     *           @OA\Property(property="code", type="integer", example=401),
+     *           @OA\Property(property="message", type="string", example="JWT Token not found")
+     *       )
+     *  )
      * @OA\Response(response="422", description="Form validations errors",
      *         @OA\JsonContent(
      *             type="object",
@@ -222,6 +250,13 @@ class ReportController extends AbstractController
      * @IsGranted("DELETE", subject="report")
      *
      * @OA\Response(response="204", description="Deleted the specified report for a specific conference")
+     * @OA\Response(response="401", description="The request is unauthenticated",
+     *       @OA\JsonContent(
+     *           type="object",
+     *           @OA\Property(property="code", type="integer", example=401),
+     *           @OA\Property(property="message", type="string", example="JWT Token not found")
+     *       )
+     *  )
      * @OA\Response(response="403", description="The user doesn't have permissions to a resource or action")
      * @OA\Response(response="404", description="The requested resource could not be found")
      * @OA\Response(response="500", description="Server error")
@@ -243,6 +278,13 @@ class ReportController extends AbstractController
      * @Security("is_granted('ROLE_USER')")
      *
      * @OA\Response(response="200", description="Downloading the specified file")
+     * @OA\Response(response="401", description="The request is unauthenticated",
+     *       @OA\JsonContent(
+     *           type="object",
+     *           @OA\Property(property="code", type="integer", example=401),
+     *           @OA\Property(property="message", type="string", example="JWT Token not found")
+     *       )
+     *  )
      * @OA\Response(response="403", description="The user doesn't have permissions to a resource or action")
      * @OA\Response(response="404", description="The requested resource could not be found")
      * @OA\Response(response="500", description="Failed to open the file for reading")
