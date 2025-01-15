@@ -21,12 +21,12 @@ class ConferenceFiltersType extends AbstractType
         ]);
         $builder->add('start_date', DateTimeType::class, [
             'label' => 'Start Date',
-            'date_widget' => 'single_text',
+            'widget' => 'single_text',
             'error_bubbling' => true,
         ]);
         $builder->add('end_date', DateTimeType::class, [
             'label' => 'End Date',
-            'date_widget' => 'single_text',
+            'widget' => 'single_text',
             'error_bubbling' => true,
         ]);
         $builder->add('is_available', CheckboxType::class);

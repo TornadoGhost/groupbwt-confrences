@@ -39,57 +39,22 @@ class ReportCommentService extends BaseService
     }
 
     public function createReportComment(
-        Request        $request,
-        UserInterface  $user,
-        Report         $report,
-        ?ReportComment $comment = null
-    ): ?FormInterface
-    {
-        if (!$comment) {
-            $comment = new ReportComment();
-        }
-
-        $commentForm = $this->formFactory->create(ReportCommentType::class, $comment);
-        $commentForm->handleRequest($request);
-
-        if ($commentForm->isSubmitted() && $commentForm->isValid()) {
-            $comment->setUser($user);
-            $comment->setReport($report);
-            $this->reportCommentRepository->add($comment, true);
-
-            return null;
-        }
-
-        return $commentForm;
-    }
-
-    public function createReportCommentApi(
-        UserInterface  $user,
-        Report         $report,
-        ?ReportComment $comment = null
+        UserInterface $user,
+        Report        $report,
+        ReportComment $comment
     ): ?ReportComment
     {
         $comment->setUser($user);
         $comment->setReport($report);
+
         return $this->reportCommentRepository->add($comment, true);
     }
 
-
     public function updateComment(
-        Request        $request,
-        ?ReportComment $comment
-    ): ?FormInterface
+        ReportComment $comment
+    ): ?ReportComment
     {
-        $commentForm = $this->formFactory->create(ReportCommentType::class, $comment);
-        $commentForm->handleRequest($request);
-
-        if ($commentForm->isSubmitted() && $commentForm->isValid()) {
-            $this->reportCommentRepository->add($comment, true);
-
-            return null;
-        }
-
-        return $commentForm;
+        return $this->reportCommentRepository->add($comment, true);
     }
 
     public function removeComment(ReportComment $comment, bool $flush): void
@@ -102,7 +67,6 @@ class ReportCommentService extends BaseService
         return $this->reportCommentRepository->getCommentsByReportQueryBuilder($report);
     }
 
-
     public function getCommentsByPage(
         Report $report,
         int    $conferenceId,
@@ -113,7 +77,6 @@ class ReportCommentService extends BaseService
         $qb = $this->getCommentsByReportQueryBuilder($report);
 
         $adapter = new QueryAdapter($qb);
-
         $pager = new Pagerfanta($adapter);
         $pager->setCurrentPage($page);
         $pager->setMaxPerPage($maxPerPage);
@@ -144,6 +107,7 @@ class ReportCommentService extends BaseService
     ): ?array
     {
         $qb = $this->getCommentsByReportQueryBuilder($report);
+
         $adapter = new QueryAdapter($qb);
         $pagerfanta = new Pagerfanta($adapter);
         $pagerfanta->setCurrentPage($page);

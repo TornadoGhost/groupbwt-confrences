@@ -30,9 +30,7 @@ class AccessDeniedListener
         if ($exception instanceof AccessDeniedException) {
             $request = $event->getRequest();
 
-            if (str_starts_with($request->getPathInfo(), '/api')) {
-                $event->setResponse(new JsonResponse(null, 403));
-            } else {
+            if (!str_starts_with($request->getPathInfo(), '/api')) {
                 $this->flashBag->add('error', 'Access Denied. You do not have permission to access that page.');
 
                 $url = $this->router->generate('app_conference_index');

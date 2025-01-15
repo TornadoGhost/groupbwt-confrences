@@ -19,7 +19,6 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 
 /**
  * @Route("/api/v1/reports/{id}/comments", name="api_")
- * @Security("is_granted('ROLE_USER')")
  */
 class ReportCommentController extends AbstractController
 {
@@ -44,6 +43,13 @@ class ReportCommentController extends AbstractController
      *     example="1")
      * @OA\Response(response="200", description="Got paginated comments for specific report",
      *      @OA\JsonContent(type="object", ref=@Model(type=ReportComment::class, groups={"api_report_comments_index"})))
+     * @OA\Response(response="401", description="The request is unauthenticated",
+     *       @OA\JsonContent(
+     *           type="object",
+     *           @OA\Property(property="code", type="integer", example=401),
+     *           @OA\Property(property="message", type="string", example="JWT Token not found")
+     *       )
+     *  )
      * @OA\Response(response="403", description="The user doesn't have permissions to a resource or action")
      * @OA\Response(response="500", description="Server error")
      */
@@ -68,6 +74,13 @@ class ReportCommentController extends AbstractController
      *
      * @OA\Response(response="201", description="Created a comment for a specific report",
      *     @OA\JsonContent(type="object", ref=@Model(type=ReportComment::class, groups={"api_report_comments_index"})))
+     * @OA\Response(response="401", description="The request is unauthenticated",
+     *       @OA\JsonContent(
+     *           type="object",
+     *           @OA\Property(property="code", type="integer", example=401),
+     *           @OA\Property(property="message", type="string", example="JWT Token not found")
+     *       )
+     *  )
      * @OA\Response(response="403", description="The user doesn't have permissions to a resource or action")
      * @OA\Response(response="500", description="Server error")
      */
@@ -78,7 +91,7 @@ class ReportCommentController extends AbstractController
         $commentForm->submit($request->toArray());
 
         if ($commentForm->isSubmitted() && $commentForm->isValid()) {
-            $report = $this->reportCommentService->createReportCommentApi($this->getUser(), $report, $comment);
+            $report = $this->reportCommentService->createReportComment($this->getUser(), $report, $comment);
 
             return $this->json($report, Response::HTTP_CREATED, [], ['groups' => ['api_report_comments_index']]);
         }
@@ -95,6 +108,13 @@ class ReportCommentController extends AbstractController
      *
      * @OA\Response(response="200", description="Showed the specified comment for the specific report",
      *      @OA\JsonContent(type="object", ref=@Model(type=ReportComment::class, groups={"api_report_comments_index"})))
+     * @OA\Response(response="401", description="The request is unauthenticated",
+     *       @OA\JsonContent(
+     *           type="object",
+     *           @OA\Property(property="code", type="integer", example=401),
+     *           @OA\Property(property="message", type="string", example="JWT Token not found")
+     *       )
+     *  )
      * @OA\Response(response="403", description="The user doesn't have permissions to a resource or action")
      * @OA\Response(response="404", description="The requested resource could not be found")
      * @OA\Response(response="500", description="Server error")
@@ -112,6 +132,13 @@ class ReportCommentController extends AbstractController
      * @OA\Response(response="200", description="Updated the specified comment for the specific report",
      *       @OA\JsonContent(type="object", ref=@Model(type=ReportComment::class, groups={"api_report_comments_index"}))
      * )
+     * @OA\Response(response="401", description="The request is unauthenticated",
+     *       @OA\JsonContent(
+     *           type="object",
+     *           @OA\Property(property="code", type="integer", example=401),
+     *           @OA\Property(property="message", type="string", example="JWT Token not found")
+     *       )
+     *  )
      * @OA\Response(response="403", description="The user doesn't have permissions to a resource or action")
      * @OA\Response(response="404", description="The requested resource could not be found")
      * @OA\Response(response="500", description="Server error")
@@ -141,6 +168,13 @@ class ReportCommentController extends AbstractController
      *        @OA\JsonContent(type="object", ref=@Model(type=ReportComment::class, groups={"api_report_comments_index"})
      *              )
      * )
+     * @OA\Response(response="401", description="The request is unauthenticated",
+     *       @OA\JsonContent(
+     *           type="object",
+     *           @OA\Property(property="code", type="integer", example=401),
+     *           @OA\Property(property="message", type="string", example="JWT Token not found")
+     *       )
+     *  )
      * @OA\Response(response="403", description="The user doesn't have permissions to a resource or action")
      * @OA\Response(response="404", description="The requested resource could not be found")
      * @OA\Response(response="500", description="Server error")
@@ -153,7 +187,7 @@ class ReportCommentController extends AbstractController
     }
 
     /**
-     * @Route("/load", name="app_report_comments_load", methods={"GET"})
+     * @Route("/load", name="report_comments_load", methods={"GET"})
      */
     public function loadComments(
         Request              $request,

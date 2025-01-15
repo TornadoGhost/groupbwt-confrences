@@ -132,6 +132,7 @@ class RegistrationFormType extends AbstractType
                 'class' => UserType::class,
                 'choice_label' => 'name',
                 'placeholder' => 'Select type',
+                'choice_loader' => $options['test_choice_loader'],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Please select a user type.',
@@ -145,6 +146,7 @@ class RegistrationFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => User::class,
+            'test_choice_loader' => null,
         ]);
     }
 }

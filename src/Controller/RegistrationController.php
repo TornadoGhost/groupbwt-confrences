@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Form\RegistrationFormType;
 use App\Service\RegistrationService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,7 +24,8 @@ class RegistrationController extends BaseAuthController
         }
 
         $user = new User();
-        $form = $registrationService->userFormPreparation($request, $user);
+        $form = $this->createForm(RegistrationFormType::class, $user);
+        $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $registrationService->saveNewUser($user, $form);

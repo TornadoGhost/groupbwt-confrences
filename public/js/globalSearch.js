@@ -1,3 +1,4 @@
+// TODO: Script does not work properly, request return data, but script does not showing it
 export function globalSearch() {
   const searchInput = document.getElementById('search-input');
   const searchResults = document.getElementById('search-results');

@@ -13,17 +13,14 @@ class GlobalSearchService
 
     protected ConferenceRepository $conferenceRepository;
     protected ReportRepository $reportRepository;
-    protected SerializerInterface $serializer;
 
     public function __construct(
         ConferenceRepository $conferenceRepository,
-        ReportRepository $reportRepository,
-        SerializerInterface $serializer
+        ReportRepository $reportRepository
     )
     {
         $this->conferenceRepository = $conferenceRepository;
         $this->reportRepository = $reportRepository;
-        $this->serializer = $serializer;
     }
 
     public function search($request): ?array
