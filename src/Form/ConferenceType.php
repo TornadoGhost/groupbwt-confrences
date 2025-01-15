@@ -81,7 +81,7 @@ class ConferenceType extends AbstractType
                 ],
                 'constraints' => [
                     new NotNull([
-                        'message' => 'The Latitude should be not null'
+                        'message' => 'The Latitude should not be null'
                     ]),
                     new Length([
                         'min' => 1,
@@ -99,7 +99,7 @@ class ConferenceType extends AbstractType
                 ],
                 'constraints' => [
                     new NotNull([
-                        'message' => 'The Longitude should be not null'
+                        'message' => 'The Longitude should not be null'
                     ]),
                     new Length([
                         'min' => 1,

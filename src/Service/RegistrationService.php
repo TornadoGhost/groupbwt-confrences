@@ -13,30 +13,19 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class RegistrationService
 {
-    private FormFactoryInterface $formFactory;
     private UserRepository $userRepository;
     private UserPasswordHasherInterface $userPasswordHasher;
 
     public function __construct(
-        FormFactoryInterface $formFactory,
         UserRepository  $userRepository,
         UserPasswordHasherInterface $userPasswordHasher
     )
     {
-        $this->formFactory = $formFactory;
         $this->userRepository = $userRepository;
         $this->userPasswordHasher = $userPasswordHasher;
     }
 
-    public function userFormPreparation(Request $request, UserInterface $user): FormInterface
-    {
-        $form = $this->formFactory->create(RegistrationFormType::class, $user);
-        $form->handleRequest($request);
-
-        return $form;
-    }
-
-    public function saveNewUser(UserInterface $user, FormInterface $form)
+    public function saveNewUser(UserInterface $user, FormInterface $form): void
     {
         $user->setPassword(
             $this->userPasswordHasher->hashPassword(

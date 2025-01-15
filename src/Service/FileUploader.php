@@ -30,12 +30,13 @@ class FileUploader
 
         $directory = $this->getTargetDirectory();
         $filesystem = new Filesystem();
+
         if (!$filesystem->exists($directory)) {
             $filesystem->mkdir($directory);
         }
 
         try {
-            $file->move($this->getTargetDirectory(), $fileName);
+            $file->move($directory, $fileName);
         } catch (FileException $e) {
             return null;
         }

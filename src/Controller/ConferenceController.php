@@ -8,7 +8,6 @@ use App\Form\ConferenceType;
 use App\Form\ReportFiltersType;
 use App\Service\ConferenceService;
 use App\Service\ReportService;
-use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -66,20 +65,8 @@ class ConferenceController extends AbstractController
     {
         // TODO: add field endedAt to form
         $conference = new Conference();
-        $form = $this->createForm(ConferenceType::class, $conference);
-        $this->conferenceService->formPreparation($request, $conference, $form);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->conferenceService->saveFormChanges($form, $conference);
-
-            return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->renderForm('conference/new.html.twig', [
-            'conference' => $conference,
-            'form' => $form,
-            'google_maps_api_key' => $_ENV['GOOGLE_MAPS_API_KEY']
-        ]);
+        return $this->handleForm($request, $conference);
     }
 
     /**
@@ -119,20 +106,7 @@ class ConferenceController extends AbstractController
      */
     public function edit(Request $request, Conference $conference): Response
     {
-        $form = $this->createForm(ConferenceType::class, $conference);
-        $this->conferenceService->formPreparation($request, $conference, $form);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->conferenceService->saveFormChanges($form, $conference);
-
-            return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->renderForm('conference/edit.html.twig', [
-            'conference' => $conference,
-            'form' => $form,
-            'google_maps_api_key' => $_ENV['GOOGLE_MAPS_API_KEY']
-        ]);
+        return $this->handleForm($request, $conference);
     }
 
     /**
@@ -176,5 +150,37 @@ class ConferenceController extends AbstractController
         }
 
         return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    private function handleForm(Request $request, Conference $conference): Response
+    {
+        $form = $this->createForm(ConferenceType::class, $conference);
+        $address = $this->conferenceService->getAddressFromConference($conference);
+
+        if (!empty($address)) {
+            foreach ($address as $key => $value) {
+                $form->get($key)->setData($value);
+            }
+        }
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->conferenceService->saveFormChanges(
+                $conference,
+                [
+                    'latitude' => $form->get('latitude')->getData(),
+                    'longitude' => $form->get('longitude')->getData()
+                ]
+            );
+
+            return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->renderForm('conference/new.html.twig', [
+            'conference' => $conference,
+            'form' => $form,
+            'google_maps_api_key' => $_ENV['GOOGLE_MAPS_API_KEY']
+        ]);
     }
 }

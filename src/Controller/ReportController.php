@@ -4,6 +4,9 @@ namespace App\Controller;
 
 use App\Entity\Conference;
 use App\Entity\Report;
+use App\Entity\ReportComment;
+use App\Form\ReportCommentType;
+use App\Form\ReportType;
 use App\Service\ConferenceService;
 use App\Service\ReportCommentService;
 use App\Service\ReportService;
@@ -60,16 +63,17 @@ class ReportController extends AbstractController
         }
 
         $report = new Report();
-        $form = $this->reportService->prepareForm(
-            $report,
-            $request,
-            $conference
-        );
+        $form = $this->createForm(ReportType::class, $report, [
+            'conference_id' => $conference->getId(),
+            'conference_start' => $conference->getStartedAt(),
+            'conference_end' => $conference->getEndedAt()
+        ]);
+        $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $document = $form->get('document')->getData() ?? null;
             $user = $this->getUser();
-            $result = $this->reportService->saveReport($report, $conference, $user, $document);
+            $result = $this->reportService->save($report, $conference, $user, $document);
 
             if (!$result) {
                 return $this->renderForm('report/new.html.twig', [
@@ -99,22 +103,18 @@ class ReportController extends AbstractController
         ReportCommentService $reportCommentService
     ): Response
     {
-        $user = $this->getUser();
-        $reportId = $report->getId();
-        $conferenceId = $conference->getId();
-        $form = $reportCommentService->createReportComment($request, $user, $report);
+        $comment = new ReportComment();
+        $commentForm = $this->createForm(ReportCommentType::class, $comment);
+        $commentForm->handleRequest($request);
 
-        if (!$form) {
-            return $this->redirectToRoute('app_report_show', [
-                'conference_id' => $conferenceId,
-                'report_id' => $reportId
-            ]);
+        if ($commentForm->isSubmitted() && $commentForm->isValid()) {
+            $reportCommentService->createReportComment($this->getUser(), $report, $comment);
         }
 
         return $this->render('report/show.html.twig', [
             'report' => $report,
-            'conferenceId' => $conferenceId,
-            'commentForm' => $form->createView()
+            'conferenceId' => $conference->getId(),
+            'commentForm' => $commentForm->createView()
         ]);
     }
 
@@ -125,16 +125,17 @@ class ReportController extends AbstractController
      */
     public function edit(Request $request, Conference $conference, Report $report): Response
     {
-        $form = $this->reportService->prepareForm(
-            $report,
-            $request,
-            $conference
-        );
+        $form = $this->createForm(ReportType::class, $report, [
+            'conference_id' => $conference->getId(),
+            'conference_start' => $conference->getStartedAt(),
+            'conference_end' => $conference->getEndedAt()
+        ]);
+        $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $document = $form['document']->getData() ?? null;
             $user = $this->getUser();
-            $result = $this->reportService->saveReport($report, $conference, $user, $document);
+            $result = $this->reportService->save($report, $conference, $user, $document);
 
             if (!$result) {
                 return $this->renderForm('report/edit.html.twig', [

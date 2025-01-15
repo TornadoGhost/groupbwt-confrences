@@ -59,15 +59,15 @@ class ReportCommentController extends AbstractController
         ReportCommentService $commentService
     )
     {
-        $form = $commentService->updateComment($request, $reportComment);
+        $form = $this->createForm(ReportCommentType::class, $reportComment);
+        $form->handleRequest($request);
 
-        if (!$form) {
-            $conferenceId = $conference->getId();
-            $reportId = $report->getId();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $commentService->updateComment($reportComment);
 
             return $this->redirectToRoute('app_report_show', [
-                'conference_id' => $conferenceId,
-                'report_id' => $reportId
+                'conference_id' => $conference->getId(),
+                'report_id' => $report->getId()
             ]);
         }
 

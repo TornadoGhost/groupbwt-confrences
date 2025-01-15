@@ -6,10 +6,8 @@ use App\Entity\Conference;
 use App\Repository\ConferenceRepository;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 class ConferenceService extends BaseService
 {
@@ -18,7 +16,7 @@ class ConferenceService extends BaseService
     protected UrlGeneratorInterface $urlGenerator;
 
     public function __construct(
-        ConferenceRepository $conferenceRepository,
+        ConferenceRepository  $conferenceRepository,
         UrlGeneratorInterface $urlGenerator
     )
     {
@@ -27,9 +25,9 @@ class ConferenceService extends BaseService
     }
 
     public function getAllConferencesWithFiltersPaginate(
-        int  $countPerPage,
-        int  $currentPage = 1,
-        ?int $userId = null,
+        int    $countPerPage,
+        int    $currentPage = 1,
+        ?int   $userId = null,
         ?array $filters = []
     ): Pagerfanta
     {
@@ -45,9 +43,9 @@ class ConferenceService extends BaseService
     }
 
     public function getAllConferencesWithFiltersPaginateApi(
-        int  $countPerPage,
-        int  $currentPage = 1,
-        ?int $userId = null,
+        int    $countPerPage,
+        int    $currentPage = 1,
+        ?int   $userId = null,
         ?array $filters = []
     ): array
     {
@@ -67,12 +65,12 @@ class ConferenceService extends BaseService
             'first_page_url' => $this->urlGenerator->generate('api_conferences_index', ['page' => 1]),
             'last_page' => $pagerfanta->getNbPages(),
             'last_page_url' => $this->urlGenerator->generate('api_conferences_index', [
-                'page' => $pagerfanta->getNbPages()]
+                    'page' => $pagerfanta->getNbPages()]
             ),
             'next_page_url' =>
                 $pagerfanta->hasNextPage()
                     ? $this->urlGenerator->generate('api_conferences_index', [
-                        'page' => $pagerfanta->getNextPage()
+                    'page' => $pagerfanta->getNextPage()
                 ])
                     : null,
             'path' => $this->urlGenerator->generate('api_conferences_index'),
@@ -80,11 +78,39 @@ class ConferenceService extends BaseService
             'prev_page_url' =>
                 $pagerfanta->hasPreviousPage()
                     ? $this->urlGenerator->generate('api_conferences_index', [
-                        'page' => $pagerfanta->getPreviousPage()
+                    'page' => $pagerfanta->getPreviousPage()
                 ])
                     : null,
             'to' => $pagerfanta->getCurrentPageResults()->count(),
         ];
+    }
+
+
+    public function getAddressFromConference(Conference $conference): array
+    {
+        $latitude = $conference->getAddress()[0] ?? null;
+        $longitude = $conference->getAddress()[1] ?? null;
+
+        if ($latitude && $longitude) {
+            return ['latitude' => $latitude, 'longitude' => $longitude];
+        }
+
+        return [];
+    }
+
+    public function saveFormChanges(Conference $conference, array $coordinates): Conference
+    {
+        if (empty($coordinates)) {
+            throw new \UnexpectedValueException('Expected a non-empty array');
+        }
+
+        if (!array_key_exists('latitude', $coordinates) || !array_key_exists('longitude', $coordinates)) {
+            throw new \InvalidArgumentException('The array does not have "latitude" or "longitude"');
+        }
+
+        $address = [$coordinates['latitude'], $coordinates['longitude']];
+
+        return $this->conferenceRepository->saveEditFormChanges($conference, $address);
     }
 
     public function addUserToConference(Conference $conference, UserInterface $user): void
@@ -95,39 +121,6 @@ class ConferenceService extends BaseService
     public function removeUserFromConference(Conference $conference, UserInterface $user): void
     {
         $this->conferenceRepository->removeUserFromConference($conference, $user);
-    }
-
-    public function formPreparation(Request $request, Conference $conference, FormInterface $form): FormInterface
-    {
-        $latitude = $conference->getAddress()[0] ?? null;
-        $longitude = $conference->getAddress()[1] ?? null;
-
-        $form = $this->setCustomDataForForm($form, ['latitude' => $latitude, 'longitude' => $longitude]);
-        $form->handleRequest($request);
-
-        return $form;
-    }
-
-    public function saveFormChanges(FormInterface $form, Conference $conference): Conference
-    {
-        $latitude = $form->get('latitude')->getData();
-        $longitude = $form->get('longitude')->getData();
-
-        $address = [$latitude, $longitude];
-        return $this->conferenceRepository->saveEditFormChanges($conference, $address);
-    }
-
-    public function setCustomDataForForm(FormInterface $form, array $fieldsData = []): FormInterface
-    {
-        if (!$fieldsData) {
-            return $form;
-        }
-
-        foreach ($fieldsData as $field => $value) {
-            $form->get($field)->setData($value);
-        }
-
-        return $form;
     }
 
     public function findParticipantByUserId(int $userId, int $conferenceId): ?array

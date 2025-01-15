@@ -83,7 +83,7 @@
         import {cancelParticipationModal} from "{{ asset('js/cancelParticipationModal.js') }}";
 
         {# TODO: need api token to work because of security #}
-        commentsLazyLoading('{{ path('app_report_comments_load', {'conference_id': conferenceId, 'report_id': report.id}) }}');
+        commentsLazyLoading('{{ path('api_report_comments_load', {'id': report.id}) }}');
 
         document.addEventListener('click', function (event) {
             if (event.target.classList.contains('btn') && event.target.dataset.comment) {

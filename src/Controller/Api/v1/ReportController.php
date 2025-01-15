@@ -305,7 +305,7 @@ class ReportController extends AbstractController
         $document = $form->get('document')->getData() ?? null;
 
         try {
-            $report = $this->reportService->saveReportApi($report, $conference, $user, $document);
+            $report = $this->reportService->save($report, $conference, $user, $document, true);
         } catch (\Exception $exception) {
             return $this->json(['message' => $exception->getMessage()], $exception->getCode());
         }
