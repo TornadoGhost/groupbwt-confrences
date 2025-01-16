@@ -17,7 +17,7 @@
                 {% endif %}
                 {% if(is_granted('DELETE', report)) %}
                     <button class="btn btn-danger" data-toggle="modal" data-target="#modal" data-cancel="participation">
-                        Cancel Participation
+                        {% if(is_granted('ROLE_ADMIN')) %} Delete {% else %}Cancel Participation {% endif %}
                     </button>
                 {% endif %}
             {% endif %}
@@ -82,9 +82,7 @@
         import {modalDeleteComment} from "{{ asset('js/modalDeleteComment.js') }}";
         import {cancelParticipationModal} from "{{ asset('js/cancelParticipationModal.js') }}";
 
-        {# TODO: need api token to work because of security #}
         commentsLazyLoading('{{ path('api_report_comments_load', {'id': report.id}) }}');
-
         document.addEventListener('click', function (event) {
             if (event.target.classList.contains('btn') && event.target.dataset.comment) {
                 const commentId = event.target.dataset.comment;
@@ -101,7 +99,5 @@
                     '{{ csrf_token('delete' ~ report.id) }}');
             }
         });
-
-
     </script>
 {% endblock %}

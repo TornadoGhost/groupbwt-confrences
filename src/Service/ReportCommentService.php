@@ -68,17 +68,18 @@ class ReportCommentService extends BaseService
 
     public function getCommentsByPage(
         Report $report,
+        ?int   $userId,
         int    $conferenceId,
-        int    $page,
-        int    $maxPerPage
+        int    $maxPerPage,
+        int    $page = 1
     ): array
     {
         $qb = $this->getCommentsByReportQueryBuilder($report);
 
         $adapter = new QueryAdapter($qb);
         $pager = new Pagerfanta($adapter);
-        $pager->setCurrentPage($page);
         $pager->setMaxPerPage($maxPerPage);
+        $pager->setCurrentPage($page);
 
         $reportId = $report->getId();
         $comments = $pager->getCurrentPageResults();
@@ -88,6 +89,7 @@ class ReportCommentService extends BaseService
                 'comment' => $comment,
                 'conferenceId' => $conferenceId,
                 'reportId' => $reportId,
+                'userId' => $userId
             ]);
         }
 

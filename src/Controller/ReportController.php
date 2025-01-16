@@ -163,8 +163,7 @@ class ReportController extends AbstractController
     public function delete(Request $request, Conference $conference, Report $report): Response
     {
         if ($this->isCsrfTokenValid('delete' . $report->getId(), $request->request->get('token'))) {
-            $user = $this->getUser();
-            $result = $this->reportService->deleteReport($report, $conference, $user);
+            $result = $this->reportService->deleteReport($report, $conference);
 
             if ($result) {
                 $this->flashBag->add('edit-page-error', 'Error. ' . $result->getMessage());

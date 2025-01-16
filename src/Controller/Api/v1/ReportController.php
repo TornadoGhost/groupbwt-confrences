@@ -13,21 +13,18 @@ use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 
 /**
  * @Route("/api/v1/conferences/{conference_id}/reports", name="api_")
  * @ParamConverter("conference", options={"mapping": {"conference_id": "id"}})
  */
-class ReportController extends AbstractController
+class ReportController extends BaseReportController
 {
     protected ReportService $reportService;
     protected ConferenceService $conferenceService;
@@ -37,6 +34,7 @@ class ReportController extends AbstractController
         ConferenceService $conferenceService
     )
     {
+        parent::__construct($reportService);
         $this->reportService = $reportService;
         $this->conferenceService = $conferenceService;
     }
@@ -294,30 +292,5 @@ class ReportController extends AbstractController
     public function download(string $file_name): StreamedResponse
     {
         return $this->reportService->downloadFile($file_name);
-    }
-
-    // TODO: move to base controller
-    protected function saveData(
-        FormInterface $form,
-        Report        $report,
-        Conference    $conference,
-        UserInterface $user
-    ): Response
-    {
-        $document = $form->get('document')->getData() ?? null;
-
-        try {
-            $report = $this->reportService->save($report, $conference, $user, $document, true);
-        } catch (\Exception $exception) {
-            return $this->json(['message' => $exception->getMessage()], $exception->getCode());
-        }
-
-        $errors = $this->reportService->getFormErrors($form);
-
-        if (!empty($errors)) {
-            return $this->json(['errors' => $errors], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
-
-        return $this->json($report, Response::HTTP_CREATED, [], ['groups' => ['api_reports_store']]);
     }
 }

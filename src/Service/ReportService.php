@@ -90,9 +90,9 @@ class ReportService extends BaseService
         return $report;
     }
 
-    public function deleteReport(Report $report, Conference $conference, UserInterface $user): ?\Exception
+    public function deleteReport(Report $report, Conference $conference): ?\Exception
     {
-        return $this->reportRepository->deleteReport($report, $conference, $user);
+        return $this->reportRepository->deleteReport($report, $conference);
     }
 
     public function deleteUploadedFile(string $fileName): void

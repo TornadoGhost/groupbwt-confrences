@@ -104,7 +104,7 @@ class ReportCommentController extends AbstractController
     }
 
     /**
-     * @Route("/{comment_id}", name="report_comments_show", methods={"GET"})
+     * @Route("/{comment_id}", name="report_comments_show", methods={"GET"}, priority=1)
      * @ParamConverter("reportComment", options={"mapping": {"comment_id": "id"}})
      * @Security("is_granted('ROLE_USER')")
      *
@@ -127,7 +127,7 @@ class ReportCommentController extends AbstractController
     }
 
     /**
-     * @Route("/{comment_id}", name="report_comments_update", methods={"PATCH"})
+     * @Route("/{comment_id}", name="report_comments_update", methods={"PATCH"}, priority=1)
      * @ParamConverter("reportComment", options={"mapping": {"comment_id": "id"}})
      * @IsGranted("EDIT", subject="reportComment")
      *
@@ -162,7 +162,7 @@ class ReportCommentController extends AbstractController
     }
 
     /**
-     * @Route("/{comment_id}", name="report_comments_delete", methods={"DELETE"})
+     * @Route("/{comment_id}", name="report_comments_delete", methods={"DELETE"}, priority=1)
      * @ParamConverter("reportComment", options={"mapping": {"comment_id": "id"}})
      * @IsGranted("DELETE", subject="reportComment")
      *
@@ -189,7 +189,7 @@ class ReportCommentController extends AbstractController
     }
 
     /**
-     * @Route("/load", name="report_comments_load", methods={"GET"})
+     * @Route("/load", name="report_comments_load", methods={"GET"}, priority=2)
      */
     public function loadComments(
         Request              $request,
@@ -197,11 +197,14 @@ class ReportCommentController extends AbstractController
         ReportCommentService $commentService
     ): JsonResponse
     {
+        $user = $this->getUser() ?? null;
+        $userId = $user ? $user->getId() : null;
         $comments = $commentService->getCommentsByPage(
             $report,
+            $userId,
             $report->getConference()->getId(),
-            (int)$request->query->get('page', 1),
-            $commentService::MAX_PER_PAGE
+            $commentService::MAX_PER_PAGE,
+            (int)$request->query->get('page', 1)
         );
 
         return $this->json($comments);

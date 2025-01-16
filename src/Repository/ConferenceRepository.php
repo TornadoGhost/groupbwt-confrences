@@ -107,10 +107,12 @@ class ConferenceRepository extends ServiceEntityRepository
 
     public function removeUserFromConference(Conference $conference, UserInterface $user): void
     {
-        $report = $this->reportRepository->findByConferenceIdAndUserIdNotDeleted($conference, $user);
+        $reports = $this->reportRepository->findByConferenceIdAndUserIdNotDeleted($conference, $user);
 
-        if ($report) {
-            $user->removeReport($report);
+        if ($reports) {
+            foreach ($reports as $report) {
+                $this->_em->remove($report);
+            }
         }
 
         $user->removeConference($conference);

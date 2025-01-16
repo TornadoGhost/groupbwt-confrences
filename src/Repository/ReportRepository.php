@@ -86,13 +86,13 @@ class ReportRepository extends ServiceEntityRepository
         return null;
     }
 
-    public function deleteReport(Report $report, Conference $conference, UserInterface $user): ?\Exception
+    public function deleteReport(Report $report, Conference $conference): ?\Exception
     {
         $this->_em->beginTransaction();
 
         try {
+            $conference->removeUser($report->getUser());
             $this->_em->remove($report);
-            $conference->removeUser($user);
             $this->_em->flush();
             $this->_em->commit();
         } catch (\Exception $e) {
@@ -104,7 +104,7 @@ class ReportRepository extends ServiceEntityRepository
         return null;
     }
 
-    public function findByConferenceIdAndUserIdNotDeleted(Conference $conference, UserInterface $user): ?Report
+    public function findByConferenceIdAndUserIdNotDeleted(Conference $conference, UserInterface $user): ?array
     {
         return $this->createQueryBuilder('r')
             ->select('r')
@@ -116,7 +116,7 @@ class ReportRepository extends ServiceEntityRepository
                 'user' => $user
             ])
             ->getQuery()
-            ->getOneOrNullResult();
+            ->getResult();
     }
 
     public function fileNameExist(int $reportId): ?array
