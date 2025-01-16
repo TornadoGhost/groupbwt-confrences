@@ -1,10 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Entity\Conference;
-use App\Entity\User;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CountryType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
@@ -51,25 +51,27 @@ class ConferenceType extends AbstractType
                     ]),
                     new Type([
                         'type' => \DateTimeInterface::class,
-                        'message' => 'The value {{ value }} is not a valid date',
+                        'message' => 'The value {{ value }} is not a valid start date',
                     ]),
                     new GreaterThanOrEqual([
                         'value' => new \DateTime(),
-                        'message' => 'The date and time must not be earlier than now',
+                        'message' => 'The start date and time must not be earlier than now',
                     ]),
                 ]
             ])
-            // TODO: Make right constraints and attr
             ->add('endedAt', DateTimeType::class, [
-                'label' => 'Date of start',
+                'label' => 'Date of end',
                 'widget' => 'single_text',
+                'attr' => [
+                    'min' => (new \DateTime())->format('Y-m-d\TH:i'),
+                ],
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'The start date cannot be blank',
+                        'message' => 'The end date cannot be blank',
                     ]),
                     new Type([
                         'type' => \DateTimeInterface::class,
-                        'message' => 'The value {{ value }} is not a valid date',
+                        'message' => 'The value {{ value }} is not a valid end date',
                     ]),
                 ]
             ])

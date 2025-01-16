@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -14,7 +16,7 @@ class FileUploader
     private ParameterBagInterface $parameterBag;
 
     public function __construct(
-        SluggerInterface $slugger,
+        SluggerInterface      $slugger,
         ParameterBagInterface $parameterBag
     )
     {
@@ -26,7 +28,7 @@ class FileUploader
     {
         $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $safeFilename = $this->slugger->slug($originalFilename);
-        $fileName = $safeFilename.'-'.uniqid().'.'.$file->guessExtension();
+        $fileName = $safeFilename . '-' . uniqid() . '.' . $file->guessExtension();
 
         $directory = $this->getTargetDirectory();
         $filesystem = new Filesystem();
@@ -46,6 +48,6 @@ class FileUploader
 
     public function getTargetDirectory(): string
     {
-        return $this->parameterBag->get('kernel.project_dir').'/public/uploads/reports';
+        return $this->parameterBag->get('kernel.project_dir') . '/public/uploads/reports';
     }
 }

@@ -38,7 +38,12 @@
                 </div>
             {% endfor %}
 
-            <h1>Conference index</h1>
+            <div class="d-flex justify-content-between align-items-center">
+                <h1>Conferences</h1>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a class="d-block btn btn-primary" href="{{ path('app_conference_new') }}">Create</a>
+                {% endif %}
+            </div>
 
             <table class="table table-hover">
                 <thead class="thead-dark">
@@ -61,46 +66,52 @@
                                             data-target="#modal"
                                             data-conference="{{ conference.id }}"
                                             data-admin="delete">
-                                        Delete
+                                        <i class="bi bi-trash"></i>
                                     </button>
                                     <a class="btn btn-info"
-                                       href="{{ path('app_conference_edit', {'id': conference.id}) }}">Edit</a>
+                                       href="{{ path('app_conference_edit', {'id': conference.id}) }}">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
                                 {% else %}
-
-                                    {% if conference.users is empty %}
-
+                                    {% if app.user in conference.getUsers %}
+                                        <button class="btn btn-danger"
+                                                data-toggle="modal"
+                                                data-target="#modal"
+                                                data-conference="{{ conference.id }}">
+                                            <i class="bi bi-x-square"></i>
+                                        </button>
+                                    {% else %}
                                         {% if is_granted('ROLE_ANNOUNCER') %}
                                             <a class="btn btn-primary"
-                                               href="{{ path('app_report_new', {'conference_id': conference.id}) }}">Join</a>
+                                               href="{{ path('app_report_new', {'conference_id': conference.id}) }}">
+                                                <i class="bi bi-check-square"></i>
+                                            </a>
                                         {% else %}
                                             <form class="d-inline"
                                                   action="{{ path('app_conference_join', {'id': conference.id}) }}"
                                                   method="post">
                                                 <input type="hidden" name="token"
                                                        value="{{ csrf_token('join-conference') }}">
-                                                <button class="btn btn-primary" type="submit">Join</button>
+                                                <button class="btn btn-primary" type="submit">
+                                                    <i class="bi bi-check-square"></i>
+                                                </button>
                                             </form>
                                         {% endif %}
-
-                                    {% else %}
-                                        <button class="btn btn-danger"
-                                                data-toggle="modal"
-                                                data-target="#modal"
-                                                data-conference="{{ conference.id }}">
-                                            Cancel Participation
-                                        </button>
                                     {% endif %}
-
                                 {% endif %}
-
                                 <a class="btn btn-primary"
-                                   href="{{ path('app_conference_show', {'id': conference.id}) }}">Details</a>
-
+                                   href="{{ path('app_conference_show', {'id': conference.id}) }}">
+                                    <i class="bi bi-info-square"></i>
+                                </a>
                             {% else %}
                                 <a class="btn btn-primary"
-                                   href="{{ path('app_login') }}">Join</a>
+                                   href="{{ path('app_login') }}">
+                                    <i class="bi bi-check-square"></i>
+                                </a>
                                 <a class="btn btn-primary"
-                                   href="{{ path('app_login') }}">Details</a>
+                                   href="{{ path('app_login') }}">
+                                    <i class="bi bi-info-square"></i>
+                                </a>
                             {% endif %}
                         </td>
                     </tr>
@@ -115,10 +126,6 @@
             <div class="pagination">
                 {{ pagerfanta(conferences, 'twitter_bootstrap4') }}
             </div>
-
-            {% if is_granted('ROLE_ADMIN') %}
-                <a class="btn btn-primary" href="{{ path('app_conference_new') }}">Create new</a>
-            {% endif %}
         </section>
     </div>
 
@@ -128,11 +135,15 @@
         import {cancelParticipationModal} from "{{ asset('js/cancelParticipationModal.js') }}";
         import {deleteAdminModal} from "{{ asset('js/deleteAdminModal.js') }}";
 
-        document.addEventListener('click', function(event) {
-            if (event.target.dataset.conference && !event.target.dataset.admin) {
+        document.addEventListener('click', function (event) {
+            if (
+                event.target.dataset.conference && !event.target.dataset.admin
+                ||
+                event.target.parentNode.dataset.conference && !event.target.parentNode.dataset.admin
+            ) {
                 const url = `https://localhost/conferences/${event.target.dataset.conference}/cancel`;
                 cancelParticipationModal('modal', url, "{{ csrf_token('cancel-conference') }}");
-            } else if (event.target.dataset.admin === 'delete') {
+            } else if (event.target.dataset.admin === 'delete' || event.target.parentNode.dataset.admin) {
                 const url = `https://localhost/conferences/${event.target.dataset.conference}/delete`;
                 deleteAdminModal('modal', url, '{{ csrf_token('delete-conference') }}')
             }

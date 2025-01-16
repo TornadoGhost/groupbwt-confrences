@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use App\Repository\ConferenceRepository;
 use App\Repository\ReportRepository;
-use Symfony\Component\Serializer\SerializerInterface;
 
 class GlobalSearchService
 {
@@ -16,7 +17,7 @@ class GlobalSearchService
 
     public function __construct(
         ConferenceRepository $conferenceRepository,
-        ReportRepository $reportRepository
+        ReportRepository     $reportRepository
     )
     {
         $this->conferenceRepository = $conferenceRepository;
@@ -61,6 +62,7 @@ class GlobalSearchService
     {
         return $this->conferenceRepository->fullTextSearchByTitle($title);
     }
+
     public function fullTextSearchReportByTitle(string $title): ?array
     {
         return $this->reportRepository->fullTextSearchByTitle($title);

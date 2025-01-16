@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Report;
@@ -56,8 +58,7 @@ class ReportCommentRepository extends ServiceEntityRepository
                 'reportId' => $reportId
             ])
             ->getQuery()
-            ->getResult()
-            ;
+            ->getResult();
     }
 
     public function getCommentsByReportQueryBuilder(Report $report): QueryBuilder
