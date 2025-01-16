@@ -22,13 +22,17 @@
                         data-admin="delete">
                     Delete
                 </button>
-                <a class="btn btn-info ml-1" href="{{ path('app_conference_edit', {'id': conference.id}) }}">Edit</a>
+                <a class="btn btn-info ml-1" href="{{ path('app_conference_edit', {'id': conference.id}) }}">
+                    Edit
+                </a>
             </div>
         {% else %}
             {% if conference.users is empty %}
                 {% if is_granted('ROLE_ANNOUNCER') %}
                     <a class="btn btn-primary"
-                       href="{{ path('app_report_new', {'conference_id': conference.id}) }}">Join</a>
+                       href="{{ path('app_report_new', {'conference_id': conference.id}) }}">
+                        Join
+                    </a>
                 {% else %}
                     <form class="d-inline"
                           action="{{ path('app_conference_join', {'id': conference.id}) }}"
@@ -78,7 +82,9 @@
                     {{ form_row(report_form_filters.end_time) }}
                     {{ form_row(report_form_filters.duration) }}
                     <div class="mt-auto ml-3 mb-3">
-                        <a class="btn btn-danger" href="{{ path('app_conference_show', { 'id': conference.id }) }}">Reset</a>
+                        <a class="btn btn-danger" href="{{ path('app_conference_show', { 'id': conference.id }) }}">
+                            Reset
+                        </a>
                         <button class="btn btn-primary" type="submit">Filter</button>
                     </div>
                     {{ form_end(report_form_filters) }}

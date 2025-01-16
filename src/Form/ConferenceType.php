@@ -42,9 +42,6 @@ class ConferenceType extends AbstractType
             ->add('startedAt', DateTimeType::class, [
                 'label' => 'Date of start',
                 'widget' => 'single_text',
-                'attr' => [
-                    'min' => (new \DateTime())->format('Y-m-d\TH:i'),
-                ],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'The start date cannot be blank',
@@ -53,18 +50,11 @@ class ConferenceType extends AbstractType
                         'type' => \DateTimeInterface::class,
                         'message' => 'The value {{ value }} is not a valid start date',
                     ]),
-                    new GreaterThanOrEqual([
-                        'value' => new \DateTime(),
-                        'message' => 'The start date and time must not be earlier than now',
-                    ]),
                 ]
             ])
             ->add('endedAt', DateTimeType::class, [
                 'label' => 'Date of end',
                 'widget' => 'single_text',
-                'attr' => [
-                    'min' => (new \DateTime())->format('Y-m-d\TH:i'),
-                ],
                 'constraints' => [
                     new NotBlank([
                         'message' => 'The end date cannot be blank',

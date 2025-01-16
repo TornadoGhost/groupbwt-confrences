@@ -134,17 +134,20 @@
     <script type="module">
         import {cancelParticipationModal} from "{{ asset('js/cancelParticipationModal.js') }}";
         import {deleteAdminModal} from "{{ asset('js/deleteAdminModal.js') }}";
+        import {getConferenceId} from "{{ asset('js/getConferenceId.js') }}";
 
-        document.addEventListener('click', function (event) {
+        document.addEventListener('mousedown', function (event) {
             if (
                 event.target.dataset.conference && !event.target.dataset.admin
                 ||
                 event.target.parentNode.dataset.conference && !event.target.parentNode.dataset.admin
             ) {
-                const url = `https://localhost/conferences/${event.target.dataset.conference}/cancel`;
+                const conferenceId = getConferenceId(event);
+                const url = `https://localhost/conferences/${conferenceId}/cancel`;
                 cancelParticipationModal('modal', url, "{{ csrf_token('cancel-conference') }}");
-            } else if (event.target.dataset.admin === 'delete' || event.target.parentNode.dataset.admin) {
-                const url = `https://localhost/conferences/${event.target.dataset.conference}/delete`;
+            } else if (event.target.dataset.admin === 'delete' || event.target.parentNode.dataset.admin  === 'delete') {
+                const conferenceId = getConferenceId(event)
+                const url = `https://localhost/conferences/${conferenceId}/delete`;
                 deleteAdminModal('modal', url, '{{ csrf_token('delete-conference') }}')
             }
         });

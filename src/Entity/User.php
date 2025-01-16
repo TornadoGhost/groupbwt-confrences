@@ -318,7 +318,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeReportComment(ReportComment $reportComment): self
     {
         if ($this->reportComments->removeElement($reportComment)) {
-            // set the owning side to null (unless already changed)
             if ($reportComment->getUser() === $this) {
                 $reportComment->setUser(null);
             }
@@ -348,7 +347,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeReport(Report $report): self
     {
         if ($this->reports->removeElement($report)) {
-            // set the owning side to null (unless already changed)
             if ($report->getUser() === $this) {
                 $report->setUser(null);
             }
