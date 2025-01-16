@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
 use App\Entity\Conference;
@@ -63,7 +65,6 @@ class ConferenceController extends AbstractController
      */
     public function new(Request $request): Response
     {
-        // TODO: add field endedAt to form
         $conference = new Conference();
 
         return $this->handleForm($request, $conference);
@@ -145,8 +146,7 @@ class ConferenceController extends AbstractController
     ): Response
     {
         if ($this->isCsrfTokenValid('cancel-conference', $request->request->get('token'))) {
-            $user = $this->getUser();
-            $this->conferenceService->removeUserFromConference($conference, $user);
+            $this->conferenceService->removeUserFromConference($conference, $this->getUser());
         }
 
         return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);

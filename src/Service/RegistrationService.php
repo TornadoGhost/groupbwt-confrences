@@ -1,13 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
-use App\Entity\User;
-use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -17,7 +15,7 @@ class RegistrationService
     private UserPasswordHasherInterface $userPasswordHasher;
 
     public function __construct(
-        UserRepository  $userRepository,
+        UserRepository              $userRepository,
         UserPasswordHasherInterface $userPasswordHasher
     )
     {

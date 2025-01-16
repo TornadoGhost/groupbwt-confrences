@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Entity\Type as UserType;
@@ -138,8 +140,7 @@ class RegistrationFormType extends AbstractType
                         'message' => 'Please select a user type.',
                     ])
                 ],
-            ])
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

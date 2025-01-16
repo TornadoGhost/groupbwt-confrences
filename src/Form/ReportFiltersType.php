@@ -29,7 +29,7 @@ class ReportFiltersType extends AbstractType
             ]
         ]);
         $builder->add('duration', ChoiceType::class, [
-            'choices' => ['15min' => 15,'30min' => 30,'45min' => 45,'60min' => 60],
+            'choices' => ['15min' => 15, '30min' => 30, '45min' => 45, '60min' => 60],
             'placeholder' => 'Select duration time',
             'label' => 'Duration',
             'label_attr' => [

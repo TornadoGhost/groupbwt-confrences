@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\ConferenceRepository;
@@ -127,6 +129,7 @@ class Conference
     public function removeUser($user): self
     {
         if ($this->users->removeElement($user)) {
+            $this->users->removeElement($user);
             $user->removeConference($this);
         }
 

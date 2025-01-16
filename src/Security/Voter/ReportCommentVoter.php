@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security\Voter;
 
 use App\Entity\ReportComment;
@@ -34,7 +36,7 @@ class ReportCommentVoter extends Voter
 
         if ($attribute === self::EDIT) {
             $commentTime = $comment->getCreatedAt()->modify("+10 minutes");
-            $now =  new \DateTime();
+            $now = new \DateTime();
 
             if ($comment->getUser() === $user && $commentTime >= $now) {
                 return true;

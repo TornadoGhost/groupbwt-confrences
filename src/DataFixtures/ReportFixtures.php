@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataFixtures;
 
 use App\Entity\Report;
@@ -14,9 +16,10 @@ class ReportFixtures extends Fixture implements DependentFixtureInterface
 {
     protected ConferenceRepository $conferenceRepository;
     protected UserRepository $userRepository;
+
     public function __construct(
         ConferenceRepository $conferenceRepository,
-        UserRepository $userRepository
+        UserRepository       $userRepository
     )
     {
         $this->conferenceRepository = $conferenceRepository;
@@ -27,7 +30,7 @@ class ReportFixtures extends Fixture implements DependentFixtureInterface
     {
         $faker = Factory::create();
 
-        for ($i = 0; $i < 60; $i++ ) {
+        for ($i = 0; $i < 60; $i++) {
             $report = new Report();
 
             $report->setTitle($faker->sentence);

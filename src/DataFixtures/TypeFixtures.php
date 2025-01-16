@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\DataFixtures;
 
 use App\Entity\Type;
@@ -11,7 +13,7 @@ class TypeFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $userTypes = ['Listener', 'Announcer'];
-        foreach($userTypes as $type) {
+        foreach ($userTypes as $type) {
             $userType = new Type();
             $userType->setName($type);
             $manager->persist($userType);

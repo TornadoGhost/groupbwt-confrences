@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repository;
 
 use App\Entity\Conference;
@@ -108,10 +110,10 @@ class ConferenceRepository extends ServiceEntityRepository
         $report = $this->reportRepository->findByConferenceIdAndUserIdNotDeleted($conference, $user);
 
         if ($report) {
-            $conference->removeReport($report);
+            $user->removeReport($report);
         }
 
-        $conference->removeUser($user);
+        $user->removeConference($conference);
         $this->saveData($user);
     }
 
