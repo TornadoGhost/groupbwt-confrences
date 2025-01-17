@@ -93,10 +93,17 @@
                     commentId,
                     '{{ csrf_token('delete' ~ report.id ~ conferenceId) }}');
             } else if (event.target.dataset.cancel === 'participation'){
+                const modalTitle = {% if(is_granted('ROLE_ADMIN')) %}'Delete'{% else %}'Cancel Participation'{% endif %};
+                const modalBody = {% if(is_granted('ROLE_ADMIN')) %}'Are you sure you want to delete it?'{% else %}'Are you sure you want to cancel participation?'{% endif %};
+                const buttonName = {% if(is_granted('ROLE_ADMIN')) %}'Delete'{% else %}'Cancel Participation'{% endif %};
                 cancelParticipationModal(
                     'modal',
                     '{{ path('app_report_delete', {'conference_id': conferenceId, 'report_id': report.id}) }}',
-                    '{{ csrf_token('delete' ~ report.id) }}');
+                    '{{ csrf_token('delete' ~ report.id) }}',
+                    modalTitle,
+                    modalBody,
+                    buttonName
+                );
             }
         });
     </script>

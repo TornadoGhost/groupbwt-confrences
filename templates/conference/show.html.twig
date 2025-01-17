@@ -16,14 +16,18 @@
         <h1>Conference</h1>
         {% if is_granted('ROLE_ADMIN') %}
             <div class="d-flex justify-content-center align-items-center">
-                <button class="btn btn-danger"
+                <a class="btn btn-info mr-1" href="{{ path('app_conference_edit', {'id': conference.id}) }}">
+                    Edit
+                </a>
+                <button class="btn btn-danger mr-1"
                         data-toggle="modal"
                         data-target="#modal"
                         data-admin="delete">
                     Delete
                 </button>
-                <a class="btn btn-info ml-1" href="{{ path('app_conference_edit', {'id': conference.id}) }}">
-                    Edit
+                <a class="btn btn-primary"
+                   href="{{ path('app_report_new', {'conference_id': conference.id}) }}">
+                    Create Report
                 </a>
             </div>
         {% else %}

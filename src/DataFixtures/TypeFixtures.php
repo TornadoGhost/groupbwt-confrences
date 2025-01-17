@@ -10,9 +10,11 @@ use Doctrine\Persistence\ObjectManager;
 
 class TypeFixtures extends Fixture
 {
+    const LISTENER = 'Listener';
+    const ANNOUNCER = 'Announcer';
     public function load(ObjectManager $manager): void
     {
-        $userTypes = ['Listener', 'Announcer'];
+        $userTypes = [self::LISTENER, self::ANNOUNCER];
         foreach ($userTypes as $type) {
             $userType = new Type();
             $userType->setName($type);

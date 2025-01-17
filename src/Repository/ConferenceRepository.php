@@ -40,7 +40,7 @@ class ConferenceRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('c')
             ->where('c.deletedAt IS NULL')
-            ->orderBy('c.createdAt', 'DESC');
+            ->orderBy('c.createdAt', 'ASC');
 
         if (!$userId) {
             $queryBuilder->leftJoin('c.users', 'u');

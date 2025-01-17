@@ -29,19 +29,28 @@ class ReportFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create();
+        $conferences = $this->conferenceRepository->findAll();
 
-        for ($i = 0; $i < 60; $i++) {
-            $report = new Report();
+        foreach ($conferences as $conference) {
+            $conferenceHourStart = $conference->getStartedAt()->format('H');
+            $conferenceHourEnd = $conference->getEndedAt()->format('H');
+            $reportNumber = $conferenceHourEnd - $conferenceHourStart;
+            $startHour = (int) $conferenceHourStart;
+            $conferenceDateStart = $conference->getStartedAt()->format('Y-m-d');
+            $conferenceDateEnd = $conference->getEndedAt()->format('Y-m-d');
 
-            $report->setTitle($faker->sentence);
-            // TODO Set the right time for the report
-            $report->setStartedAt($faker->dateTimeBetween('now', '+8 hours'));
-            $report->setEndedAt($faker->dateTimeBetween('+2 hours', '+10 hours'));
-            $report->setDescription($faker->sentence);
-            $report->setConference($this->conferenceRepository->getRandomConference());
-            $report->setUser($this->userRepository->getRandomAnnouncerUser());
+            for ($i = 0; $i < $reportNumber; $i++) {
+                $report = new Report();
 
-            $manager->persist($report);
+                $report->setTitle($faker->sentence);
+                $report->setStartedAt((new \DateTime($conferenceDateStart))->setTime($startHour, 0));
+                $report->setEndedAt((new \DateTime($conferenceDateEnd))->setTime(++$startHour, 0));
+                $report->setDescription($faker->sentence);
+                $report->setConference($conference);
+                $report->setUser($this->userRepository->getRandomAnnouncerUser());
+
+                $manager->persist($report);
+            }
         }
 
         $manager->flush();

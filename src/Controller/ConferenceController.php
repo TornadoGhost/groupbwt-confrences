@@ -107,6 +107,7 @@ class ConferenceController extends BaseConferenceController
     {
         if ($this->isCsrfTokenValid('delete-conference', $request->request->get('token'))) {
             $this->conferenceService->delete($conference);
+            $this->addFlash('success', 'Conference was deleted successfully!');
         }
 
         return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);

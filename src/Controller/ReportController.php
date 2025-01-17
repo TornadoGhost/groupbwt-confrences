@@ -170,6 +170,8 @@ class ReportController extends AbstractController
 
                 return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
             }
+
+            $this->addFlash('success', 'Report was deleted successfully!');
         }
 
         return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);

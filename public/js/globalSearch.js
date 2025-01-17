@@ -86,7 +86,7 @@ export function globalSearch() {
         }
         return response.json();
       })
-      .then(({data}) => {
+      .then((data) => {
         if (!data) {
           return;
         }
