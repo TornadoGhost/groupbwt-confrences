@@ -145,8 +145,8 @@ class ReportType extends AbstractType
             /** @var Report $data */
             $data = $event->getData();
 
-            $startTime = $this->entityManager->contains($data) ? $data->getStartedAt() : null;
-            $endTime = $this->entityManager->contains($data) ? $data->getEndedAt() : null;
+            $startTime = $data->getStartedAt() ?? null;
+            $endTime = $data->getEndedAt() ?? null;
             $conferenceId = $options['conference_id'];
 
             if (!$startTime && !$endTime) {

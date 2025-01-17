@@ -22,6 +22,7 @@ use Symfony\Component\Form\PreloadedExtension;
 class RegistrationFormTypeTest extends AbstractTypeTestCase
 {
     private array $testTypes;
+    private ?Type $type = null;
     protected function setUp(): void
     {
         parent::setUp();

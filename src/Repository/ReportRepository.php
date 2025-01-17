@@ -46,24 +46,17 @@ class ReportRepository extends ServiceEntityRepository
             ->where('r.startedAt < :endTime')
             ->andWhere('r.endedAt > :startTime')
             ->andWhere('c.id = :conferenceId')
-            ->andWhere('r.deletedAt IS NULL');
+            ->andWhere('r.deletedAt IS NULL')
+            ->setParameters([
+                'startTime' => $startTime,
+                'endTime' => $endTime,
+                'conferenceId' => $conferenceId,
+            ]);
 
         if ($reportId) {
             $existingReportsBuilder
                 ->andWhere('r.id != :reportId')
-                ->setParameters([
-                    'startTime' => $startTime,
-                    'endTime' => $endTime,
-                    'conferenceId' => $conferenceId,
-                    'reportId' => $reportId
-                ]);
-        } else {
-            $existingReportsBuilder
-                ->setParameters([
-                    'startTime' => $startTime,
-                    'endTime' => $endTime,
-                    'conferenceId' => $conferenceId,
-                ]);
+                ->setParameter('reportId', $reportId);
         }
 
         $existingReportsResult = $existingReportsBuilder->getQuery()->getResult();

@@ -357,9 +357,9 @@ class ReportServiceTest extends AbstractTestCase
 
         $expected = [
             'start_time' => (new \DateTime($conference->getStartedAt()->format('Y-m-d')))->setTime(
-                $filters['start_time']->format('H'),
-                $filters['start_time']->format('i'),
-                $filters['start_time']->format('s')
+                (int) $filters['start_time']->format('H'),
+                (int) $filters['start_time']->format('i'),
+                (int) $filters['start_time']->format('s')
             )
         ];
 
@@ -377,9 +377,9 @@ class ReportServiceTest extends AbstractTestCase
 
         $expected = [
             'end_time' => (new \DateTime($conference->getStartedAt()->format('Y-m-d')))->setTime(
-                $filters['end_time']->format('H'),
-                $filters['end_time']->format('i'),
-                $filters['end_time']->format('s')
+                (int) $filters['end_time']->format('H'),
+                (int) $filters['end_time']->format('i'),
+                (int) $filters['end_time']->format('s')
             )
         ];
 
@@ -399,14 +399,14 @@ class ReportServiceTest extends AbstractTestCase
 
         $expected = [
             'start_time' => (new \DateTime($conference->getStartedAt()->format('Y-m-d')))->setTime(
-                $filters['start_time']->format('H'),
-                $filters['start_time']->format('i'),
-                $filters['start_time']->format('s')
+                (int) $filters['start_time']->format('H'),
+                (int) $filters['start_time']->format('i'),
+                (int) $filters['start_time']->format('s')
             ),
             'end_time' => (new \DateTime($conference->getStartedAt()->format('Y-m-d')))->setTime(
-                $filters['end_time']->format('H'),
-                $filters['end_time']->format('i'),
-                $filters['end_time']->format('s')
+                (int) $filters['end_time']->format('H'),
+                (int) $filters['end_time']->format('i'),
+                (int) $filters['end_time']->format('s')
             )
         ];
 
