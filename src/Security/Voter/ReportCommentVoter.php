@@ -11,8 +11,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class ReportCommentVoter extends Voter
 {
-    public const EDIT = 'EDIT';
-    public const DELETE = 'DELETE';
+    private const EDIT = 'EDIT';
+    private const DELETE = 'DELETE';
 
     protected function supports(string $attribute, $subject): bool
     {

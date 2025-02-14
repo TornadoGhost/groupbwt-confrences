@@ -83,6 +83,8 @@ class ReportController extends AbstractController
                 ]);
             }
 
+            $this->addFlash('success', 'Report created successfully');
+
             return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -144,6 +146,8 @@ class ReportController extends AbstractController
                     'form' => $form,
                 ]);
             }
+
+            $this->addFlash('success', 'Report updated successfully');
 
             return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
         }

@@ -10,8 +10,8 @@ use Doctrine\Persistence\ObjectManager;
 
 class TypeFixtures extends Fixture
 {
-    const LISTENER = 'Listener';
-    const ANNOUNCER = 'Announcer';
+    private const LISTENER = 'Listener';
+    private const ANNOUNCER = 'Announcer';
     public function load(ObjectManager $manager): void
     {
         $userTypes = [self::LISTENER, self::ANNOUNCER];

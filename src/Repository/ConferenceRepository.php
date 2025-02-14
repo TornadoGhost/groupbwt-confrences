@@ -39,6 +39,7 @@ class ConferenceRepository extends ServiceEntityRepository
     public function getAllConferencesWithFiltersPaginate(?int $userId = null, array $filters = []): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('c')
+            ->select('PARTIAL c.{id, title, startedAt, endedAt}')
             ->where('c.deletedAt IS NULL')
             ->orderBy('c.createdAt', 'ASC');
 
