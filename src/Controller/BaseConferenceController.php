@@ -24,7 +24,12 @@ class BaseConferenceController extends AbstractController
         $this->conferenceService = $conferenceService;
     }
 
-    protected function handleForm(Request $request, Conference $conference, string $method): Response
+    protected function handleForm(
+        Request $request,
+        Conference $conference,
+        string $method,
+        string $alertSuccessMessage
+    ): Response
     {
         $form = $this->createForm(ConferenceType::class, $conference);
         $address = $this->conferenceService->getAddressFromConference($conference);
@@ -45,6 +50,8 @@ class BaseConferenceController extends AbstractController
                     'longitude' => $form->get('longitude')->getData()
                 ]
             );
+
+            $this->addFlash('success', $alertSuccessMessage);
 
             return $this->redirectToRoute('app_conference_index', [], Response::HTTP_SEE_OTHER);
         }

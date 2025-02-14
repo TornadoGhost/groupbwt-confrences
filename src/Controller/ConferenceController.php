@@ -56,7 +56,11 @@ class ConferenceController extends BaseConferenceController
     {
         $conference = new Conference();
 
-        return $this->handleForm($request, $conference, BaseConferenceController::CREATE);
+        return $this->handleForm(
+            $request,
+            $conference,
+            BaseConferenceController::CREATE,
+            'Conference created successfully');
     }
 
     /**
@@ -96,7 +100,11 @@ class ConferenceController extends BaseConferenceController
      */
     public function edit(Request $request, Conference $conference): Response
     {
-        return $this->handleForm($request, $conference, BaseConferenceController::EDIT);
+        return $this->handleForm(
+            $request,
+            $conference,
+            BaseConferenceController::EDIT,
+            'Conference updated successfully');
     }
 
     /**

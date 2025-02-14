@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Entity\Conference;
 use App\Repository\ConferenceRepository;
+use Pagerfanta\Adapter\ArrayAdapter;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -13,7 +14,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class ConferenceService extends BaseService
 {
-    const COUNT_PER_PAGE = 15;
+    public const COUNT_PER_PAGE = 15;
     private ConferenceRepository $conferenceRepository;
     protected UrlGeneratorInterface $urlGenerator;
 
@@ -36,6 +37,10 @@ class ConferenceService extends BaseService
         $queryResult = $this->conferenceRepository->getAllConferencesWithFiltersPaginate($userId, $filters);
 
         $adapter = new QueryAdapter($queryResult);
+
+        // TODO: check
+//        $adap = new ArrayAdapter($queryResult->getQuery()->getResult());
+
         $conferences = new Pagerfanta($adapter);
 
         $conferences->setMaxPerPage($countPerPage);

@@ -16,7 +16,7 @@ use Twig\Environment;
 
 class ReportCommentService extends BaseService
 {
-    const MAX_PER_PAGE = 4;
+    public const MAX_PER_PAGE = 4;
     protected ReportCommentRepository $reportCommentRepository;
     protected FormFactoryInterface $formFactory;
     protected Environment $twig;

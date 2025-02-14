@@ -24,6 +24,7 @@ class FileUploader
         $this->parameterBag = $parameterBag;
     }
 
+    // TODO: redo with component
     public function upload(UploadedFile $file): ?string
     {
         $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
