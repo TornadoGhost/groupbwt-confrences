@@ -19,9 +19,10 @@ doctrine:
                 type: annotation
         dql:
             numeric_functions:
-                rand: DoctrineExtensions\Query\Mysql\Rand
+#                rand: DoctrineExtensions\Query\Mysql\Rand
+                rand: App\DQL\StringFunction
             string_functions:
-                JSON_CONTAINS: Scienta\DoctrineJsonFunctions\Query\AST\Functions\Mysql\JsonContains
+                JSON_CONTAINS: DoctrineExtensions\Query\Mysql\JsonContains
                 match: DoctrineExtensions\Query\Mysql\MatchAgainst
             datetime_functions:
                 timestampdiff: DoctrineExtensions\Query\Mysql\TimestampDiff

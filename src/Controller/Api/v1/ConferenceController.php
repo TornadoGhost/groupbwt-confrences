@@ -145,13 +145,19 @@ class ConferenceController extends AbstractController
     public function store(Request $request): Response
     {
         $conference = new Conference();
+        $requestData = $request->toArray();
         $form = $this->createForm(ConferenceType::class, $conference);
-        $form->submit($request->toArray());
+        $form->submit($requestData);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $conference = $this->conferenceService->saveFormChanges($form, $conference);
+            $conference = $this->conferenceService->saveFormChanges($conference,
+                [
+                    'latitude' => $requestData['latitude'] ?? null,
+                    'longitude' => $requestData['longitude'] ?? null,
+                ]
+            );
 
-            return $this->json($conference, Response::HTTP_CREATED, ['groups' => ['api_conferences_store']]);
+            return $this->json($conference, Response::HTTP_CREATED, [], ['groups' => ['api_conferences_store']]);
         }
 
         $errors = $this->conferenceService->getFormErrors($form);

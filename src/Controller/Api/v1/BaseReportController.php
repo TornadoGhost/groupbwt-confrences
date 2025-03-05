@@ -44,6 +44,8 @@ class BaseReportController extends AbstractController
             return $this->json(['errors' => $errors], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        $this->reportService->sendEmailToAdmin($user->getEmail(), $report, $conference);
+
         return $this->json($report, Response::HTTP_CREATED, [], ['groups' => ['api_reports_store']]);
     }
 }

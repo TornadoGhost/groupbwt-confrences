@@ -41,7 +41,7 @@ class ConferenceRepository extends ServiceEntityRepository
         $queryBuilder = $this->createQueryBuilder('c')
             ->select('PARTIAL c.{id, title, startedAt, endedAt}')
             ->where('c.deletedAt IS NULL')
-            ->orderBy('c.createdAt', 'ASC');
+            ->orderBy('c.createdAt', 'DESC');
 
         if (!$userId) {
             $queryBuilder->leftJoin('c.users', 'u');

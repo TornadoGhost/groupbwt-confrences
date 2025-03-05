@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Conference;
+use App\Message\ConferenceEmailNotification;
 use App\Repository\ConferenceRepository;
 use Pagerfanta\Adapter\ArrayAdapter;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -17,6 +19,7 @@ class ConferenceService extends BaseService
     public const COUNT_PER_PAGE = 15;
     private ConferenceRepository $conferenceRepository;
     protected UrlGeneratorInterface $urlGenerator;
+
 
     public function __construct(
         ConferenceRepository  $conferenceRepository,

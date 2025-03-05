@@ -167,7 +167,7 @@ class ReportController extends BaseReportController
         $form->submit($request->toArray());
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->saveData($form, $report, $conference, $user);
+            return $this->saveData($form, $report, $conference, $user);
         }
 
         $errors = $this->reportService->getFormErrors($form);

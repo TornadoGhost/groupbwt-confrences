@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Entity\Conference;
 use App\Entity\Report;
+use App\Message\ConferenceEmailNotification;
 use App\Repository\ReportRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -13,6 +14,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class ReportService extends BaseService
@@ -23,6 +25,7 @@ class ReportService extends BaseService
     protected EntityManagerInterface $entityManager;
     protected FlashBagInterface $flashBag;
     protected Filesystem $filesystem;
+    private MessageBusInterface $bus;
 
     public function __construct(
         ReportRepository       $reportRepository,
@@ -30,7 +33,8 @@ class ReportService extends BaseService
         ConferenceService      $conferenceService,
         EntityManagerInterface $entityManager,
         FlashBagInterface      $flashBag,
-        Filesystem             $filesystem
+        Filesystem             $filesystem,
+        MessageBusInterface    $bus
     )
     {
         $this->reportRepository = $reportRepository;
@@ -39,6 +43,7 @@ class ReportService extends BaseService
         $this->entityManager = $entityManager;
         $this->flashBag = $flashBag;
         $this->filesystem = $filesystem;
+        $this->bus = $bus;
     }
 
     public function save(
@@ -164,20 +169,31 @@ class ReportService extends BaseService
 
         if (!empty($filters['start_time'])) {
             $filters['start_time'] = (new \DateTime($conference->getStartedAt()->format('Y-m-d')))->setTime(
-                (int) $filters['start_time']->format('H'),
-                (int) $filters['start_time']->format('i'),
-                (int) $filters['start_time']->format('s')
+                (int)$filters['start_time']->format('H'),
+                (int)$filters['start_time']->format('i'),
+                (int)$filters['start_time']->format('s')
             );
         }
 
         if (!empty($filters['end_time'])) {
             $filters['end_time'] = (new \DateTime($conference->getEndedAt()->format('Y-m-d')))->setTime(
-                (int) $filters['end_time']->format('H'),
-                (int) $filters['end_time']->format('i'),
-                (int) $filters['end_time']->format('s')
+                (int)$filters['end_time']->format('H'),
+                (int)$filters['end_time']->format('i'),
+                (int)$filters['end_time']->format('s')
             );
         }
 
         return $filters;
     }
+
+    public function sendEmailToAdmin(string $userEmail, Report $report, Conference $conference): void
+    {
+        $this->bus->dispatch(new ConferenceEmailNotification(
+            'admin@myconference.com',
+            'User participated in conference',
+            'User - ' . $userEmail . ' created report - ' . $report->getTitle() . '(' . $report->getId() .')'
+            . ' for conference - ' . $conference->getTitle() . '(' . $conference->getId() .')'
+        ));
+    }
+
 }
