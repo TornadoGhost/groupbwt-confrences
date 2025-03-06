@@ -7,6 +7,7 @@ namespace App\Controller\Api\v1;
 use App\Entity\Conference;
 use App\Form\ConferenceType;
 use App\Service\ConferenceService;
+use App\Service\Export;
 use OpenApi\Annotations as OA;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,12 +22,15 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 class ConferenceController extends AbstractController
 {
     private ConferenceService $conferenceService;
+    private Export $export;
 
     public function __construct(
-        ConferenceService $conferenceService
+        ConferenceService $conferenceService,
+        Export $export
     )
     {
         $this->conferenceService = $conferenceService;
+        $this->export = $export;
     }
 
     /**
@@ -288,5 +292,29 @@ class ConferenceController extends AbstractController
         $this->conferenceService->removeUserFromConference($conference, $this->getUser());
 
         return $this->json(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @Route("/{id}/export-csv", name="conferences_export_csv", methods={"POST"})
+     * @Security("is_granted('ROLE_ADMIN')")
+     */
+    public function exportCsv(Conference $conference): Response
+    {
+        return $this->export->exportExcel(
+            $this->conferenceService->formatForExcel($conference),
+            'conference_' . $conference->getStartedAt()->format('d-m-Y'));
+    }
+
+    /**
+     * @Route("/{id}/export-pdf", name="conferences_export_pdf", methods={"POST"})
+     * @Security("is_granted('ROLE_ADMIN')")
+     */
+    public function exportPdf(Conference $conference): Response
+    {
+        return $this->export->exportPdf(
+            $this->conferenceService->formatForPdf($conference),
+            'pdf/conferenceSchedule.html.twig',
+            'conference_' . $conference->getStartedAt()->format('d-m-Y')
+        );
     }
 }

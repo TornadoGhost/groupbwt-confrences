@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ data.title }}</title>
+    <style>
+        body { font-family: {{ data.font }}, sans-serif; font-size: 14px; }
+        h1 { color: darkblue; }
+        p { text-align: justify; }
+    </style>
+</head>
+<body>
+<h1>{{ data.title }}</h1>
+<ol class="list-group">
+{% for report in data.reports %}
+    <li class="list-group-item">
+        <div>
+            <p>{{ report.title }}</p>
+            <p>Time: {{ report.time }}</p>
+            <p>Speaker: {{ report.speaker }}</p>
+        </div>
+    </li>
+{% endfor %}
+</ol>
+<p>{{ data.time }}</p>
+</body>
+</html>

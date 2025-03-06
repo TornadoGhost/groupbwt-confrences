@@ -5,12 +5,9 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Conference;
-use App\Message\ConferenceEmailNotification;
 use App\Repository\ConferenceRepository;
-use Pagerfanta\Adapter\ArrayAdapter;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -19,15 +16,18 @@ class ConferenceService extends BaseService
     public const COUNT_PER_PAGE = 15;
     private ConferenceRepository $conferenceRepository;
     protected UrlGeneratorInterface $urlGenerator;
+    private Export $export;
 
 
     public function __construct(
         ConferenceRepository  $conferenceRepository,
-        UrlGeneratorInterface $urlGenerator
+        UrlGeneratorInterface $urlGenerator,
+        Export $export
     )
     {
         $this->conferenceRepository = $conferenceRepository;
         $this->urlGenerator = $urlGenerator;
+        $this->export = $export;
     }
 
     public function getAllConferencesWithFiltersPaginate(
@@ -108,6 +108,11 @@ class ConferenceService extends BaseService
         return [];
     }
 
+    /*public function exportCsv($testCsvHeaders, $testCsvData, $conference)
+    {
+        $this->export->exportCsv($testCsvHeaders, $testCsvData, 'conference_' . $conference->getStartedAt()->format('d-m-Y'));
+    }*/
+
     public function saveFormChanges(Conference $conference, array $coordinates): Conference
     {
         if (empty($coordinates)) {
@@ -121,6 +126,48 @@ class ConferenceService extends BaseService
         $address = [$coordinates['latitude'], $coordinates['longitude']];
 
         return $this->conferenceRepository->saveEditFormChanges($conference, $address);
+    }
+
+    public function formatForExcel(Conference $conference): array
+    {
+        $array = [];
+        $array['Reports'][] = ['Report Title', 'Report Speaker', 'Report Time'];
+        $array['Conference'] = [
+            ['Conference ID', 'Conference Title', 'Conference Coordinates'],
+            [$conference->getId(), $conference->getTitle(), implode(', ',$conference->getAddress())]
+        ];
+
+        foreach ($conference->getReports() as $report) {
+            $user = $report->getUser();
+            $array['Reports'][] = [
+                $report->getTitle(),
+                $user->getFirstname() . ' ' . $user->getLastname(),
+                $report->getStartedAt()->format('H:i') . '-' . $report->getEndedAt()->format('H:i')
+            ];
+        }
+
+        return $array;
+    }
+
+    public function formatForPdf(Conference $conference): array
+    {
+        $array = [];
+
+        $array['title'] = $conference->getTitle();
+        $array['time'] =
+            $conference->getStartedAt()->format('d M Y, H:i') . '-' .
+            $conference->getEndedAt()->format('H:i');
+
+        foreach ($conference->getReports() as $report) {
+            $user = $report->getUser();
+            $array['reports'][] = [
+                'title' => $report->getTitle(),
+                'time' => $report->getStartedAt()->format('H:i') . '-' . $report->getEndedAt()->format('H:i'),
+                'speaker' => $user->getFirstname() . ' ' . $user->getLastname()
+            ];
+        }
+
+        return $array;
     }
 
     public function addUserToConference(Conference $conference, UserInterface $user): void
