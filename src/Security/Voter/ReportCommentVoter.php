@@ -6,6 +6,7 @@ namespace App\Security\Voter;
 
 use App\Entity\ReportComment;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -13,6 +14,13 @@ class ReportCommentVoter extends Voter
 {
     private const EDIT = 'EDIT';
     private const DELETE = 'DELETE';
+
+    private $accessDecisionManager;
+
+    public function __construct(AccessDecisionManagerInterface $accessDecisionManager)
+    {
+        $this->accessDecisionManager = $accessDecisionManager;
+    }
 
     protected function supports(string $attribute, $subject): bool
     {
@@ -30,7 +38,7 @@ class ReportCommentVoter extends Voter
         /** @var ReportComment $comment */
         $comment = $subject;
 
-        if (in_array('ROLE_ADMIN', $user->getRoles())) {
+        if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN'])) {
             return true;
         }
 

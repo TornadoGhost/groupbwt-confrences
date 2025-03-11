@@ -5,20 +5,22 @@
 {% block isActive %}active{% endblock %}
 
 {% block body %}
-    <div class="form-group">
-        <div>
-            <button class="btn btn-primary btn-lg" id="say-hello" type="button">Say hello</button>
-            <button class="btn btn-primary btn-lg" id="unsubscribe" type="button">Unsubscribe</button>
-            <button class="btn btn-primary btn-lg" id="admin-private-message" type="button">Admin Private Message
-            </button>
+    {% if is_granted('ROLE_ADMIN') %}
+        <div class="form-group">
+            <div>
+                <button class="btn btn-primary btn-lg" id="say-hello" type="button">Say hello</button>
+                <button class="btn btn-primary btn-lg" id="unsubscribe" type="button">Unsubscribe</button>
+                <button class="btn btn-primary btn-lg" id="admin-private-message" type="button">Admin Private Message
+                </button>
+            </div>
+            <div>
+                <ul class="list-group mt-2" id="test-list">
+                </ul>
+                <p id="admin-message"></p>
+            </div>
         </div>
-        <div>
-            <ul class="list-group mt-2" id="test-list">
-            </ul>
-            <p id="admin-message"></p>
-        </div>
-    </div>
-    <div {% if is_granted('ROLE_USER') %}class="row"{% endif %}>
+    {% endif %}
+    <div {% if is_granted('ROLE_USER') %} class="row" {% endif %}>
         {% if is_granted('ROLE_USER') %}
             <div class="col-md-2 filters mt-md-5">
                 <button class="d-block m-auto btn btn-secondary mt-md-3" type="button" data-toggle="collapse"
@@ -76,7 +78,7 @@
                 </thead>
                 <tbody>
                 {% for conference in conferences.currentPageResults %}
-                    <tr>
+                    <tr data-conference-id="{{ conference.id }}">
                         <td>{{ conference.title }}</td>
                         <td>{{ conference.startedAt ? conference.startedAt|date('Y-m-d H:i') ~ '-' ~ conference.endedAt|date('H:i') : 'None' }}</td>
                         <td>
@@ -90,13 +92,16 @@
                                                 data-admin="delete">
                                             <i class="bi bi-trash"></i>
                                         </button>
+                                        <button class="btn btn-danger mb-1" id="export-pdf">
+                                            <i class="bi bi-file-earmark-pdf"></i>
+                                        </button>
                                         <a class="btn btn-info mb-1"
                                            href="{{ path('app_conference_edit', {'id': conference.id}) }}"
                                            role="button"
                                         >
                                             <i class="bi bi-pencil"></i>
                                         </a>
-                                        <button class="btn btn-success mb-1">
+                                        <button class="btn btn-success mb-1" id="export-excel">
                                             <i class="bi bi-file-earmark-excel"></i>
                                         </button>
                                         <a class="btn btn-primary mb-1"
@@ -106,31 +111,31 @@
                                     </div>
                                 {% else %}
                                     <div>
-                                    {% if app.user in conference.getUsers %}
-                                        <button class="btn btn-danger"
-                                                data-toggle="modal"
-                                                data-target="#modal"
-                                                data-conference="{{ conference.id }}">
-                                            <i class="bi bi-x-square"></i>
-                                        </button>
-                                    {% else %}
-                                        {% if is_granted('ROLE_ANNOUNCER') %}
-                                            <a class="btn btn-primary"
-                                               href="{{ path('app_report_new', {'conference_id': conference.id}) }}">
-                                                <i class="bi bi-check-square"></i>
-                                            </a>
+                                        {% if app.user in conference.getUsers %}
+                                            <button class="btn btn-danger"
+                                                    data-toggle="modal"
+                                                    data-target="#modal"
+                                                    data-conference="{{ conference.id }}">
+                                                <i class="bi bi-x-square"></i>
+                                            </button>
                                         {% else %}
-                                            <form class="d-inline"
-                                                  action="{{ path('app_conference_join', {'id': conference.id}) }}"
-                                                  method="post">
-                                                <input type="hidden" name="token"
-                                                       value="{{ csrf_token('join-conference') }}">
-                                                <button class="btn btn-primary" type="submit">
+                                            {% if is_granted('ROLE_ANNOUNCER') %}
+                                                <a class="btn btn-primary"
+                                                   href="{{ path('app_report_new', {'conference_id': conference.id}) }}">
                                                     <i class="bi bi-check-square"></i>
-                                                </button>
-                                            </form>
+                                                </a>
+                                            {% else %}
+                                                <form class="d-inline"
+                                                      action="{{ path('app_conference_join', {'id': conference.id}) }}"
+                                                      method="post">
+                                                    <input type="hidden" name="token"
+                                                           value="{{ csrf_token('join-conference') }}">
+                                                    <button class="btn btn-primary" type="submit">
+                                                        <i class="bi bi-check-square"></i>
+                                                    </button>
+                                                </form>
+                                            {% endif %}
                                         {% endif %}
-                                    {% endif %}
                                         <a class="btn btn-primary"
                                            href="{{ path('app_conference_show', {'id': conference.id}) }}">
                                             <i class="bi bi-info-square"></i>
@@ -168,97 +173,15 @@
     <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script type="module">
-        import {cancelParticipationModal} from "{{ asset('js/cancelParticipationModal.js') }}";
-        import {deleteAdminModal} from "{{ asset('js/deleteAdminModal.js') }}";
-        import {getConferenceId} from "{{ asset('js/getConferenceId.js') }}";
+        import {exportExcel} from "{{ asset('js/conferences/exportExcel.js') }}";
+        import {testPusher} from "{{ asset('js/pusher/test.js') }}";
+        import {defaultActions} from "{{ asset('js/conferences/defaultActions.js') }}";
+        import {exportPdf} from "{{ asset('js/conferences/exportPdf.js') }}";
 
-        document.addEventListener('mousedown', function (event) {
-            if (
-                event.target.dataset.conference && !event.target.dataset.admin
-                ||
-                event.target.parentNode.dataset.conference && !event.target.parentNode.dataset.admin
-            ) {
-                const conferenceId = getConferenceId(event);
-                const url = `https://localhost/conferences/${conferenceId}/cancel`;
-                cancelParticipationModal('modal', url, "{{ csrf_token('cancel-conference') }}");
-            } else if (event.target.dataset.admin === 'delete' || event.target.parentNode.dataset.admin === 'delete') {
-                const conferenceId = getConferenceId(event)
-                const url = `https://localhost/conferences/${conferenceId}/delete`;
-                deleteAdminModal('modal', url, '{{ csrf_token('delete-conference') }}')
-            }
-        });
+        exportPdf();
+        exportExcel({{ is_granted('ROLE_ADMIN') }});
+        testPusher({{ is_granted('ROLE_ADMIN') }});
+        defaultActions('{{ csrf_token('delete-conference') }}', '{{ csrf_token('cancel-conference') }}');
 
-        const helloHandler = function () {
-            fetch('/api/pusher/say-hello', {
-                method: 'POST'
-            });
-
-            document.removeEventListener('click', helloHandler);
-        }
-
-        document.getElementById('say-hello').addEventListener('click', helloHandler);
-
-        const pusher = new Pusher('9ee3cd5959ce0b5242f0', {
-            cluster: 'eu'
-        });
-
-        const channel = pusher
-            .subscribe('greetings')
-            .bind('new-greeting', function (data) {
-                console.log(data);
-                const list = document.getElementById('test-list')
-                list.innerHTML = '';
-                if (data) {
-                    Object.entries(data).forEach(elem => {
-                        list.insertAdjacentHTML('beforeend',
-                            `<li>${elem[0]}</li>`
-                        );
-                    });
-                }
-            });
-
-        const unsubscribeHandler = function () {
-            pusher.unsubscribe('new-greeting');
-            console.log('Unsubscribe Event Done');
-            document.removeEventListener('click', unsubscribeHandler);
-        }
-        document.getElementById('unsubscribe').addEventListener('click', unsubscribeHandler);
-
-        const privatePusher = new Pusher('9ee3cd5959ce0b5242f0', {
-            cluster: 'eu',
-            authEndpoint: 'https://localhost/api/pusher/auth',
-            auth: {
-                headers: {
-                    'Authorization': 'Bearer ' + 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NDA2NDg4MTUsImV4cCI6MTc0MTI1MzYxNSwicm9sZXMiOlsiUk9MRV9MSVNURU5FUiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6InNpcGVzLm5lbHNvbkBydW5vbGZzZG90dGlyLmNvbSJ9.ObcgPBYm0Wa9yed1DYoFu4wSTEachYcJAwKvWQmPNgM4cUbDMS_XNGZz3C7cP9HNXOLSJGE11jl_WUSnJ9CFXUuwK5paQSOMLMxHeDbExuGVK4dN-fbRlWw0WnRl7nh9q3eJP56YEWn9OgF5W11wdgXfONQ-FZWi5swZJ3pw0LMvjHMHFy54dac56QTP13ZbjQGflmpHYnxbBd4tl_5jKSwkDoW9ehppg1cj-_U9y_lJiulF61r8HJg7q55aOmczm9KnvrACGgpWjyBe5i_tmUsPIt0-vqunuAmZzz4tc-ps5adx6CivgwDvbG15V9Zo3JQiiYbMTugpaxmQNuUodA',
-                }
-            }
-        });
-
-        privatePusher
-            .subscribe('private-v-chat.260')
-            .bind('big-troubles', function (data) {
-                document.getElementById('admin-message').innerHTML = '';
-
-                if (data?.message) {
-                    document.getElementById('admin-message').innerHTML = data.message;
-                }
-
-                console.log(data);
-            });
-
-        const adminPrivateMessageHandler = function () {
-            fetch('/api/pusher/admin-notify', {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer ' + 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NDA1NzUzNTcsImV4cCI6MTc0MTE4MDE1Nywicm9sZXMiOlsiUk9MRV9BRE1JTiIsIlJPTEVfVVNFUiJdLCJ1c2VybmFtZSI6ImFkbWluQGV4YW1wbGUuY29tIn0.VSw3pUTI3_5dT7Fh3nwS_G1jDJpx1qZ-alrpCBccBH0n7KkNfbB7jjtpMWEa-HJMLYc64CGHDmTcfMUA_5sBchfCtDB9oxcVNUvNDl8u6kXyHktXrq_h9ImCVt7t5bRuRwIBbYzjflomiMu1XgtgVQTrzULARTXPlFoojMD66JW18kGxc3tmQge6F16OV7a6D2jaKuvCg-a3JgTbJuBsIzrBGyLEp0el8iFBgn0heiSZS40zH2LUt8u_vXlpoSZb1-Gl2WUxfGJPI41lytoUuxBGAZpxJv9nPVxz-mxe1u5fwfOluEkWDi-zMDnKhUXHXa3yUh9e68zaf4suAS0Zjw',
-                },
-                params: {
-                    socket_id: privatePusher.connection.socket_id
-                }
-            });
-            document.removeEventListener('click', adminPrivateMessageHandler);
-        };
-
-        document.getElementById('admin-private-message').addEventListener('click', adminPrivateMessageHandler)
     </script>
 {% endblock %}

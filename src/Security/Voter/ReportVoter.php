@@ -6,13 +6,22 @@ namespace App\Security\Voter;
 
 use App\Entity\Report;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\CacheableVoterInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class ReportVoter extends Voter
+class ReportVoter extends Voter implements CacheableVoterInterface
 {
     private const EDIT = 'EDIT';
     private const DELETE = 'DELETE';
+
+    private $accessDecisionManager;
+
+    public function __construct(AccessDecisionManagerInterface $accessDecisionManager)
+    {
+        $this->accessDecisionManager = $accessDecisionManager;
+    }
 
     protected function supports(string $attribute, $subject): bool
     {
@@ -30,7 +39,8 @@ class ReportVoter extends Voter
         /** @var Report $report */
         $report = $subject;
 
-        if (in_array('ROLE_ADMIN', $user->getRoles())) {
+
+        if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN'])) {
             return true;
         }
 

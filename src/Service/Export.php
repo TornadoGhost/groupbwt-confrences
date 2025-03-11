@@ -78,7 +78,7 @@ class Export
             200,
             [
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' => "inline; filename=$filename",
+                'Content-Disposition' => "attachment; filename=\"$filename\"",
             ]
         );
     }

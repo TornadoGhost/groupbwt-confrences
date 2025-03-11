@@ -6,13 +6,20 @@ namespace App\Controller\Api\v1;
 
 use App\Entity\Conference;
 use App\Form\ConferenceType;
+use App\Message\ImportNewConferencesCsv;
 use App\Service\ConferenceService;
 use App\Service\Export;
+use Dompdf\Exception;
 use OpenApi\Annotations as OA;
+use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
+use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Nelmio\ApiDocBundle\Annotation\Model;
 
@@ -26,7 +33,7 @@ class ConferenceController extends AbstractController
 
     public function __construct(
         ConferenceService $conferenceService,
-        Export $export
+        Export            $export
     )
     {
         $this->conferenceService = $conferenceService;
@@ -295,10 +302,10 @@ class ConferenceController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/export-csv", name="conferences_export_csv", methods={"POST"})
+     * @Route("/{id}/export-excel", name="conferences_export_excel", methods={"POST"})
      * @Security("is_granted('ROLE_ADMIN')")
      */
-    public function exportCsv(Conference $conference): Response
+    public function exportExcel(Conference $conference): Response
     {
         return $this->export->exportExcel(
             $this->conferenceService->formatForExcel($conference),
@@ -307,7 +314,7 @@ class ConferenceController extends AbstractController
 
     /**
      * @Route("/{id}/export-pdf", name="conferences_export_pdf", methods={"POST"})
-     * @Security("is_granted('ROLE_ADMIN')")
+     * @Security("is_granted('ROLE_USER')")
      */
     public function exportPdf(Conference $conference): Response
     {
@@ -316,5 +323,22 @@ class ConferenceController extends AbstractController
             'pdf/conferenceSchedule.html.twig',
             'conference_' . $conference->getStartedAt()->format('d-m-Y')
         );
+    }
+
+    /**
+     * @Route("/import-csv", name="conferences_import_csv", methods={"POST"})
+     * @Security("is_granted('ROLE_ADMIN')")
+     */
+    public function importCsv(Request $request, MessageBusInterface $bus): Response
+    {
+        if (!$request->files->get('import_csv')) {
+            throw new BadRequestHttpException('File is not found.');
+        }
+
+        $csvData = $this->conferenceService->getCsvData($request->files->get('import_csv')->getPathname());
+
+        $bus->dispatch(new ImportNewConferencesCsv($csvData));
+
+        dd('done');
     }
 }
