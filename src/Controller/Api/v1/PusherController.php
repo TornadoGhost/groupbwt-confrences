@@ -47,9 +47,9 @@ class PusherController extends AbstractController
         ];
 
         $pusher->trigger('private-v-chat.' . $user->getId(), 'big-troubles', $arrayTest);
-
         return new Response();
     }
+
 
     /**
      * @Route("/api/pusher/auth", name="pusher_auth", methods={"POST"})

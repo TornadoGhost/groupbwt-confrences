@@ -75,4 +75,14 @@ export function testPusher(isGranted) {
 
   document.getElementById('admin-private-message').addEventListener('click', adminPrivateMessageHandler);
 
+  // Import csv conferences notification test
+
+  const notificationChannel = pusher
+    .subscribe('notification');
+  notificationChannel.bind('success-import', function (data) {
+    console.log('Success import message - ', data);
+  });
+  notificationChannel.bind('error-import', function (data) {
+    console.log('Error import message', data);
+  });
 }

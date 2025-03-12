@@ -6,22 +6,19 @@ namespace App\Controller\Api\v1;
 
 use App\Entity\Conference;
 use App\Form\ConferenceType;
+use App\Import\Csv\ConferencesCsv;
 use App\Message\ImportNewConferencesCsv;
 use App\Service\ConferenceService;
 use App\Service\Export;
-use Dompdf\Exception;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Annotations as OA;
-use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
-use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Nelmio\ApiDocBundle\Annotation\Model;
 
 /**
  * @Route("/api/v1/conferences", name="api_")
@@ -30,14 +27,17 @@ class ConferenceController extends AbstractController
 {
     private ConferenceService $conferenceService;
     private Export $export;
+    private ConferencesCsv $csvService;
 
     public function __construct(
         ConferenceService $conferenceService,
-        Export            $export
+        Export            $export,
+        ConferencesCsv    $csvService
     )
     {
         $this->conferenceService = $conferenceService;
         $this->export = $export;
+        $this->csvService = $csvService;
     }
 
     /**
@@ -335,10 +335,9 @@ class ConferenceController extends AbstractController
             throw new BadRequestHttpException('File is not found.');
         }
 
-        $csvData = $this->conferenceService->getCsvData($request->files->get('import_csv')->getPathname());
-
+        $csvData = $this->csvService->getCsvData($request->files->get('import_csv')->getPathname());
         $bus->dispatch(new ImportNewConferencesCsv($csvData));
 
-        dd('done');
+        return $this->json('Successfully pushed to queue');
     }
 }
