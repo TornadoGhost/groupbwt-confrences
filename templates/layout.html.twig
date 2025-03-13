@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
           integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="{{ asset('css/modalSiteSearch.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/main.css') }}">
 </head>
 
 <body>
@@ -33,6 +33,26 @@
         </ul>
 
         <div class="d-md-flex">
+            <div class="position-relative d-flex mr-3 mb-0" id="notifications">
+                <button class="btn btn-lg p-0" type="button">
+                    <i class="bi bi-bell text-white"></i>
+                </button>
+                <div class="position-absolute d-block rounded notification-window">
+                    <ul class="d-none list-group text-white overflow-auto">
+                        <li class="list-group-item bg-danger">Notification 1</li>
+                        <li class="list-group-item bg-danger">Notification 2</li>
+                        <li class="list-group-item bg-danger">Notification 3</li>
+                        <li class="list-group-item bg-danger">Notification 4</li>
+                        <li class="list-group-item bg-danger">Notification 4</li>
+                        <li class="list-group-item bg-danger">Notification 4</li>
+                        <li class="list-group-item bg-danger">Notification 4</li>
+                        <li class="list-group-item bg-danger">Notification 4</li>
+                        <li class="list-group-item bg-danger">Notification 4</li>
+                        <li class="list-group-item bg-danger">Notification 4</li>
+                        <li class="list-group-item bg-danger">Notification 4</li>
+                    </ul>
+                </div>
+            </div>
             <div class="position-relative mr-3 mb-2 mb-md-0 mb-lg-0">
                 <label class="sr-only" for="search-input">Search</label>
                 <input class="form-control w-100" id="search-input" type="text"
@@ -86,8 +106,10 @@
 
 <script type="module">
     import {globalSearch} from "{{ asset('js/globalSearch.js') }}";
+    import {show} from "{{ asset('js/notifications/showNotification.js') }}"
 
     globalSearch();
+    show();
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"

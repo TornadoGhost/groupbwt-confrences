@@ -335,6 +335,7 @@ class ConferenceController extends AbstractController
             throw new BadRequestHttpException('File is not found.');
         }
 
+        // TODO: change property "csvService" name
         $csvData = $this->csvService->getCsvData($request->files->get('import_csv')->getPathname());
         $bus->dispatch(new ImportNewConferencesCsv($csvData));
 

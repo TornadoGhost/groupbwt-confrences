@@ -9,7 +9,15 @@
     transform: translate(-58%, 20%)
 }
 
-@media (max-width: 767px) {
+@media screen and (max-width: 767px) {
+    #notifications .notification-window {
+        width: 200px;
+        top: 0;
+        left: 0;
+
+        transform: translate(15%, 2%);
+    }
+
     .modal-search {
         width: 100%;
         height: 300px;
@@ -37,4 +45,18 @@
     .text-sm {
         font-size: 10px;
     }
+}
+
+.notification-window {
+    top: 0;
+    left: 0;
+    transform: translate(-100%, 2%);
+    z-index: 88;
+
+    width: 200px;
+    background-color: #565b5f;
+}
+
+#notifications ul {
+    height: 250px;
 }
