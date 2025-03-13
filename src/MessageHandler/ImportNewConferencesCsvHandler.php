@@ -20,7 +20,6 @@ class ImportNewConferencesCsvHandler implements MessageHandlerInterface
     private ConferenceService $conferenceService;
     private EntityManagerInterface $em;
     private Pusher $pusher;
-    private bool $importDone = true;
     private ConferencesCsvValidation $csvValidation;
 
     public function __construct(
@@ -78,7 +77,7 @@ class ImportNewConferencesCsvHandler implements MessageHandlerInterface
 
         $this->em->commit();
 
-        $this->sendPushMessage($this->importDone);
+        $this->sendSuccessPushMessage();
     }
 
     private function sendSuccessPushMessage(string $message = "New conferences imported successfully")
@@ -90,14 +89,12 @@ class ImportNewConferencesCsvHandler implements MessageHandlerInterface
         );
     }
 
-    private function sendErrorPushMessage(array $errors)
+    private function sendErrorPushMessage(string $errorMessage)
     {
-        $transformArrayToString = implode("; ", $errors);
-
         $this->pusher->trigger(
             'notification',
             'error-import',
-            $transformArrayToString
+            $errorMessage
         );
     }
 }

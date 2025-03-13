@@ -10,12 +10,68 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\Validator\Constraints\Type;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validation;
 
 class ConferencesCsvValidation implements CsvValidationInterface
 {
+    const REQUITED_TITLES = [
+        'title',
+        'startedAt',
+        'endedAt',
+        'latitude',
+        'longitude',
+        'country',
+    ];
+
     // TODO: validation not done, need to be finished
-    public function validate(array $csvData): ?array
+    public function validate(array $csvData): ?string
+    {
+        $titleErrorMessage = $this->titlesValidation($csvData);
+        if ($titleErrorMessage !== null) {
+            return $titleErrorMessage;
+        }
+
+        $recordsViolations = $this->recordsValidation($csvData);
+        if (count($recordsViolations) > 0) {
+            $errors = [];
+
+            foreach ($recordsViolations as $violation) {
+                preg_match_all('/\[(.*?)]/', $violation->getPropertyPath(), $matches);
+                list($row, $field) = $matches[1];
+                $row += 2;
+                $errors[] = 'Row №' . $row . ', field:"' . $field . '"' . ": " . $violation->getMessage() . "\n";
+            }
+
+            dd(implode("; ", $errors));
+            return implode("; ", $errors);
+        }
+
+        return null;
+    }
+
+    private function titlesValidation(array $csvData): ?string
+    {
+        $titles = array_keys($csvData[0]);
+        $notInListTitles = [];
+
+        foreach ($titles as $title) {
+            if (!in_array($title, self::REQUITED_TITLES)) {
+                $notInListTitles[] = $title;
+            }
+        }
+
+        if (!empty($notInListTitles)) {
+            $notInListTitles = implode(', ', $notInListTitles);
+            $titles = implode(', ', $titles);
+
+            return 'Founded wrong titles: ' . $notInListTitles . '. ' . 'Required fields: ' . $titles;
+        }
+
+        return null;
+    }
+
+    private function recordsValidation(array $csvData): ConstraintViolationListInterface
     {
         $itemConstraints = new Assert\Collection([
             'fields' => [
@@ -37,18 +93,18 @@ class ConferencesCsvValidation implements CsvValidationInterface
                     new NotBlank([
                         'message' => 'The start date - {{ value }}, cannot be blank',
                     ]),
-                    new Type([
-                        'type' => \DateTimeInterface::class,
-                        'message' => 'The value - {{ value }}, is not a valid start date',
+                    new Assert\DateTime([
+                        'format' => 'Y-m-d H:i',
+                        'message' => 'The value - {{ value }}, is not a valid start date, right format - Y-m-d H:i',
                     ]),
                 ],
                 'endedAt' => [
                     new NotBlank([
                         'message' => 'The end date cannot be blank',
                     ]),
-                    new Type([
-                        'type' => \DateTimeInterface::class,
-                        'message' => 'The value {{ value }} is not a valid end date',
+                    new Assert\DateTime([
+                        'format' => 'Y-m-d H:i',
+                        'message' => 'The value {{ value }} is not a valid end date, right format - Y-m-d H:i',
                     ]),
                 ],
                 'latitude' => [
@@ -89,21 +145,6 @@ class ConferencesCsvValidation implements CsvValidationInterface
             'constraints' => [$itemConstraints]
         ]);
 
-        $violations = Validation::createValidator()->validate($csvData, $constraints);
-
-        if (count($violations) > 0) {
-            $errors = [];
-
-            foreach ($violations as $violation) {
-                preg_match_all('/\[(.*?)\]/', $violation->getPropertyPath(), $matches);
-                list($row, $field) = $matches[1];
-                $row += 2;
-                $errors[] = 'Row №' . $row . ', field:"' . $field . '"' . ": " . $violation->getMessage() . "\n";
-            }
-
-            return $errors;
-        }
-
-        return null;
+        return Validation::createValidator()->validate($csvData, $constraints);
     }
 }
