@@ -27,17 +27,14 @@ class ConferenceController extends AbstractController
 {
     private ConferenceService $conferenceService;
     private Export $export;
-    private ConferencesCsv $csvService;
 
     public function __construct(
         ConferenceService $conferenceService,
-        Export            $export,
-        ConferencesCsv    $csvService
+        Export            $export
     )
     {
         $this->conferenceService = $conferenceService;
         $this->export = $export;
-        $this->csvService = $csvService;
     }
 
     /**
@@ -329,15 +326,17 @@ class ConferenceController extends AbstractController
      * @Route("/import-csv", name="conferences_import_csv", methods={"POST"})
      * @Security("is_granted('ROLE_ADMIN')")
      */
-    public function importCsv(Request $request, MessageBusInterface $bus): Response
+    public function importCsv(Request $request, MessageBusInterface $bus, ConferencesCsv $import): Response
     {
         if (!$request->files->get('import_csv')) {
             throw new BadRequestHttpException('File is not found.');
         }
 
-        // TODO: change property "csvService" name
-        $csvData = $this->csvService->getCsvData($request->files->get('import_csv')->getPathname());
-        $bus->dispatch(new ImportNewConferencesCsv($csvData));
+        $bus->dispatch(
+            new ImportNewConferencesCsv(
+                $import->getCsvData($request->files->get('import_csv')->getPathname())
+            )
+        );
 
         return $this->json('Successfully pushed to queue');
     }

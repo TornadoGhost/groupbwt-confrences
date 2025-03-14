@@ -2,18 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Import\Csv\Validation;
+namespace App\Import\Validation;
 
-use App\Import\Csv\Validation\Contract\CsvValidationInterface;
+use App\Import\Validation\Contracts\ConferencesCsvValidationInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
-use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validation;
 
-class ConferencesCsvValidation implements CsvValidationInterface
+class ConferencesCsvValidation implements ConferencesCsvValidationInterface
 {
     const REQUITED_TITLES = [
         'title',

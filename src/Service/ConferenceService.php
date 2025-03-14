@@ -6,6 +6,7 @@ namespace App\Service;
 
 use App\Entity\Conference;
 use App\Form\ConferenceType;
+use App\Message\ImportNewConferencesCsv;
 use App\Repository\ConferenceRepository;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
