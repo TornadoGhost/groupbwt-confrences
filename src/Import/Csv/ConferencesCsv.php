@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Import\Csv;
 
 use App\Entity\Conference;
 use App\Form\ConferenceType;
 use App\Import\Validation\ConferencesCsvValidation;
+use App\Import\Validation\Contracts\ConferencesCsvValidationInterface;
 use App\Service\ConferenceService;
+use App\Service\NotificationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Pusher\Pusher;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -15,7 +19,7 @@ class ConferencesCsv extends AbstractCsvImport
     private FormFactoryInterface $form;
     private ConferenceService $conferenceService;
     private EntityManagerInterface $em;
-    private ConferencesCsvValidation $csvValidation;
+    private ConferencesCsvValidationInterface $csvValidation;
 
     public function __construct(
         FormFactoryInterface     $form,
@@ -32,15 +36,13 @@ class ConferencesCsv extends AbstractCsvImport
         $this->csvValidation = $csvValidation;
     }
 
-    public function import(array $data): void
+    public function import(array $data): ?string
     {
         $data = $this->formatCsvData($data);;
         $validationResult = $this->csvValidation->validate($data);
 
         if (!empty($validationResult)) {
-            $this->sendErrorPushMessage($validationResult);
-
-            return;
+            return $validationResult;
         }
 
         $this->em->getConnection()->beginTransaction();
@@ -61,11 +63,13 @@ class ConferencesCsv extends AbstractCsvImport
             } else {
                 $this->em->getConnection()->rollBack();
 
-                $this->sendErrorPushMessage("Import failed. Wrong data");
+                // TODO: change message by showing which data is wrong
+                return 'Import failed. [Wrong data]';
             }
         }
 
         $this->em->commit();
-        $this->sendSuccessPushMessage();
+
+        return null;
     }
 }

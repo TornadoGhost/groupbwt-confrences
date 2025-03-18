@@ -334,7 +334,8 @@ class ConferenceController extends AbstractController
 
         $bus->dispatch(
             new ImportNewConferencesCsv(
-                $import->getCsvData($request->files->get('import_csv')->getPathname())
+                $import->getCsvData($request->files->get('import_csv')->getPathname()),
+                $this->getUser()
             )
         );
 

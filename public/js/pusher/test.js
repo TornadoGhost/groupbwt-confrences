@@ -1,5 +1,7 @@
+import {addNotificationBudgeOnButton} from "../notifications/addNotificationBudgeOnButton.js";
+
 export function testPusher(isGranted) {
-  if (!isGranted) {
+  /*if (!isGranted) {
     return false;
   }
   const helloHandler = function () {
@@ -73,16 +75,45 @@ export function testPusher(isGranted) {
     document.removeEventListener('click', adminPrivateMessageHandler);
   };
 
-  document.getElementById('admin-private-message').addEventListener('click', adminPrivateMessageHandler);
+  document.getElementById('admin-private-message').addEventListener('click', adminPrivateMessageHandler);*/
 
   // Import csv conferences notification test
 
-  const notificationChannel = pusher
-    .subscribe('notification');
+
+  // TODO: change to private channel, so user can get notification addressed to him
+  const pusher = new Pusher('9ee3cd5959ce0b5242f0', {
+    cluster: 'eu',
+    forceTLS: true,  // Гарантує використання WebSockets через HTTPS
+    disableStats: true, // Вимикає додаткові статистичні запити, які відправляються на сервер Pusher
+    enabledTransports: ['ws', 'wss'] // Примушує використовувати тільки WebSockets
+  });
+
+  const notificationChannel = pusher.subscribe('notification');
   notificationChannel.bind('success-import', function (data) {
     console.log('Success import message - ', data);
+    addNewNotification(data);
   });
   notificationChannel.bind('error-import', function (data) {
-    console.log('Error import message', data);
+    console.log('Error import message - ', data);
+    addNewNotification(data);
   });
+
+  function addNewNotification(data) {
+    const notificationList = document.getElementById('notification-list');
+    notificationList.insertAdjacentHTML('afterbegin', `
+        <li class="list-group-item bg-dark border-white border-top-0 border-left-0 border-right-0">
+            <div>
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex notification-status">
+                        <p class="text-danger mr-1">New</p>
+                        <p class="h5">${data.title}</p>
+                    </div>
+                    <p>${data.createdAt}</p>
+                </div>
+                <p class="mb-0 text-pre-wrap">${data.message}</p>
+            </div>
+        </li>
+    `);
+    addNotificationBudgeOnButton();
+  }
 }

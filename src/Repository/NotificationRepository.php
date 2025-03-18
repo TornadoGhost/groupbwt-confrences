@@ -3,8 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Notification;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @extends ServiceEntityRepository<Notification>
@@ -30,6 +32,19 @@ class NotificationRepository extends ServiceEntityRepository
         }
     }
 
+    public function getNotificationsByUser(int $userId)
+    {
+        $query = $this->createQueryBuilder('n')
+            ->select('PARTIAL n.{id, title, message, link, viewed, createdAt}')
+            ->leftJoin('n.user', 'u')
+            ->where('u.id = :userId')
+            ->setParameters(['userId' => $userId])
+            ->orderBy('n.createdAt', 'DESC')
+        ;
+
+        return $query->getQuery()->getResult();
+    }
+
     public function remove(Notification $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
@@ -39,28 +54,9 @@ class NotificationRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Notification[] Returns an array of Notification objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('n')
-//            ->andWhere('n.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('n.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Notification
-//    {
-//        return $this->createQueryBuilder('n')
-//            ->andWhere('n.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function save(Notification $notification)
+    {
+        $this->_em->persist($notification);
+        $this->_em->flush($notification);
+    }
 }

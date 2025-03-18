@@ -39,11 +39,10 @@ class ConferencesCsvValidation implements ConferencesCsvValidationInterface
                 preg_match_all('/\[(.*?)]/', $violation->getPropertyPath(), $matches);
                 list($row, $field) = $matches[1];
                 $row += 2;
-                $errors[] = 'Row №' . $row . ', field:"' . $field . '"' . ": " . $violation->getMessage() . "\n";
+                $errors[] = 'Row №' . $row . ', field "' . $field . '"' . ": " . $violation->getMessage();
             }
 
-            dd(implode("; ", $errors));
-            return implode("; ", $errors);
+            return 'Records errors: ' . implode("; ", $errors);
         }
 
         return null;
@@ -62,7 +61,7 @@ class ConferencesCsvValidation implements ConferencesCsvValidationInterface
 
         if (!empty($notInListTitles)) {
             $notInListTitles = implode(', ', $notInListTitles);
-            $titles = implode(', ', $titles);
+            $titles = implode(', ', self::REQUITED_TITLES);
 
             return 'Founded wrong titles: ' . $notInListTitles . '. ' . 'Required fields: ' . $titles;
         }
@@ -76,25 +75,25 @@ class ConferencesCsvValidation implements ConferencesCsvValidationInterface
             'fields' => [
                 'title' => [
                     new NotBlank([
-                        'message' => 'The title - {{ value }} is missing'
+                        'message' => 'The title is missing'
                     ]),
                     new NotNull([
                         'message' => 'The title should be not null'
                     ]),
                     new Length([
                         'min' => '2',
-                        'minMessage' => 'The title - {{ value }}, should be at least {{ limit }} characters',
+                        'minMessage' => 'The title {{ value }}, should be at least {{ limit }} characters',
                         'max' => '255',
                         'maxMessage' => 'The title should be not longer than {{ limit }} characters',
                     ])
                 ],
                 'startedAt' => [
                     new NotBlank([
-                        'message' => 'The start date - {{ value }}, cannot be blank',
+                        'message' => 'The start date {{ value }} cannot be blank',
                     ]),
                     new Assert\DateTime([
                         'format' => 'Y-m-d H:i',
-                        'message' => 'The value - {{ value }}, is not a valid start date, right format - Y-m-d H:i',
+                        'message' => 'The value {{ value }}, is not a valid start date, right format is "Y-m-d H:i"',
                     ]),
                 ],
                 'endedAt' => [
@@ -103,7 +102,7 @@ class ConferencesCsvValidation implements ConferencesCsvValidationInterface
                     ]),
                     new Assert\DateTime([
                         'format' => 'Y-m-d H:i',
-                        'message' => 'The value {{ value }} is not a valid end date, right format - Y-m-d H:i',
+                        'message' => 'The value {{ value }} is not a valid end date, right format is "Y-m-d H:i"',
                     ]),
                 ],
                 'latitude' => [

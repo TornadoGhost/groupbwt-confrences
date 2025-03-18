@@ -1,7 +1,7 @@
 export function show() {
   const notification = document.getElementById('notifications')
   const notificationButton = notification.querySelector('button[type=button]');
-  const notificationList = notification.querySelector('div.notification-window').children[0];
+  const notificationList = document.getElementById('notification-list');
   notificationButton.addEventListener('mousedown', function (event) {
     if (event.currentTarget === this) {
       if (notificationList.classList.contains('d-none')) {

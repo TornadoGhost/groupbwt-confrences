@@ -37,19 +37,9 @@
                 <button class="btn btn-lg p-0" type="button">
                     <i class="bi bi-bell text-white"></i>
                 </button>
-                <div class="position-absolute d-block rounded notification-window">
-                    <ul class="d-none list-group text-white overflow-auto">
-                        <li class="list-group-item bg-danger">Notification 1</li>
-                        <li class="list-group-item bg-danger">Notification 2</li>
-                        <li class="list-group-item bg-danger">Notification 3</li>
-                        <li class="list-group-item bg-danger">Notification 4</li>
-                        <li class="list-group-item bg-danger">Notification 4</li>
-                        <li class="list-group-item bg-danger">Notification 4</li>
-                        <li class="list-group-item bg-danger">Notification 4</li>
-                        <li class="list-group-item bg-danger">Notification 4</li>
-                        <li class="list-group-item bg-danger">Notification 4</li>
-                        <li class="list-group-item bg-danger">Notification 4</li>
-                        <li class="list-group-item bg-danger">Notification 4</li>
+                <div class="position-absolute d-block rounded notification-window notification-wrapper">
+                    <ul class="d-none list-group text-white overflow-auto" id="notification-list">
+                        Theres no notifications yet...
                     </ul>
                 </div>
             </div>
@@ -107,9 +97,13 @@
 <script type="module">
     import {globalSearch} from "{{ asset('js/globalSearch.js') }}";
     import {show} from "{{ asset('js/notifications/showNotification.js') }}"
+    import {getNotificationsForUser} from "{{ asset('js/notifications/getNotificationsForUser.js') }}";
+    import {removeNewStatusNotification} from "{{ asset('js/notifications/removeNewStatusNotification.js') }}";
 
     globalSearch();
     show();
+    getNotificationsForUser();
+    removeNewStatusNotification();
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
