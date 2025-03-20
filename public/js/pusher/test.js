@@ -98,6 +98,7 @@ export function testPusher(isGranted) {
     addNewNotification(data);
   });
 
+  // TODO: move this function and reuse it by import here and in getNotificationsForUser
   function addNewNotification(data) {
     const notificationList = document.getElementById('notification-list');
     notificationList.insertAdjacentHTML('afterbegin', `

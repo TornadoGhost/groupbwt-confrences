@@ -5,11 +5,8 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Entity\Notification;
-use App\Entity\User;
 use App\Repository\NotificationRepository;
 use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Pusher\Pusher;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -87,5 +84,15 @@ class NotificationService
         $notification->setViewed(true);
 
         $this->notificationRepository->save($notification);
+    }
+
+    public function markAllAsViewed(UserInterface $user): bool
+    {
+        if ($this->notificationRepository->getNotViewedNotificationsCountForUser($user->getId())) {
+            $this->notificationRepository->markAllAsViewed($user->getId());
+
+            return true;
+        }
+        return false;
     }
 }

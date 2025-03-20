@@ -30,7 +30,7 @@ export function getNotificationsForUser() {
         } else {
           notWatchedNotifications += 1;
           elem = `
-              <li class="list-group-item bg-dark border-white border-top-0 border-left-0 border-right-0">
+              <li class="list-group-item bg-dark border-white border-top-0 border-left-0 border-right-0" data-id="${notification.id}">
                   <div>
                       <div class="d-flex justify-content-between">
                           <div class="d-flex notification-status">

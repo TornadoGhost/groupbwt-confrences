@@ -37,8 +37,13 @@
                 <button class="btn btn-lg p-0" type="button">
                     <i class="bi bi-bell text-white"></i>
                 </button>
-                <div class="position-absolute d-block rounded notification-window notification-wrapper">
-                    <ul class="d-none list-group text-white overflow-auto" id="notification-list">
+                <div class="d-none position-absolute rounded notification-window notification-wrapper">
+                    {# TODO: rework notification window, so buttons can be inside #}
+                    <div class="bg-dark p-2 border-bottom" id="notification-buttons">
+                        <button class="btn btn-sm btn-primary">Delete all</button>
+                        <button class="btn btn-sm btn-primary">Mark all as Viewed</button>
+                    </div>
+                    <ul class="list-group text-white overflow-auto" id="notification-list">
                         Theres no notifications yet...
                     </ul>
                 </div>

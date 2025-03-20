@@ -1,3 +1,5 @@
+import {markAsViewedNotification} from "./markAsViewedNotification.js";
+
 export function removeNewStatusNotification() {
   const notificationWrapper = document.querySelector('div.notification-wrapper');
   notificationWrapper.addEventListener('mouseover', function (event) {
@@ -5,8 +7,7 @@ export function removeNewStatusNotification() {
       const listElem = event.target.closest('.list-group-item');
       const newNotificationText = listElem.getElementsByClassName('text-danger')[0];
       if (newNotificationText) {
-        // TODO: add fetch to change 'watched' status of the notification
-
+        markAsViewedNotification(listElem.dataset.id);
         newNotificationText.remove();
 
         const notificationsButton = document.getElementById('notifications')

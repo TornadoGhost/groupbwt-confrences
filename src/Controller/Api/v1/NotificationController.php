@@ -6,10 +6,11 @@ namespace App\Controller\Api\v1;
 
 use App\Entity\Notification;
 use App\Service\NotificationService;
-use Exception;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 
@@ -17,7 +18,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/api/v1/notifications", name="api_")
- * @IsGranted("ROLE_USER")
+ * @Security("is_granted('ROLE_USER')")
  */
 class NotificationController extends AbstractController
 {
@@ -46,14 +47,25 @@ class NotificationController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/watched", methods={"PATCH"})
+     * @Route("/{id}/viewed", methods={"PATCH"})
+     * @IsGranted("EDIT", subject="notification")
      */
-
-    // TODO: add Voters, so user can change status only for own notifications
-    public function watched(Notification $notification): Response
+    public function viewed(Notification $notification): Response
     {
         $this->notificationService->changeWatchStatus($notification);
 
         return new Response('', Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @Route("/mark-viewed", methods={"PATCH"})
+     */
+    public function markAllAsViewed(): Response
+    {
+        if ($this->notificationService->markAllAsViewed($this->getUser())) {
+            return new Response('', Response::HTTP_NO_CONTENT);
+        }
+
+        throw new HttpException(Response::HTTP_CONFLICT, 'All notifications already viewed');
     }
 }

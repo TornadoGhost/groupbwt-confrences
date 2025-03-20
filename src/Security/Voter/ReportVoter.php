@@ -16,7 +16,7 @@ class ReportVoter extends Voter implements CacheableVoterInterface
     private const EDIT = 'EDIT';
     private const DELETE = 'DELETE';
 
-    private $accessDecisionManager;
+    private AccessDecisionManagerInterface $accessDecisionManager;
 
     public function __construct(AccessDecisionManagerInterface $accessDecisionManager)
     {

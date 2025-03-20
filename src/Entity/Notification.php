@@ -5,7 +5,6 @@ namespace App\Entity;
 use App\Repository\NotificationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -44,9 +43,9 @@ class Notification
     private ?string $link;
 
     /**
-     * @ORM\ManyToMany(targetEntity=User::class, inversedBy="notifications")
+     * @ORM\ManyToMany(targetEntity=User::class, inversedBy="notifications", fetch="EAGER")
      */
-    private ?Collection $user;
+    private ?Collection $users;
 
     /**
      * @ORM\Column(type="boolean", options={"default": 0})
@@ -66,7 +65,7 @@ class Notification
 
     public function __construct()
     {
-        $this->user = new ArrayCollection();
+        $this->users = new ArrayCollection();
         $this->viewed = 0;
     }
 
@@ -114,15 +113,15 @@ class Notification
     /**
      * @return Collection<int, User>
      */
-    public function getUser(): Collection
+    public function getUsers(): Collection
     {
-        return $this->user;
+        return $this->users;
     }
 
     public function addUser(?User $user): self
     {
-        if (!$this->user->contains($user)) {
-            $this->user[] = $user;
+        if (!$this->users->contains($user)) {
+            $this->users[] = $user;
         }
 
         return $this;
@@ -130,7 +129,7 @@ class Notification
 
     public function removeUser(?User $user): self
     {
-        $this->user->removeElement($user);
+        $this->users->removeElement($user);
 
         return $this;
     }

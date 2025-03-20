@@ -36,13 +36,41 @@ class NotificationRepository extends ServiceEntityRepository
     {
         $query = $this->createQueryBuilder('n')
             ->select('PARTIAL n.{id, title, message, link, viewed, createdAt}')
-            ->leftJoin('n.user', 'u')
+            ->leftJoin('n.users', 'u')
             ->where('u.id = :userId')
             ->setParameters(['userId' => $userId])
-            ->orderBy('n.createdAt', 'DESC')
-        ;
+            ->orderBy('n.createdAt', 'DESC');
 
         return $query->getQuery()->getResult();
+    }
+
+    public function markAllAsViewed(int $userId): void
+    {
+        // not working
+        $sql = "update notification n
+                join notification_user pivot on n.id=pivot.notification_id
+                set n.viewed = 1
+                where n.viewed = 0 and pivot.user_id = $userId";
+
+        $this->_em->getConnection()->executeQuery($sql);
+    }
+
+    public function getNotViewedNotificationsCountForUser(int $userId): int
+    {
+        $query = $this->createQueryBuilder('n')
+            ->select('count(n.id) as count')
+            ->innerJoin('n.users', 'u')
+            ->where('n.viewed = :viewed')
+            ->andWhere('u.id = :userId')
+            ->setParameters([
+                'viewed' => 0,
+                'userId' => $userId
+            ])
+        ;
+
+        $result = $query->getQuery()->getArrayResult();
+
+        return $result[0]['count'];
     }
 
     public function remove(Notification $entity, bool $flush = false): void

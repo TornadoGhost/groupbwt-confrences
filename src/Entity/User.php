@@ -100,7 +100,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Collection $reports;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Notification::class, mappedBy="user")
+     * @ORM\ManyToMany(targetEntity=Notification::class, mappedBy="users", fetch="EAGER")
      */
     private ?Collection $notifications;
 
