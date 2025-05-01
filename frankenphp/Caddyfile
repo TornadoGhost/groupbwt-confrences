@@ -54,4 +54,18 @@
 	php @frontController
 
 	file_server
+
+	tls internal
+
+    @cors_preflight {
+        method OPTIONS
+    }
+    respond @cors_preflight 204
+
+    header {
+        Access-Control-Allow-Origin *
+        Access-Control-Allow-Methods *
+        Access-Control-Allow-Headers *
+        Access-Control-Allow-Credentials true
+    }
 }

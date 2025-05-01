@@ -20,7 +20,7 @@ doctrine:
         dql:
             numeric_functions:
 #                rand: DoctrineExtensions\Query\Mysql\Rand
-                rand: App\DQL\StringFunction
+                rand: DoctrineExtensions\Query\Mysql\Rand
             string_functions:
                 JSON_CONTAINS: DoctrineExtensions\Query\Mysql\JsonContains
                 match: DoctrineExtensions\Query\Mysql\MatchAgainst

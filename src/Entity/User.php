@@ -36,11 +36,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=100, unique=true)
+     * @Groups({"auth"})
      */
     private ?string $email;
 
     /**
      * @ORM\Column(type="json")
+     * @Groups({"auth"})
      */
     private ?array $roles;
 
@@ -52,6 +54,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\ManyToOne(inversedBy="users")
+     * @Groups({"auth"})
      */
     private ?Type $type;
 
@@ -63,13 +66,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @Groups({"api_report_comments_index"})
+     * @Groups({"api_report_comments_index", "auth"})
      */
     private ?string $firstname;
 
     /**
      * @ORM\Column(type="string", length=100)
-     * @Groups({"api_report_comments_index"})
+     * @Groups({"api_report_comments_index", "auth"})
      */
     private ?string $lastname;
 
@@ -215,7 +218,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Conference>
+     * @return Collection|null
      */
     public function getConferences(): ?Collection
     {

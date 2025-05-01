@@ -18,12 +18,13 @@ VOLUME /app/var/
 # persistent / runtime deps
 # hadolint ignore=DL3008
 RUN apt-get update && apt-get install -y --no-install-recommends \
-	acl \
-	file \
-	gettext \
-	git \
-    php-gd \
-	&& rm -rf /var/lib/apt/lists/*
+    acl \
+    file \
+    gettext \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN install-php-extensions gd
 
 RUN set -eux; \
 	install-php-extensions \

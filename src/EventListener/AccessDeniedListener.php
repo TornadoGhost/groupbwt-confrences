@@ -24,7 +24,7 @@ class AccessDeniedListener
         $this->requestStack = $requestStack;
     }
 
-    public function onKernelException(ExceptionEvent $event)
+    public function onKernelException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
 

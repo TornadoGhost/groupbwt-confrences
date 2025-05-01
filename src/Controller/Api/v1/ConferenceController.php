@@ -341,4 +341,15 @@ class ConferenceController extends AbstractController
 
         return $this->json('Successfully pushed to queue');
     }
+
+    /**
+     * @Route("/subscribed", name="conferences_user", methods={"GET"}, priority="1")
+     * @Security("is_granted('ROLE_USER')")
+     */
+    public function subscribed(): Response
+    {
+        $usersSubscribedConferences = $this->getUser()->getConferences();
+
+        return $this->json($usersSubscribedConferences, Response::HTTP_OK, [], ['groups' => ['api_conferences_subscribed']]);
+    }
 }

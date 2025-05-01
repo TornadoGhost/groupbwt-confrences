@@ -33,7 +33,8 @@ class Conference
      *     "api_conferences_all",
      *     "api_reports_store",
      *     "api_conferences_store",
-     *     "api_conferences_show"
+     *     "api_conferences_show",
+     *     "api_conferences_subscribed"
      * })
      */
     private ?int $id;
@@ -46,7 +47,12 @@ class Conference
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"global_search", "api_conferences_all", "api_conferences_store", "api_conferences_show"})
+     * @Groups({
+     *     "global_search",
+     *     "api_conferences_all",
+     *     "api_conferences_store",
+     *     "api_conferences_show",
+     * })
      */
     private ?string $title;
 
