@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class TestMailController extends AbstractController
 {
     /**
-     * @Route("/api/v1/test-email", name="test_email", methods={"GET"})
+     * @Route("/test-email", name="test_email", methods={"GET"})
      */
     public function index(MailerService $service): Response
     {

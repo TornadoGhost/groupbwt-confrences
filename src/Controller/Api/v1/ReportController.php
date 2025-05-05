@@ -21,7 +21,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Nelmio\ApiDocBundle\Annotation\Model;
 
 /**
- * @Route("/api/v1/conferences/{conference_id}/reports", name="api_")
+ * @Route("/conferences/{conference_id}/reports", name="api_")
  * @ParamConverter("conference", options={"mapping": {"conference_id": "id"}})
  */
 class ReportController extends BaseReportController

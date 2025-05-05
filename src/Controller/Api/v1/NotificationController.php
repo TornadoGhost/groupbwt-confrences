@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 // TODO: check if I can move /api/v1 to global place, so I dont need to write it in every controller (can via routes, check comments there)
 
 /**
- * @Route("/api/v1/notifications", name="api_")
+ * @Route("/notifications", name="api_")
  * @Security("is_granted('ROLE_USER')")
  */
 class NotificationController extends AbstractController

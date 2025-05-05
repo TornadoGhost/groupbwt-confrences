@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Nelmio\ApiDocBundle\Annotation\Model;
 
 /**
- * @Route("/api/v1/reports/{id}/comments", name="api_")
+ * @Route("/reports/{id}/comments", name="api_")
  */
 class ReportCommentController extends AbstractController
 {

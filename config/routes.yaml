@@ -3,9 +3,3 @@
 #    controller: App\Controller\DefaultController::index
 api_login_check:
     path: /api/login_check
-
-#Тоді всі контролери з атрибутами (наприклад, #[Route('/users')]) у цьому каталозі будуть доступні за маршрутом /api/v1/users.
-#api_v1:
-#    resource: '../src/Controller/Api/v1/'
-#    type: attribute
-#    prefix: /api/v1

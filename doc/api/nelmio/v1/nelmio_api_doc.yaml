@@ -1,0 +1,307 @@
+nelmio_api_doc:
+    documentation:
+        tags:
+            - name: Conference
+              description: Conference related api
+            - name: GlobalSearch
+              description: Global search of conferences and reports
+
+        paths:
+            /api/v1/conferences:
+                get:
+                    operationId: get_conferences
+                    summary: Get paginated list of conferences
+                    tags:
+                        - Conference
+                    parameters:
+                        - name: page
+                          in: query
+                          description: Pagination page
+                          required: false
+                          schema:
+                              type: integer
+                              example: '1'
+                        - name: report_number
+                          in: query
+                          description: The number of reports in every conference
+                          required: false
+                          schema:
+                              type: integer
+                              example: '3'
+                        - name: start_date
+                          in: query
+                          description: The start date and time of the conferences
+                          required: false
+                          schema:
+                              type: string
+                              format: date-time
+                              example: '2024-01-01T09:00:00'
+                        - name: end_date
+                          in: query
+                          description: The end date and time of the conferences
+                          required: false
+                          schema:
+                              type: string
+                              format: date-time
+                              example: '2024-01-31T18:00:00'
+                        - name: is_available
+                          in: query
+                          description: Show conference if it is available minimum 15 minutes for a report
+                          required: false
+                          schema:
+                              type: boolean
+                              example: 'true'
+                    responses:
+                        '200':
+                            description: Got paginated conferences
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            data:
+                                                type: array
+                                                items:
+                                                    type: object
+                                                    properties:
+                                                        id:
+                                                            type: integer
+                                                            example: 364
+                                                        title:
+                                                            type: string
+                                                            example: test
+                                                        startedAt:
+                                                            type: string
+                                                            format: date-time
+                                                            example: '2025-10-01 11:00'
+                                                        endedAt:
+                                                            type: string
+                                                            format: date-time
+                                                            example: '2025-10-01 18:00'
+                                            total:
+                                                type: integer
+                                                example: 18
+                                            count:
+                                                type: integer
+                                                example: 15
+                                            current_page:
+                                                type: integer
+                                                example: 1
+                                            first_page_url:
+                                                type: string
+                                                format: uri
+                                                example: /api/v1/conferences/?page=1
+                                            last_page:
+                                                type: integer
+                                                example: 2
+                                            last_page_url:
+                                                type: string
+                                                format: uri
+                                                example: /api/v1/conferences/?page=2
+                                            next_page_url:
+                                                type: string
+                                                format: uri
+                                                example: /api/v1/conferences/?page=2
+                                            path:
+                                                type: string
+                                                example: /api/v1/conferences/
+                                            per_page:
+                                                type: integer
+                                                example: 15
+                                            prev_page_url:
+                                                type: string
+                                                format: uri
+                                                nullable: true
+                                                example: null
+                                            to:
+                                                type: integer
+                                                example: 15
+                post:
+                    operationId: create_conference
+                    summary: Create a new conference
+                    tags:
+                        - Conference
+                    responses:
+                        '201':
+                            description: Conference created
+                        '422':
+                            description: Validation error
+
+            /conferences/{id}:
+                get:
+                    operationId: get_conference
+                    summary: Get a single conference
+                    tags:
+                        - Conference
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          schema:
+                              type: integer
+                    responses:
+                        '200':
+                            description: Successful operation
+                put:
+                    operationId: update_conference
+                    summary: Update a conference
+                    tags:
+                        - Conference
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          schema:
+                              type: integer
+                    responses:
+                        '200':
+                            description: Conference updated
+                        '422':
+                            description: Validation error
+                delete:
+                    operationId: delete_conference
+                    summary: Delete a conference
+                    tags:
+                        - Conference
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          schema:
+                              type: integer
+                    responses:
+                        '204':
+                            description: Conference deleted
+
+            /conferences/{id}/join:
+                post:
+                    operationId: join_conference
+                    summary: Join a conference
+                    tags:
+                        - Conference
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          schema:
+                              type: integer
+                    responses:
+                        '204':
+                            description: User joined the conference
+
+            /conferences/{id}/cancel:
+                post:
+                    operationId: cancel_conference
+                    summary: Cancel participation in a conference
+                    tags:
+                        - Conference
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          schema:
+                              type: integer
+                    responses:
+                        '204':
+                            description: User removed from the conference
+
+            /conferences/{id}/export-excel:
+                post:
+                    operationId: export_conference_excel
+                    summary: Export conference data to Excel
+                    tags:
+                        - Conference
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          schema:
+                              type: integer
+                    responses:
+                        '200':
+                            description: Excel file exported
+
+            /conferences/{id}/export-pdf:
+                post:
+                    operationId: export_conference_pdf
+                    summary: Export conference data to PDF
+                    tags:
+                        - Conference
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          schema:
+                              type: integer
+                    responses:
+                        '200':
+                            description: PDF file exported
+
+            /conferences/import-csv:
+                post:
+                    operationId: import_csv
+                    summary: Import conferences from a CSV file
+                    tags:
+                        - Conference
+                    responses:
+                        '200':
+                            description: CSV import initiated
+
+            /conferences/subscribed:
+                get:
+                    operationId: get_subscribed_conferences
+                    summary: Get conferences the user is subscribed to
+                    tags:
+                        - Conference
+                    responses:
+                        '200':
+                            description: List of subscribed conferences
+
+            /api/v1/global-search:
+                get:
+                    tags:
+                        - GlobalSearch
+                    operationId: get_global_search
+                    summary: Global search by page
+                    parameters:
+                        - name: page
+                          in: query
+                          description: Pagination page
+                          schema:
+                              type: integer
+                          example: 1
+                    responses:
+                        '200':
+                            description: Got paginated comments for specific report
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            conferences:
+                                                type: array
+                                                items:
+                                                    type: object
+                                                    properties:
+                                                        id:
+                                                            type: integer
+                                                            example: 0
+                                                        title:
+                                                            type: string
+                                                            example: string
+                                            reports:
+                                                type: array
+                                                items:
+                                                    type: object
+                                                    properties:
+                                                        id:
+                                                            type: integer
+                                                            example: 0
+                                                        title:
+                                                            type: string
+                                                            example: string
+                                                        conference_id:
+                                                            type: integer
+                                                            example: 0
+                        '500':
+                            description: Server error

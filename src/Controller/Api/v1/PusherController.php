@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class PusherController extends AbstractController
 {
     /**
-     * @Route("/api/pusher/say-hello", name="pusher_say_hello", methods={"POST"})
+     * @Route("/pusher/say-hello", name="pusher_say_hello", methods={"POST"})
      */
     public function sayHello(Pusher $pusher): Response
     {
