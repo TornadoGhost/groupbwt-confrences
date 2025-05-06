@@ -3,3 +3,8 @@
 #    controller: App\Controller\DefaultController::index
 api_login_check:
     path: /api/login_check
+
+api_v1:
+    resource: '../src/Controller/Api/v1/'
+    type: annotation
+    prefix: /api/v1

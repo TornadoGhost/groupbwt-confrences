@@ -19,14 +19,14 @@ nelmio_api_doc:
                           description: Pagination page
                           required: false
                           schema:
-                              type: integer
+                              type: string
                               example: '1'
                         - name: report_number
                           in: query
                           description: The number of reports in every conference
                           required: false
                           schema:
-                              type: integer
+                              type: string
                               example: '3'
                         - name: start_date
                           in: query
@@ -46,11 +46,11 @@ nelmio_api_doc:
                               example: '2024-01-31T18:00:00'
                         - name: is_available
                           in: query
-                          description: Show conference if it is available minimum 15 minutes for a report
+                          description: Show conference if it is available minimum 15 minutes for a report (`0, false` or `1, true`)
                           required: false
                           schema:
-                              type: boolean
-                              example: 'true'
+                              type: string
+                              example: "0"
                     responses:
                         '200':
                             description: Got paginated conferences
