@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\DTO\Request\ConferenceIndexRequest;
 use App\Entity\Conference;
 use App\Form\ConferenceType;
 use App\Message\ImportNewConferencesCsv;
@@ -15,6 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class ConferenceService extends BaseService
 {
@@ -22,17 +24,20 @@ class ConferenceService extends BaseService
     private ConferenceRepository $conferenceRepository;
     protected UrlGeneratorInterface $urlGenerator;
     private Export $export;
+    private NormalizerInterface $normalizer;
 
 
     public function __construct(
         ConferenceRepository  $conferenceRepository,
         UrlGeneratorInterface $urlGenerator,
-        Export $export
+        Export                $export,
+        NormalizerInterface   $normalizer
     )
     {
         $this->conferenceRepository = $conferenceRepository;
         $this->urlGenerator = $urlGenerator;
         $this->export = $export;
+        $this->normalizer = $normalizer;
     }
 
     public function getAllConferencesWithFiltersPaginate(
@@ -45,10 +50,6 @@ class ConferenceService extends BaseService
         $queryResult = $this->conferenceRepository->getAllConferencesWithFiltersPaginate($userId, $filters);
 
         $adapter = new QueryAdapter($queryResult);
-
-        // TODO: check
-//        $adap = new ArrayAdapter($queryResult->getQuery()->getResult());
-
         $conferences = new Pagerfanta($adapter);
 
         $conferences->setMaxPerPage($countPerPage);
@@ -173,6 +174,24 @@ class ConferenceService extends BaseService
         }
 
         return $array;
+    }
+
+    public function getConferences(ConferenceIndexRequest $request, ?UserInterface $user): array
+    {
+        $userId = !$user
+            ? null
+            : $user->getId();
+
+        $requestToArray = $this->normalizer->normalize($request);
+        $page = (int)$requestToArray['page'] ?: 1;
+
+        return $this->getAllConferencesWithFiltersPaginateApi(
+            ConferenceService::COUNT_PER_PAGE,
+            $page,
+            $userId,
+            $requestToArray
+        );
+
     }
 
     public function addUserToConference(Conference $conference, UserInterface $user): void

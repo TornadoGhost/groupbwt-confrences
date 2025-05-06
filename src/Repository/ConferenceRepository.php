@@ -50,26 +50,26 @@ class ConferenceRepository extends ServiceEntityRepository
                 ->setParameter('userId', $userId);
         }
 
-        if ($filters['report_number'] ?? null) {
+        if ($filters['reportNumber'] ?? null) {
             $queryBuilder->andWhere(
                 $queryBuilder->expr()->eq(
                     '(SELECT COUNT(r.id) FROM ' . Report::class . ' r WHERE r.conference = c.id)',
-                    $filters['report_number']
+                    $filters['reportNumber']
                 )
             );
         }
 
-        if ($filters['start_date'] ?? null) {
+        if ($filters['startDate'] ?? null) {
             $queryBuilder->andWhere('c.startedAt = :started_at')
-                ->setParameter('started_at', $filters['start_date']);
+                ->setParameter('started_at', $filters['startDate']);
         }
 
-        if ($filters['end_date'] ?? null) {
+        if ($filters['endDate'] ?? null) {
             $queryBuilder->andWhere('c.endedAt = :ended_at')
-                ->setParameter('ended_at', $filters['end_date']);
+                ->setParameter('ended_at', $filters['endDate']);
         }
 
-        if ($filters['is_available'] ?? null) {
+        if ($filters['isAvailable'] ?? null) {
             $subQueryBeforeFirst = $this->getEntityManager()->createQueryBuilder()
                 ->select(self::REPORT_SELECT_NUMBER)
                 ->from(Report::class, 'r1')

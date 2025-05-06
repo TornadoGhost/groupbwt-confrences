@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Api\v1;
 
+use App\DTO\Request\ConferenceIndexRequest;
 use App\Entity\Conference;
 use App\Form\ConferenceType;
 use App\Import\Csv\ConferencesCsv;
@@ -22,7 +23,6 @@ use Symfony\Component\Routing\Annotation\Route;
  * @Route("/conferences", name="api_")
  */
 
-// TODO: move all api doc to xml(?) file, how in GUI project
 // TODO: add validations for queries in all routes
 class ConferenceController extends AbstractController
 {
@@ -41,17 +41,14 @@ class ConferenceController extends AbstractController
     /**
      * @Route("", name="conferences_index", methods={"GET"})
      */
-    public function index(Request $request): Response
+    public function index(ConferenceIndexRequest $request): Response
     {
-        $userId = !$this->getUser() ? null : $this->getUser()->getId();
-        $conferences = $this->conferenceService->getAllConferencesWithFiltersPaginateApi(
-            ConferenceService::COUNT_PER_PAGE,
-            $request->query->getInt('page', 1),
-            $userId,
-            $request->query->all()
+        return $this->json(
+            $this->conferenceService->getConferences($request, $this->getUser()),
+            Response::HTTP_OK,
+            [],
+            ['groups' => ['api_conferences_all']]
         );
-
-        return $this->json($conferences, Response::HTTP_OK, [], ['groups' => ['api_conferences_all']]);
     }
 
     /**
