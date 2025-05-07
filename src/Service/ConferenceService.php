@@ -4,11 +4,16 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\DTO\Request\ConferenceIndexRequest;
+use App\DTO\Request\IndexConferenceRequest;
+use App\DTO\Request\ConferenceRequest;
 use App\Entity\Conference;
 use App\Form\ConferenceType;
 use App\Message\ImportNewConferencesCsv;
 use App\Repository\ConferenceRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
+use Exception;
 use Pagerfanta\Doctrine\ORM\QueryAdapter;
 use Pagerfanta\Pagerfanta;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
@@ -25,19 +30,22 @@ class ConferenceService extends BaseService
     protected UrlGeneratorInterface $urlGenerator;
     private Export $export;
     private NormalizerInterface $normalizer;
+    private EntityManagerInterface $entityManager;
 
 
     public function __construct(
         ConferenceRepository  $conferenceRepository,
         UrlGeneratorInterface $urlGenerator,
         Export                $export,
-        NormalizerInterface   $normalizer
+        NormalizerInterface   $normalizer,
+        EntityManagerInterface         $entityManager
     )
     {
         $this->conferenceRepository = $conferenceRepository;
         $this->urlGenerator = $urlGenerator;
         $this->export = $export;
         $this->normalizer = $normalizer;
+        $this->entityManager = $entityManager;
     }
 
     public function getAllConferencesWithFiltersPaginate(
@@ -176,7 +184,7 @@ class ConferenceService extends BaseService
         return $array;
     }
 
-    public function getConferences(ConferenceIndexRequest $request, ?UserInterface $user): array
+    public function getConferences(IndexConferenceRequest $request, ?UserInterface $user): array
     {
         $userId = !$user
             ? null
@@ -192,6 +200,38 @@ class ConferenceService extends BaseService
             $requestToArray
         );
 
+    }
+
+    public function setConferenceData(Conference $conference, ConferenceRequest $request): Conference
+    {
+        $conference->setTitle($request->getTitle());
+        $conference->setStartedAt(new \DateTime($request->getStartedAt()));
+        $conference->setEndedAt(new \DateTime($request->getEndedAt()));
+        $conference->setAddress([$request->getLatitude(), $request->getLongitude()]);
+        $conference->setCountry($request->getCountry());
+
+        return $conference;
+    }
+
+    public function createConference(ConferenceRequest $request): Conference
+    {
+        $conference = new Conference();
+        $this->setConferenceData($conference, $request);
+
+        $this->entityManager->persist($conference);
+        $this->entityManager->flush();
+
+        return $conference;
+    }
+
+    public function updateConference(Conference $conference, ConferenceRequest $request): Conference
+    {
+        $conference = $this->setConferenceData($conference, $request);
+
+        $this->entityManager->persist($conference);
+        $this->entityManager->flush();
+
+        return $conference;
     }
 
     public function addUserToConference(Conference $conference, UserInterface $user): void

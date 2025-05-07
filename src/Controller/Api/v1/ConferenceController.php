@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Controller\Api\v1;
 
-use App\DTO\Request\ConferenceIndexRequest;
+use App\DTO\Request\IndexConferenceRequest;
+use App\DTO\Request\ConferenceRequest;
 use App\Entity\Conference;
 use App\Form\ConferenceType;
 use App\Import\Csv\ConferencesCsv;
@@ -20,10 +21,9 @@ use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/conferences", name="api_")
+ * @Route("/conferences", name="api_", requirements={"id"="\d+"})
  */
 
-// TODO: add validations for queries in all routes
 class ConferenceController extends AbstractController
 {
     private ConferenceService $conferenceService;
@@ -41,7 +41,7 @@ class ConferenceController extends AbstractController
     /**
      * @Route("", name="conferences_index", methods={"GET"})
      */
-    public function index(ConferenceIndexRequest $request): Response
+    public function index(IndexConferenceRequest $request): Response
     {
         return $this->json(
             $this->conferenceService->getConferences($request, $this->getUser()),
@@ -55,27 +55,14 @@ class ConferenceController extends AbstractController
      * @Route("", name="conferences_store", methods={"POST"})
      * @Security("is_granted('ROLE_ADMIN')")
      */
-    public function store(Request $request): Response
+    public function store(ConferenceRequest $request): Response
     {
-        $conference = new Conference();
-        $requestData = $request->toArray();
-        $form = $this->createForm(ConferenceType::class, $conference);
-        $form->submit($requestData);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $conference = $this->conferenceService->saveFormChanges($conference,
-                [
-                    'latitude' => $requestData['latitude'] ?? null,
-                    'longitude' => $requestData['longitude'] ?? null,
-                ]
-            );
-
-            return $this->json($conference, Response::HTTP_CREATED, [], ['groups' => ['api_conferences_store']]);
-        }
-
-        $errors = $this->conferenceService->getFormErrors($form);
-
-        return $this->json(['errors' => $errors], Response::HTTP_UNPROCESSABLE_ENTITY);
+        return $this->json(
+            $this->conferenceService->createConference($request),
+            Response::HTTP_CREATED,
+            [],
+            ['groups' => ['api_conferences_store']]
+        );
     }
 
     /**
@@ -84,27 +71,25 @@ class ConferenceController extends AbstractController
      */
     public function show(Conference $conference): Response
     {
-        return $this->json($conference, Response::HTTP_OK, [], ['groups' => ['api_conferences_show']]);
+        return $this->json(
+            $conference,
+            Response::HTTP_OK,
+            [],
+            ['groups' => ['api_conferences_show']]);
     }
 
     /**
      * @Route("/{id}", name="conferences_update", methods={"PUT"})
      * @Security("is_granted('ROLE_ADMIN')")
      */
-    public function update(Request $request, Conference $conference): Response
+    public function update(ConferenceRequest $request, Conference $conference): Response
     {
-        $form = $this->createForm(ConferenceType::class, $conference);
-        $form->submit($request->toArray());
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $conference = $this->conferenceService->saveFormChanges($form, $conference);
-
-            return $this->json($conference, Response::HTTP_OK, [], ['groups' => ['api_conferences_show']]);
-        }
-
-        return $this->json([
-            'errors' => $this->conferenceService->getFormErrors($form)
-        ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        return $this->json(
+            $this->conferenceService->updateConference($conference, $request),
+            Response::HTTP_OK,
+            [],
+            ['groups' => ['api_conferences_store']]
+        );
     }
 
     /**
