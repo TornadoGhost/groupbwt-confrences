@@ -305,3 +305,405 @@ nelmio_api_doc:
                                                             example: 0
                         '500':
                             description: Server error
+            /conferences/{conference_id}/reports:
+                get:
+                    tags: [Report]
+                    summary: Get all reports for a specific conference
+                    security:
+                        - bearerAuth: []
+                    parameters:
+                        - in: path
+                          name: conference_id
+                          required: true
+                          schema:
+                              type: integer
+                        - in: query
+                          name: start_time
+                          schema:
+                              type: string
+                              format: date-time
+                          example: '2024-12-27T12:00'
+                        - in: query
+                          name: end_time
+                          schema:
+                              type: string
+                              format: date-time
+                          example: '2024-12-27T18:00'
+                        - in: query
+                          name: duration
+                          schema:
+                              type: integer
+                          example: 30
+                    responses:
+                        '200':
+                            description: Got all reports for specific conference
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            id: { type: integer, example: 455 }
+                                            title: { type: string, example: "Soluta sed ipsum consequuntur odio." }
+                                            description: { type: string, example: "Beatae pariatur omnis omnis explicabo dolores pariatur fugit porro." }
+                                            startedAt: { type: string, format: datetime, example: "2024-12-27 17:10" }
+                                            endedAt: { type: string, format: datetime, example: "2024-12-27 16:50" }
+                                            commentsNumber: { type: integer, example: 84 }
+                        '401':
+                            description: The request is unauthenticated
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            code: { type: integer, example: 401 }
+                                            message: { type: string, example: "JWT Token not found" }
+                        '403': { description: The user doesn't have permissions to a resource or action }
+                        '404': { description: The requested resource could not be found }
+                        '500': { description: Server error }
+                
+                post:
+                    tags: [Report]
+                    summary: Create a report for a specific conference
+                    security:
+                        - bearerAuth: []
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    required: [title, description, startedAt, endedAt]
+                                    properties:
+                                        title: { type: string, example: "Title" }
+                                        description: { type: string, example: "Description" }
+                                        startedAt: { type: string, format: date-time, example: "2025-10-01T11:00" }
+                                        endedAt: { type: string, format: date-time, example: "2025-10-01T18:00" }
+                                        document: { type: string, format: binary, example: "document.pptx" }
+                    responses:
+                        '201':
+                            description: Created a report
+                        '401':
+                            description: The request is unauthenticated
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            code: { type: integer, example: 401 }
+                                            message: { type: string, example: "JWT Token not found" }
+                        '422':
+                            description: Form validation errors
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            errors:
+                                                type: object
+                                                properties:
+                                                    title: { type: string, example: ["The title should be not null"] }
+                                                    description: { type: string, example: ["The description should be not null"] }
+                                                    startedAt: { type: string, example: ["The start time cannot be blank"] }
+                                                    endedAt: { type: string, example: ["The end time cannot be blank"] }
+                                                    document: { type: string, example: ["The file should be not bigger than 10 mb"] }
+                        '403': { description: The user doesn't have permissions to a resource or action }
+                        '404': { description: The requested resource could not be found }
+                        '500': { description: Server error }
+            
+            /conferences/{conference_id}/reports/{id}:
+                get:
+                    tags: [Report]
+                    summary: Get a specific report
+                    security:
+                        - bearerAuth: []
+                    parameters:
+                        - in: path
+                          name: conference_id
+                          required: true
+                          schema:
+                              type: integer
+                        - in: path
+                          name: id
+                          required: true
+                          schema:
+                              type: integer
+                    responses:
+                        '200':
+                            description: Showed the specified report
+                        '401':
+                            description: The request is unauthenticated
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            code: { type: integer, example: 401 }
+                                            message: { type: string, example: "JWT Token not found" }
+                        '403': { description: The user doesn't have permissions to a resource or action }
+                        '404': { description: The requested resource could not be found }
+                        '500': { description: Server error }
+                
+                put:
+                    tags: [Report]
+                    summary: Update a specific report
+                    security:
+                        - bearerAuth: []
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    required: [ title, description, startedAt, endedAt ]
+                                    properties:
+                                        title: { type: string, example: "Title" }
+                                        description: { type: string, example: "Description" }
+                                        startedAt: { type: string, format: date-time, example: "2025-10-01T11:00" }
+                                        endedAt: { type: string, format: date-time, example: "2025-10-01T18:00" }
+                                        document: { type: string, format: binary, example: "document.pptx" }
+                    responses:
+                        '200':
+                            description: Updated the specified report
+                        '401':
+                            description: The request is unauthenticated
+                        '422':
+                            description: Form validation errors
+                        '403': { description: The user doesn't have permissions to a resource or action }
+                        '404': { description: The requested resource could not be found }
+                        '500': { description: Server error }
+                
+                delete:
+                    tags: [Report]
+                    summary: Delete a specific report
+                    security:
+                        - bearerAuth: []
+                    responses:
+                        '204': { description: Deleted the specified report }
+                        '401': { description: The request is unauthenticated }
+                        '403': { description: The user doesn't have permissions to a resource or action }
+                        '404': { description: The requested resource could not be found }
+                        '500': { description: Server error }
+            
+            /conferences/{conference_id}/reports/{id}/{file_name}:
+                get:
+                    tags: [Report]
+                    summary: Download the specified file
+                    security:
+                        - bearerAuth: []
+                    parameters:
+                        - in: path
+                          name: conference_id
+                          required: true
+                          schema:
+                              type: integer
+                        - in: path
+                          name: id
+                          required: true
+                          schema:
+                              type: integer
+                        - in: path
+                          name: file_name
+                          required: true
+                          schema:
+                              type: string
+                    responses:
+                        '200': { description: Downloading the specified file }
+                        '401': { description: The request is unauthenticated }
+                        '403': { description: The user doesn't have permissions to a resource or action }
+                        '404': { description: The requested resource could not be found }
+                        '500': { description: Failed to open the file for reading }
+
+            /api/v1/reports/{id}/comments:
+                get:
+                    tags: [ Report Comments ]
+                    summary: Get paginated comments for a specific report
+                    security:
+                        -   bearerAuth: [ ]
+                    parameters:
+                        -   in: path
+                            name: id
+                            required: true
+                            schema:
+                                type: integer
+                        -   in: query
+                            name: page
+                            schema:
+                                type: integer
+                                example: 1
+                            description: Pagination page
+                    responses:
+                        200:
+                            description: Got paginated comments for specific report
+                        401:
+                            description: The request is unauthenticated
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            code:
+                                                type: integer
+                                                example: 401
+                                            message:
+                                                type: string
+                                                example: JWT Token not found
+                        403:
+                            description: The user doesn't have permissions to a resource or action
+                        500:
+                            description: Server error
+                
+                post:
+                    tags: [ Report Comments ]
+                    summary: Create a comment for a specific report
+                    security:
+                        -   bearerAuth: [ ]
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    required: [ content ]
+                                    properties:
+                                        content: { type: string, example: "Comment example" }
+                    
+                    responses:
+                        201:
+                            description: Created a comment for a specific report
+                        401:
+                            description: The request is unauthenticated
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            code:
+                                                type: integer
+                                                example: 401
+                                            message:
+                                                type: string
+                                                example: JWT Token not found
+                        403:
+                            description: The user doesn't have permissions to a resource or action
+                        422:
+                            description: Validation failed
+                        500:
+                            description: Server error
+            
+            /api/v1/reports/{id}/comments/{comment_id}:
+                get:
+                    tags: [ Report Comments ]
+                    summary: Get a specific comment for a report
+                    security:
+                        -   bearerAuth: [ ]
+                    parameters:
+                        -   in: path
+                            name: id
+                            required: true
+                            schema:
+                                type: integer
+                        -   in: path
+                            name: comment_id
+                            required: true
+                            schema:
+                                type: integer
+                    responses:
+                        200:
+                            description: Showed the specified comment
+                        401:
+                            description: Unauthenticated
+                        403:
+                            description: Forbidden
+                        404:
+                            description: Not Found
+                        500:
+                            description: Server error
+                
+                patch:
+                    tags: [ Report Comments ]
+                    summary: Update a comment
+                    security:
+                        -   bearerAuth: [ ]
+                    parameters:
+                        -   in: path
+                            name: id
+                            required: true
+                            schema:
+                                type: integer
+                        -   in: path
+                            name: comment_id
+                            required: true
+                            schema:
+                                type: integer
+                    requestBody:
+                        required: true
+                        content:
+                            application/json:
+                                schema:
+                                    type: object
+                                    required: [ content ]
+                                    properties:
+                                        content: { type: string, example: "Comment example" }
+                    responses:
+                        200:
+                            description: Updated the specified comment
+                        401:
+                            description: Unauthenticated
+                        403:
+                            description: Forbidden
+                        404:
+                            description: Not Found
+                        422:
+                            description: Validation failed
+                        500:
+                            description: Server error
+                
+                delete:
+                    tags: [ Report Comments ]
+                    summary: Delete a comment
+                    security:
+                        -   bearerAuth: [ ]
+                    parameters:
+                        -   in: path
+                            name: id
+                            required: true
+                            schema:
+                                type: integer
+                        -   in: path
+                            name: comment_id
+                            required: true
+                            schema:
+                                type: integer
+                    responses:
+                        204:
+                            description: Deleted successfully
+                        401:
+                            description: Unauthenticated
+                        403:
+                            description: Forbidden
+                        404:
+                            description: Not Found
+                        500:
+                            description: Server error
+            
+            /api/v1/reports/{id}/comments/load:
+                get:
+                    tags: [ Report Comments ]
+                    summary: Load comments for report with pagination and user context
+                    security:
+                        -   bearerAuth: [ ]
+                    parameters:
+                        -   in: path
+                            name: id
+                            required: true
+                            schema:
+                                type: integer
+                        -   in: query
+                            name: page
+                            required: false
+                            schema:
+                                type: integer
+                                default: 1
+                    responses:
+                        200:
+                            description: Loaded comments

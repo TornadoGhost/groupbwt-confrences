@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\DTO\Request\ReportCommentRequest;
 use App\Entity\Report;
 use App\Entity\ReportComment;
 use App\Repository\ReportCommentRepository;
@@ -49,7 +50,7 @@ class ReportCommentService extends BaseService
         return $this->reportCommentRepository->add($comment, true);
     }
 
-    public function updateComment(
+    public function updateReportComment(
         ReportComment $comment
     ): ?ReportComment
     {
@@ -125,5 +126,29 @@ class ReportCommentService extends BaseService
     public function save(ReportComment $entity, bool $flush = false): ?ReportComment
     {
         return $this->reportCommentRepository->add($entity, $flush);
+    }
+
+    public function setReportCommentData(ReportCommentRequest $request, ReportComment $reportComment): ReportComment
+    {
+        $reportComment->setContent($request->getContent());
+
+        return $reportComment;
+    }
+
+    public function createComment(ReportCommentRequest $request, Report $report, UserInterface $user): ReportComment
+    {
+        $reportComment = new ReportComment();
+        $reportComment = $this->setReportCommentData($request, $reportComment);
+
+        return $this->createReportComment($user, $report, $reportComment);
+    }
+
+    public function updateComment(ReportCommentRequest $request, ReportComment $reportComment): ReportComment
+    {
+        $reportComment->setContent($request->getContent());
+
+        $this->save($reportComment, true);
+
+        return $reportComment;
     }
 }

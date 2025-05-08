@@ -10,7 +10,6 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class BooleanTypeValidator extends ConstraintValidator
 {
-
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof BooleanType) {

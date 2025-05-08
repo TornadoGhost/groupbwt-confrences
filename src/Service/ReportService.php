@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use App\DTO\Request\IndexReportRequest;
+use App\DTO\Request\ReportRequest;
 use App\Entity\Conference;
 use App\Entity\Report;
 use App\Message\ConferenceEmailNotification;
 use App\Repository\ReportRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -149,9 +153,9 @@ class ReportService extends BaseService
         return $response;
     }
 
-    public function getAllReportsWithFilters(Conference $conference, array $filters = []): array
+    public function getAllReportsWithFilters(Conference $conference, IndexReportRequest $request): array
     {
-        return $this->reportRepository->getAllReportsWithFilters($conference, $filters);
+        return $this->reportRepository->getAllReportsWithFilters($conference, $request);
     }
 
     public function prepareReportFilters(array $filters, Conference $conference): array
@@ -196,4 +200,20 @@ class ReportService extends BaseService
         ));
     }
 
+    public function setReportData(Report $report, ReportRequest $request): Report
+    {
+        $report->setTitle($request->getTitle());
+        $report->setDescription($request->getDescription());
+        $report->setStartedAt(new \DateTime($request->getStartedAt()));
+        $report->setEndedAt(new \DateTime($request->getEndedAt()));
+
+        return $report;
+    }
+
+    public function createReport(ReportRequest $request): Report
+    {
+        $report = new Report();
+
+        return $this->setReportData($report, $request);
+    }
 }

@@ -13,9 +13,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
-
-// TODO: check if I can move /api/v1 to global place, so I dont need to write it in every controller (can via routes, check comments there)
-
 /**
  * @Route("/notifications", name="api_")
  * @Security("is_granted('ROLE_USER')")
@@ -47,7 +44,7 @@ class NotificationController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/viewed", methods={"PATCH"})
+     * @Route("/{id<\d+>}/viewed", methods={"PATCH"})
      * @IsGranted("EDIT", subject="notification")
      */
     public function viewed(Notification $notification): Response

@@ -7,27 +7,27 @@ namespace App\DTO\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Validator\Constraints as AppAssert;
 
-class ConferenceIndexRequest
+class IndexConferenceRequest
 {
     /**
-     * @Assert\Type("digit")
+     * @Assert\Type("numeric")
      * @Assert\Positive
      */
     private ?string $page;
 
     /**
-     * @Assert\Type("digit")
-     * @Assert\Positive
+     * @Assert\Type("numeric")
+     * @Assert\GreaterThanOrEqual("1")
      */
     private ?string $reportNumber;
 
     /**
-     * @Assert\DateTime(format="d-m-Y H:i")
+     * @Assert\DateTime(format="Y-m-d H:i")
      */
     private ?string $startDate;
 
     /**
-     * @Assert\DateTime(format="d-m-Y H:i")
+     * @Assert\DateTime(format="Y-m-d H:i")
      */
     private ?string $endDate;
 
