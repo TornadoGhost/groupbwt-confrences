@@ -21,8 +21,11 @@ class GlobalSearchController extends AbstractController
         GlobalSearchService $globalSearchService
     ): Response
     {
-        $data = $globalSearchService->search($request);
-
-        return $this->json($data, Response::HTTP_OK, [], ['groups' => ['global_search']]);
+        return $this->json(
+            $globalSearchService->search($request),
+            Response::HTTP_OK,
+            [],
+            ['groups' => ['global_search']]
+        );
     }
 }

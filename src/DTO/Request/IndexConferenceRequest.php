@@ -17,7 +17,7 @@ class IndexConferenceRequest
 
     /**
      * @Assert\Type("numeric")
-     * @Assert\Positive
+     * @Assert\GreaterThanOrEqual("1")
      */
     private ?string $reportNumber;
 

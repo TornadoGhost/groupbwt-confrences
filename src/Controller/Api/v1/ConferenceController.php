@@ -43,6 +43,7 @@ class ConferenceController extends AbstractController
      */
     public function index(IndexConferenceRequest $request): Response
     {
+        dd($request);
         return $this->json(
             $this->conferenceService->getConferences($request, $this->getUser()),
             Response::HTTP_OK,

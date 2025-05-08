@@ -49,31 +49,29 @@ class ConferenceService extends BaseService
     }
 
     public function getAllConferencesWithFiltersPaginate(
+        IndexConferenceRequest $filters,
         int    $countPerPage,
-        int    $currentPage = 1,
-        ?int   $userId = null,
-        ?array $filters = []
+        ?int   $userId = null
     ): Pagerfanta
     {
-        $queryResult = $this->conferenceRepository->getAllConferencesWithFiltersPaginate($userId, $filters);
+        $queryResult = $this->conferenceRepository->getAllConferencesWithFiltersPaginate($filters, $userId);
 
         $adapter = new QueryAdapter($queryResult);
         $conferences = new Pagerfanta($adapter);
 
         $conferences->setMaxPerPage($countPerPage);
-        $conferences->setCurrentPage($currentPage);
+        $conferences->setCurrentPage((int)$filters->getPage() ?? 1);
 
         return $conferences;
     }
 
     public function getAllConferencesWithFiltersPaginateApi(
+        ?IndexConferenceRequest $filters,
         int    $countPerPage,
-        int    $currentPage = 1,
-        ?int   $userId = null,
-        ?array $filters = []
+        ?int   $userId = null
     ): array
     {
-        $pagerfanta = $this->getAllConferencesWithFiltersPaginate($countPerPage, $currentPage, $userId, $filters);
+        $pagerfanta = $this->getAllConferencesWithFiltersPaginate($filters, $countPerPage, $userId);
 
         $conferences = [];
         foreach ($pagerfanta->getCurrentPageResults() as $result) {
@@ -81,6 +79,7 @@ class ConferenceService extends BaseService
         }
 
         // TODO: Reread how to make response with pagination https://restfulapi.net/api-pagination-sorting-filtering/
+        // TODO: maybe redo with normalize class
         return [
             'data' => $conferences,
             'total' => $pagerfanta->getNbResults(),
@@ -190,16 +189,11 @@ class ConferenceService extends BaseService
             ? null
             : $user->getId();
 
-        $requestToArray = $this->normalizer->normalize($request);
-        $page = (int)$requestToArray['page'] ?: 1;
-
         return $this->getAllConferencesWithFiltersPaginateApi(
+            $request,
             ConferenceService::COUNT_PER_PAGE,
-            $page,
-            $userId,
-            $requestToArray
+            $userId
         );
-
     }
 
     public function setConferenceData(Conference $conference, ConferenceRequest $request): Conference

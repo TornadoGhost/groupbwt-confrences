@@ -13,7 +13,7 @@ class ConferenceRequest
      *     min = 2,
      *     max = 255,
      *     minMessage = "The title should be at least {{ limit }} characters",
-     *     maxMessage = "The title should be not longer than {{ limit }} characters",
+     *     maxMessage = "The title should тbe not longer than {{ limit }} characters",
      * )
      * @Assert\Type("alnum")
      */

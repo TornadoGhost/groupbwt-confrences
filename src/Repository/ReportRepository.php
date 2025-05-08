@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\DTO\Request\IndexReportRequest;
 use App\Entity\Conference;
 use App\Entity\Report;
 use App\Entity\ReportComment;
@@ -83,6 +84,8 @@ class ReportRepository extends ServiceEntityRepository
     {
         $this->_em->beginTransaction();
 
+        dd($report);
+
         try {
             $conference->removeUser($report->getUser());
             $this->_em->remove($report);
@@ -138,7 +141,7 @@ class ReportRepository extends ServiceEntityRepository
         return $this->find($randomReport);
     }
 
-    public function getAllReportsWithFilters(Conference $conference, array $filters = []): array
+    public function getAllReportsWithFilters(Conference $conference, IndexReportRequest $filters): array
     {
         $subQuery = $this->getEntityManager()->createQueryBuilder()
             ->select('COUNT(c.id)')
@@ -161,22 +164,25 @@ class ReportRepository extends ServiceEntityRepository
             ->setParameter('conference', $conference)
             ->orderBy('r.createdAt', 'DESC');
 
-        if (($filters['start_time'] ?? null)) {
+        $startTime = $filters->getStartTime();
+        if ($startTime) {
             $queryBuilder
                 ->andWhere('r.startedAt >= :startTime')
-                ->setParameter('startTime', $filters['start_time']);
+                ->setParameter('startTime', $startTime);
         }
 
-        if (($filters['end_time'] ?? null)) {
+        $endTime = $filters->getEndTime();
+        if ($endTime) {
             $queryBuilder
                 ->andWhere('r.endedAt <= :endTime')
-                ->setParameter('endTime', $filters['end_time']);
+                ->setParameter('endTime', $endTime);
         }
 
-        if ($filters['duration'] ?? null) {
+        $duration = $filters->getDuration();
+        if ($duration) {
             $queryBuilder
                 ->andWhere('TIMESTAMPDIFF(MINUTE, r.startedAt, r.endedAt) <= :duration')
-                ->setParameter('duration', $filters['duration']);
+                ->setParameter('duration', $duration);
         }
 
         return $queryBuilder->getQuery()->getResult();

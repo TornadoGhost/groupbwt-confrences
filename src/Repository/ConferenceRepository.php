@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
+use App\DTO\Request\IndexConferenceRequest;
 use App\Entity\Conference;
 use App\Entity\Report;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -36,7 +37,7 @@ class ConferenceRepository extends ServiceEntityRepository
         $this->reportRepository = $reportRepository;
     }
 
-    public function getAllConferencesWithFiltersPaginate(?int $userId = null, array $filters = []): QueryBuilder
+    public function getAllConferencesWithFiltersPaginate(IndexConferenceRequest $filters, ?int $userId = null): QueryBuilder
     {
         $queryBuilder = $this->createQueryBuilder('c')
             ->select('PARTIAL c.{id, title, startedAt, endedAt}')
@@ -50,26 +51,29 @@ class ConferenceRepository extends ServiceEntityRepository
                 ->setParameter('userId', $userId);
         }
 
-        if ($filters['reportNumber'] ?? null) {
+        $reportNumber = $filters->getReportNumber();
+        if ($reportNumber) {
             $queryBuilder->andWhere(
                 $queryBuilder->expr()->eq(
                     '(SELECT COUNT(r.id) FROM ' . Report::class . ' r WHERE r.conference = c.id)',
-                    $filters['reportNumber']
+                    $reportNumber
                 )
             );
         }
 
-        if ($filters['startDate'] ?? null) {
+        $startDate = $filters->getStartDate();
+        if ($startDate) {
             $queryBuilder->andWhere('c.startedAt = :started_at')
-                ->setParameter('started_at', $filters['startDate']);
+                ->setParameter('started_at', $startDate);
         }
 
-        if ($filters['endDate'] ?? null) {
+        $endDate = $filters->getEndDate();
+        if ($endDate) {
             $queryBuilder->andWhere('c.endedAt = :ended_at')
-                ->setParameter('ended_at', $filters['endDate']);
+                ->setParameter('ended_at', $endDate);
         }
 
-        if ($filters['isAvailable'] ?? null) {
+        if ($filters->getIsAvailable()) {
             $subQueryBeforeFirst = $this->getEntityManager()->createQueryBuilder()
                 ->select(self::REPORT_SELECT_NUMBER)
                 ->from(Report::class, 'r1')
